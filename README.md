@@ -1,4 +1,4 @@
-# 🐖 prisma-kysely <sup>`beta`</sup>
+# prisma-kysely
 
 > 🚧 **Library and README in progress...**
 
@@ -12,7 +12,7 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
    yarn add prisma-kysely
    ```
 
-2. Replace the default client generator with the following:
+2. Replace the default client generator in your `schema.prisma` file with the following:
 
    ```prisma
    generator kysely {
