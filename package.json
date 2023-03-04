@@ -11,6 +11,7 @@
     "start": "node dist/bin.js",
     "dev": "tsc --watch",
     "build": "tsc",
+    "typecheck": "tsc --noemit",
     "prepack": "yarn build",
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",

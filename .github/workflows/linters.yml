@@ -1,0 +1,86 @@
+name: 😵‍💫 Sanity checks
+on:
+  pull_request:
+    types: [opened, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: 🧪 Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🧪 Run tests
+        run: yarn run test
+
+  typecheck:
+    name: 🤓 Type checker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🤓 Run type checker
+        run: yarn run typecheck
+
+  lint:
+    name: 👮‍♂️ Linters and formatters
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write # Allow creating checks
+      contents: read
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 👮‍♂️ Run linters
+        run: yarn run lint
+
+      - name: 💅 Run fixers, and check diff
+        id: diffCheck
+        run: yarn run fix && git diff --exit-code -- ':!yarn.lock'
+
+      - name: 💬 Post a check explaining the issue
+        if: ${{ failure() && steps.diffCheck.conclusion == 'failure' }}
+        uses: LouisBrunner/checks-action@v1.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: 🧹 Check all files are formatted correctly
+          conclusion: failure
+          output: |
+            {"summary": "Hrm, seems like you don't have prettier set up properly. Make sure your editor is configured to format code automatically, and that it respects the project's prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to view the Prettier extension for VS Code.\n\n> _**💡 Tip:**_ \n> \n> In the meantime you can run `npm run fix` and commit the changes."}
