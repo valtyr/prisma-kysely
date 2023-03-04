@@ -1,9 +1,10 @@
-name: Publish Package to NPM
+name: 📦 Publish Package to NPM
 on:
   release:
     types: [published]
 jobs:
   build:
+    name: 📦 Build and publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
