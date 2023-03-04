@@ -27,6 +27,8 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
    }
    ```
 
+3. Run `prisma migrate dev` or `prisma generate` and use your freshly generated types when instantiating Kysely!
+
 ### Motivation
 
 `prisma-kysely` is meant as a more convenient alternative to `kysely-codegen` for those that use Prisma only for migrations. The package makes sure that Kysely's types are always up to date with the latest database schema. `prisma-kysely` also has better support for enums than `kysely-codegen` does. The author has used Prisma Migrate and Kysely together with Postgres and Cloudflare's D1 daily for a few months now and is really happy with the combo, but this has been the missing piece needed to make workflow super smooth.
