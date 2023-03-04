@@ -1,5 +1,5 @@
-import { DMMF } from "@prisma/generator-helper";
 import { sorted } from "../utils/sorted";
+import type { DMMF } from "@prisma/generator-helper";
 
 /*
 
@@ -39,7 +39,7 @@ function generateModels(
 
   const manySecond = manyToManyFields.find(
     (field) => field.relationName === manyFirst.relationName
-  )!;
+  );
 
   if (!manySecond) {
     return manyToManyTables;

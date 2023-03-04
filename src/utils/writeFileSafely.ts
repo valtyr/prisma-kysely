@@ -1,9 +1,11 @@
+import { formatFile } from "./formatFile";
 import fs from "fs";
 import path from "path";
 
-import { formatFile } from "./formatFile";
-
-export const writeFileSafely = async (writeLocation: string, content: any) => {
+export const writeFileSafely = async (
+  writeLocation: string,
+  content: string
+) => {
   fs.mkdirSync(path.dirname(writeLocation), {
     recursive: true,
   });
@@ -13,7 +15,7 @@ export const writeFileSafely = async (writeLocation: string, content: any) => {
 
 export const writeFileSafelyWithoutFormatting = async (
   writeLocation: string,
-  content: any
+  content: string
 ) => {
   fs.mkdirSync(path.dirname(writeLocation), {
     recursive: true,

@@ -1,8 +1,8 @@
-import { DMMF } from "@prisma/generator-helper";
-import { Config } from "../utils/validateConfig";
-import ts from "typescript";
+import type { Config } from "../utils/validateConfig";
 import { generateField } from "./generateField";
 import { generateFieldType } from "./generateFieldType";
+import type { DMMF } from "@prisma/generator-helper";
+import ts from "typescript";
 
 /**
  * Some of Prisma's default values are implemented in

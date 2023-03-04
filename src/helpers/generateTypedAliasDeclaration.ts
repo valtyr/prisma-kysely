@@ -1,14 +1,14 @@
-import ts from 'typescript';
+import ts from "typescript";
 
 export const generateTypedAliasDeclaration = (
   name: string,
-  type: ts.TypeNode,
+  type: ts.TypeNode
 ) => {
   return ts.factory.createTypeAliasDeclaration(
     undefined,
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     ts.factory.createIdentifier(name),
     undefined,
-    type,
+    type
   );
 };

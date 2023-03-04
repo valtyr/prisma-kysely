@@ -1,6 +1,3 @@
-import { GeneratorOptions, generatorHandler } from "@prisma/generator-helper";
-import path from "path";
-
 import { GENERATOR_NAME } from "./constants";
 import { generateDatabaseType } from "./helpers/generateDatabaseType";
 import { generateFile } from "./helpers/generateFile";
@@ -11,7 +8,11 @@ import { generateTypedAliasDeclaration } from "./helpers/generateTypedAliasDecla
 import { sorted } from "./utils/sorted";
 import { validateConfig } from "./utils/validateConfig";
 import { writeFileSafely } from "./utils/writeFileSafely";
+import type { GeneratorOptions } from "@prisma/generator-helper";
+import { generatorHandler } from "@prisma/generator-helper";
+import path from "path";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");
 
 generatorHandler({
@@ -64,7 +65,7 @@ generatorHandler({
 
     // And write it to a file!
     const writeLocation = path.join(
-      options.generator.output?.value!,
+      options.generator.output?.value || "",
       config.fileName
     );
     await writeFileSafely(writeLocation, file);

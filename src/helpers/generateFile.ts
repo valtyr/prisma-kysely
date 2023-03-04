@@ -1,7 +1,5 @@
 import ts from "typescript";
 
-import { formatFile } from "../utils/formatFile";
-
 const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
 export const generateFile = (statements: readonly ts.Statement[]) => {

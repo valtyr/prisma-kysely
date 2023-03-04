@@ -1,4 +1,4 @@
-import ts from 'typescript';
+import ts from "typescript";
 
 export const generateDatabaseType = (models: string[]) => {
   const properties = models.map((field) => {
@@ -8,16 +8,16 @@ export const generateDatabaseType = (models: string[]) => {
       undefined,
       ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(field),
-        undefined,
-      ),
+        undefined
+      )
     );
   });
 
   return ts.factory.createTypeAliasDeclaration(
     undefined,
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.factory.createIdentifier('DB'),
+    ts.factory.createIdentifier("DB"),
     undefined,
-    ts.factory.createTypeLiteralNode(properties),
+    ts.factory.createTypeLiteralNode(properties)
   );
 };
