@@ -4,7 +4,7 @@
   "repository": {
     "url": "https://github.com/valtyr/prisma-kysely"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/generator.js",
   "license": "MIT",
   "bin": {
