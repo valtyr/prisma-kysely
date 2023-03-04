@@ -57,14 +57,11 @@ Here's everything you need to do (let me know if something's missing...)
 
 I'm not 100% sure the [type maps](https://github.com/valtyr/prisma-kysely/blob/main/src/helpers/generateFieldType.ts) are correct for every dialect, so any and all contributions on that front would be greatly appreciated. The same goes for any bug you come across or improvement you can think of.
 
-
 ### Shoutouts
 
 - I wouldn't have made this library if I hadn't used Robin Blomberg's amazing [Kysely Codegen](https://github.com/RobinBlomberg/kysely-codegen). For anyone that isn't using Prisma for migrations I wholeheartedly recommend his package.
 - The implicit many-to-many table generation code is partly inspired by and partly stolen from [`prisma-dbml-generator`](https://github.com/notiz-dev/prisma-dbml-generator/blob/752f89cf40257a9698913294b38843ac742f8345/src/generator/many-to-many-tables.ts). Many-too-many thanks to them!
 
-
 ```diff
 + 🥹 Make Codd proud!
 ```
-
