@@ -34,14 +34,16 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
 ### Config
 
 | Key                      | Description                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| :----------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `output`                 | The directory where generated code will be saved                                                                                                                                                                                                                                                                                                                                    |
 | `fileName`               | The filename for the generated file                                                                                                                                                                                                                                                                                                                                                 |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |
 
 ### Contributions
 
-OMG you actually want to contribute? I'm so thankful! Development is super easy.
+OMG you actually want to contribute? I'm so thankful! 🙇‍♂️
+
+Here's everything you need to do (let me know if something's missing...)
 
 1. Fork and pull the repository
 2. Run `yarn install` and `yarn dev` to start `tsc` in watch mode.
