@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "commonjs",
+    "lib": ["esnext"],
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "moduleResolution": "Node",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "newLine": "lf"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules", "**/*.test.ts","**/__tests__", "**/dest"]
+}
