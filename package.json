@@ -8,7 +8,7 @@
   "main": "dist/generator.js",
   "license": "MIT",
   "bin": {
-    "prisma-generator-kysely-types": "dist/bin.js"
+    "prisma-kysely": "dist/bin.js"
   },
   "scripts": {
     "start": "node dist/bin.js",
