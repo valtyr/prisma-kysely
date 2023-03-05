@@ -5,11 +5,9 @@
 </p>
 
 <br/>
-<br/>
 
 ![Hero image "Generate Kysely types directly from your Prisma schema"](assets/hero.png)
 
-<br/>
 <br/>
 
 > 🚧 **Library and README in progress...**
