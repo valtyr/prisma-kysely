@@ -1,6 +1,10 @@
 # prisma-kysely
 
-[![npm version](https://badge.fury.io/js/prisma-kysely.svg)](https://www.npmjs.com/package/prisma-kysely)
+![Hero image "Generate Kysely types directly from your Prisma schema"](assets/hero.png)
+
+<a href="https://www.npmjs.com/package/prisma-kysely"><img src="https://badge.fury.io/js/prisma-kysely.svg"></a>
+<br/>
+<br/>
 
 > 🚧 **Library and README in progress...**
 
