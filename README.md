@@ -1,8 +1,14 @@
-# prisma-kysely
+![Prisma Kysely](assets/logo-hero.png)
+
+<center>
+<a href="https://www.npmjs.com/package/prisma-kysely"><img src="https://badge.fury.io/js/prisma-kysely.svg"></a>
+</center>
+
+<br/>
+<br/>
 
 ![Hero image "Generate Kysely types directly from your Prisma schema"](assets/hero.png)
 
-<a href="https://www.npmjs.com/package/prisma-kysely"><img src="https://badge.fury.io/js/prisma-kysely.svg"></a>
 <br/>
 <br/>
 
