@@ -1,9 +1,0 @@
-name: 'Pretty PR'
-description: "Add emojis to PR names when they're missing"
-runs:
-  using: 'node16'
-  main: 'dist/index.js'
-inputs:
-  repo-token: # id of input
-    description: 'Github API token'
-    required: true
