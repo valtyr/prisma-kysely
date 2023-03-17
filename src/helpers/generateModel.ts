@@ -47,7 +47,8 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
   });
 
   return {
-    name: model.name,
+    typeName: model.name,
+    tableName: model.dbName || model.name,
     definition: ts.factory.createTypeAliasDeclaration(
       undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
