@@ -51,6 +51,26 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
 | `fileName`               | The filename for the generated file                                                                                                                                                                                                                                                                                                                                                 |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |
 
+### Gotchas
+
+#### Default values
+
+By default (no pun intended) the Prisma Query Engine uses JS based implementations for certain default values, namely: `uuid()` and `cuid()`. This means that they don't end up getting defined as default values on the database level, and end up being pretty useless for us.
+
+Prisma does provide a nice solution to this though, in the form of `dbgenerated()`. This allows us to use any valid default value expression that our database supports:
+
+```prisma
+model PostgresUser {
+   id    String @id @default(dbgenerated("gen_random_uuid()"))
+}
+
+model SQLiteUser {
+   id    String @id @default(dbgenerated("uuid()"))
+}
+```
+
+[Check out the Prisma Docs for more info.](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#attribute-functions)
+
 ### Contributions
 
 OMG you actually want to contribute? I'm so thankful! 🙇‍♂️
