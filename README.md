@@ -24,7 +24,7 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
    yarn add prisma-kysely
    ```
 
-2. Replace the default client generator in your `schema.prisma` file with the following:
+2. Replace (or augment) the default client generator in your `schema.prisma` file with the following:
 
    ```prisma
    generator kysely {
@@ -41,7 +41,13 @@ Do you like Prisma's migration flow, schema language and DX but not the limitati
 
 ### Motivation
 
-`prisma-kysely` is meant as a more convenient alternative to `kysely-codegen` for those that use Prisma only for migrations. The package makes sure that Kysely's types are always up to date with the latest database schema. `prisma-kysely` also has better support for enums than `kysely-codegen` does. The author has used Prisma Migrate and Kysely together with Postgres and Cloudflare's D1 daily for a few months now and is really happy with the combo, but this has been the missing piece needed to make workflow super smooth.
+Prisma's migration and schema definition workflow is undeniably great, and the typesafety of the Prisma client is top notch, but there comes a time in every Prisma user's life where the client becomes just a bit too limiting. Sometimes we just need to write our own multi table joins and squeeze that extra drop of performance out of our apps. The Prisma client provides us with just two options: using their simplified query API, or sending raw strings of SQL forfeiting all hopes of typesafety in one go.
+
+This is where the magic of Kysely comes into play. Kysely gives us the toolbox to write expressive SQL queries while retaining full typesafety and autocompletion. The problem with Kysely though is that it's not super opinionated when it comes to schema definition and migration. What many users resort to is using something like Prisma to define the structure of their databases, and `kysely-codegen` to introspect their databases post-migration. 
+
+This package, `prisma-kysely`, is meant as a more integrated and convenient way to keep Kysely types in sync with Prisma schemas. After making the prerequisite changes to your schema file, it's just as convenient and foolproof as using Prisma's own client. 
+
+I've been using this combo for a few months now in tandem with Cloudflare's D1 and I couldn't be happier. I hope that it'll be as useful to all of you 😎
 
 ### Config
 
