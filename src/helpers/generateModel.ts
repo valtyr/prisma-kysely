@@ -12,6 +12,7 @@ import ts from "typescript";
 const defaultTypesImplementedInJS = ["cuid", "uuid"];
 
 export const generateModel = (model: DMMF.Model, config: Config) => {
+  model.fieldMap
   const properties = model.fields.flatMap((field) => {
     if (field.kind === "object" || field.kind === "unsupported") return [];
     if (field.kind === "enum")
@@ -49,7 +50,6 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
   return {
     name: model.name,
     definition: ts.factory.createTypeAliasDeclaration(
-      undefined,
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.factory.createIdentifier(model.name),
       undefined,
