@@ -104,6 +104,16 @@ model SQLiteUser {
 [Check out the Prisma Docs for more
 info.](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#attribute-functions)
 
+#### Field level `@map` not supported
+
+Regrettably, `prisma-kysely` doesn't support
+[mapping](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#map)
+field names to different columns. This is due the fact that Prisma's "Data Model
+Meta Format" doesn't supply custom generators with the info needed. There's no
+easy way to implement this besides re-parsing the schema ourselves, so for now
+we have to wait until Prisma fix this upstream. We're keeping track of the issue
+here: https://github.com/valtyr/prisma-kysely/issues/4.
+
 ### Contributions
 
 OMG you actually want to contribute? I'm so thankful! 🙇‍♂️
@@ -133,7 +143,8 @@ you can think of.
   partly stolen from
   [`prisma-dbml-generator`](https://github.com/notiz-dev/prisma-dbml-generator/blob/752f89cf40257a9698913294b38843ac742f8345/src/generator/many-to-many-tables.ts).
   Many-too-many thanks to them!
-- Jökull Sólberg ([@jokull](https://github.com/jokull)) for being this library's main proponent on Twitter!
+- Jökull Sólberg ([@jokull](https://github.com/jokull)) for being this library's
+  main proponent on Twitter!
 
 ```diff
 + Boyce-Codd gang unite! 💽
