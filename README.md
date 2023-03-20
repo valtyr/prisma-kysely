@@ -112,7 +112,8 @@ field names to different columns. This is due the fact that Prisma's "Data Model
 Meta Format" doesn't supply custom generators with the info needed. There's no
 easy way to implement this besides re-parsing the schema ourselves, so for now
 we have to wait until Prisma fix this upstream. We're keeping track of the issue
-here: https://github.com/valtyr/prisma-kysely/issues/4.
+here: https://github.com/valtyr/prisma-kysely/issues/4. In the meantime you can
+get around the issue by naming the field directly after the column.
 
 ### Contributions
 
