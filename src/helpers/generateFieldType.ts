@@ -90,6 +90,9 @@ export const generateFieldTypeInner = (type: string, config: Config) => {
 
 export const generateFieldType = (type: string, config: Config) => {
   const fieldType = generateFieldTypeInner(type, config);
-  if (!fieldType) throw new Error(`Unsupported type ${type}`);
+  if (!fieldType)
+    throw new Error(
+      `Unsupported type ${type} for database ${config.databaseProvider}`
+    );
   return fieldType;
 };

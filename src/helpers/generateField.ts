@@ -7,6 +7,13 @@ export const generateField = (
   generated: boolean,
   list: boolean
 ) => {
+  /*
+   * I'm not totally sure in which order these should be applied when it comes
+   * to lists. Is the whole list nullable or is each entry in the list nullable?
+   * If you run into problems here please file an issue or create a pull request
+   * with a fix and some proof please. Thank you :D
+   */
+
   let fieldType = type;
 
   if (nullable)
