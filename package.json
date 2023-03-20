@@ -21,7 +21,7 @@
     "prepack": "yarn build",
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests --coverage --collectCoverageFrom=\"./src/**/*.ts\""
   },
   "dependencies": {
     "@prisma/generator-helper": "3.12.0",
