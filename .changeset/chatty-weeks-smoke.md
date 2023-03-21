@@ -2,4 +2,4 @@
 "prisma-kysely": patch
 ---
 
-Add Typescript as a primary dependency
+Adds Typescript as a primary dependency in order to fix issue #8
