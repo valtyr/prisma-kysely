@@ -24,6 +24,9 @@ export const configValidator = z
     jsonTypeOverride: z.string().optional(),
     bytesTypeOverride: z.string().optional(),
     unsupportedTypeOverride: z.string().optional(),
+
+    // Support the Kysely camel case plugin
+    camelCase: z.boolean().default(false),
   })
   .strict();
 

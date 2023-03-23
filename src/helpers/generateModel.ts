@@ -1,3 +1,4 @@
+import { normalizeCase } from "../utils/normalizeCase";
 import type { Config } from "../utils/validateConfig";
 import { generateField } from "./generateField";
 import { generateFieldType } from "./generateFieldType";
@@ -35,7 +36,7 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
       );
 
     return generateField(
-      field.name,
+      normalizeCase(field.name, config),
       ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(generateFieldType(field.type, config)),
         undefined

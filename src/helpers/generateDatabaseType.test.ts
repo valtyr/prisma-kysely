@@ -2,11 +2,18 @@ import { stringifyTsNode } from "../utils/testUtils";
 import { generateDatabaseType } from "./generateDatabaseType";
 
 test("it works for plain vanilla type names", () => {
-  const node = generateDatabaseType([
-    { tableName: "Bookmark", typeName: "Bookmark" },
-    { tableName: "Session", typeName: "Session" },
-    { tableName: "User", typeName: "User" },
-  ]);
+  const node = generateDatabaseType(
+    [
+      { tableName: "Bookmark", typeName: "Bookmark" },
+      { tableName: "Session", typeName: "Session" },
+      { tableName: "User", typeName: "User" },
+    ],
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      camelCase: false,
+    }
+  );
   const result = stringifyTsNode(node);
 
   expect(result).toEqual(`export type DB = {
@@ -16,12 +23,41 @@ test("it works for plain vanilla type names", () => {
 };`);
 });
 
+test("it respects camelCase option names", () => {
+  const node = generateDatabaseType(
+    [
+      { tableName: "book_mark", typeName: "Bookmark" },
+      { tableName: "session", typeName: "Session" },
+      { tableName: "user_table", typeName: "User" },
+    ],
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      camelCase: true,
+    }
+  );
+  const result = stringifyTsNode(node);
+
+  expect(result).toEqual(`export type DB = {
+    bookMark: Bookmark;
+    session: Session;
+    userTable: User;
+};`);
+});
+
 test("it works for table names with spaces and weird symbols", () => {
-  const node = generateDatabaseType([
-    { tableName: "Bookmark", typeName: "Bookmark" },
-    { tableName: "user session_*table ;D", typeName: "Session" },
-    { tableName: "User", typeName: "User" },
-  ]);
+  const node = generateDatabaseType(
+    [
+      { tableName: "Bookmark", typeName: "Bookmark" },
+      { tableName: "user session_*table ;D", typeName: "Session" },
+      { tableName: "User", typeName: "User" },
+    ],
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      camelCase: false,
+    }
+  );
   const result = stringifyTsNode(node);
 
   expect(result).toEqual(`export type DB = {

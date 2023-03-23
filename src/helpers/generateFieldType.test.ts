@@ -18,6 +18,7 @@ test("it respects overrides when generating field types", () => {
     ...overrides,
     databaseProvider: "postgresql" as const,
     fileName: "types.ts",
+    camelCase: false,
   };
 
   const sourceTypes = [
@@ -43,6 +44,7 @@ test("it respects overrides when generating field types", () => {
     databaseProvider: "mysql",
     fileName: "types.ts",
     stringTypeOverride: "cheese",
+    camelCase: false,
   });
 
   expect(node).toEqual("cheese");
@@ -52,16 +54,19 @@ test("it respects differences between database engines", () => {
   const postgresBooleanType = generateFieldType("Boolean", {
     databaseProvider: "postgresql",
     fileName: "types.ts",
+    camelCase: false,
   });
 
   const mysqlBooleanType = generateFieldType("Boolean", {
     databaseProvider: "mysql",
     fileName: "types.ts",
+    camelCase: false,
   });
 
   const sqliteBooleanType = generateFieldType("Boolean", {
     databaseProvider: "sqlite",
     fileName: "types.ts",
+    camelCase: false,
   });
 
   expect(postgresBooleanType).toEqual("boolean");
@@ -74,6 +79,7 @@ test("it throws an error when unsupported type is encountered", () => {
     generateFieldType("Json", {
       databaseProvider: "sqlite",
       fileName: "types.ts",
+      camelCase: false,
     })
   ).toThrowError(new Error("Unsupported type Json for database sqlite"));
 });

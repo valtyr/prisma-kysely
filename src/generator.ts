@@ -55,7 +55,8 @@ generatorHandler({
 
     // Generate the database type that ties it all together
     const databaseType = generateDatabaseType(
-      models.map((m) => ({ tableName: m.tableName, typeName: m.typeName }))
+      models.map((m) => ({ tableName: m.tableName, typeName: m.typeName })),
+      config
     );
 
     // Print it all into a string

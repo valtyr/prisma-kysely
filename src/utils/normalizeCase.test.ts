@@ -1,0 +1,23 @@
+import { normalizeCase } from "./normalizeCase";
+
+test("converts names to camel case when config value is set", () => {
+  const originalName = "user_id";
+  const newName = normalizeCase(originalName, {
+    camelCase: true,
+    databaseProvider: "postgresql",
+    fileName: "",
+  });
+
+  expect(newName).toEqual("userId");
+});
+
+test("doesn't convert names to camel case when config value isn't set", () => {
+  const originalName = "user_id";
+  const newName = normalizeCase(originalName, {
+    camelCase: false,
+    databaseProvider: "postgresql",
+    fileName: "",
+  });
+
+  expect(newName).toEqual("user_id");
+});
