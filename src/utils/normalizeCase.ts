@@ -1,5 +1,5 @@
+import { createCamelCaseMapper } from "./camelCase";
 import type { Config } from "./validateConfig";
-import { createCamelCaseMapper } from "kysely/dist/cjs/plugin/camel-case/camel-case";
 
 const snakeToCamel = createCamelCaseMapper();
 
