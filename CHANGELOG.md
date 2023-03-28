@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.0.9
+
+### Patch Changes
+
+- 3bb5d89: Add support for Kysely's camel case plugin
+
 ## 1.0.8
 
 ### Patch Changes
