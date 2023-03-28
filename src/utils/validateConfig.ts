@@ -24,6 +24,15 @@ export const configValidator = z
     jsonTypeOverride: z.string().optional(),
     bytesTypeOverride: z.string().optional(),
     unsupportedTypeOverride: z.string().optional(),
+
+    // Support the Kysely camel case plugin
+    camelCase: z
+      .union([z.boolean(), z.literal("true"), z.literal("false")])
+      .transform((arg) => {
+        if (typeof arg === "boolean") return arg;
+        return arg === "true";
+      })
+      .default(false),
   })
   .strict();
 
