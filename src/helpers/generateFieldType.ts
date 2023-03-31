@@ -85,6 +85,8 @@ export const generateFieldTypeInner = (type: string, config: Config) => {
       return overrideType(type, config) || mysqlTypeMap[type];
     case "postgresql":
       return overrideType(type, config) || postgresqlTypeMap[type];
+    case "cockroachdb":
+      return overrideType(type, config) || postgresqlTypeMap[type];
   }
 };
 
