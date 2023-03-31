@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-import "./generator";
+import "~/generator";

@@ -1,6 +1,7 @@
-import { stringifyTsNode } from "../utils/testUtils";
-import { generateTypedAliasDeclaration } from "./generateTypedAliasDeclaration";
 import ts from "typescript";
+
+import { generateTypedAliasDeclaration } from "~/helpers/generateTypedAliasDeclaration";
+import { stringifyTsNode } from "~/utils/testUtils";
 
 test("it creates and exports a type alias :D", () => {
   const node = generateTypedAliasDeclaration(

@@ -1,6 +1,7 @@
-import { stringifyTsNode } from "../utils/testUtils";
-import { generateField } from "./generateField";
 import ts from "typescript";
+
+import { generateField } from "~/helpers/generateField";
+import { stringifyTsNode } from "~/utils/testUtils";
 
 const stringTypeNode = ts.factory.createTypeReferenceNode(
   ts.factory.createIdentifier("string"),

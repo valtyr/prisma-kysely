@@ -1,7 +1,8 @@
-import isValidTSIdentifier from "../utils/isValidTSIdentifier";
-import { normalizeCase } from "../utils/normalizeCase";
-import type { Config } from "../utils/validateConfig";
 import ts from "typescript";
+
+import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
+import { normalizeCase } from "~/utils/normalizeCase";
+import type { Config } from "~/utils/validateConfig";
 
 export const generateDatabaseType = (
   models: { tableName: string; typeName: string }[],

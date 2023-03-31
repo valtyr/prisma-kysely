@@ -1,6 +1,7 @@
-import { stringifyTsNode } from "../utils/testUtils";
-import { generateStringLiteralUnion } from "./generateStringLiteralUnion";
 import assert from "assert";
+
+import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
+import { stringifyTsNode } from "~/utils/testUtils";
 
 test("it returns null for 0 items", () => {
   const node = generateStringLiteralUnion([]);

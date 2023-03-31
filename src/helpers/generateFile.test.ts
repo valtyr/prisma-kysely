@@ -1,4 +1,4 @@
-import { generateFile } from "./generateFile";
+import { generateFile } from "~/helpers/generateFile";
 
 test("generates a file!", () => {
   expect(() => {

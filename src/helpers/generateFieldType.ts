@@ -1,4 +1,4 @@
-import type { Config } from "../utils/validateConfig";
+import type { Config } from "~/utils/validateConfig";
 
 type TypeName =
   | "BigInt"

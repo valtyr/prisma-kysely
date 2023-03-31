@@ -1,9 +1,10 @@
-import { normalizeCase } from "../utils/normalizeCase";
-import type { Config } from "../utils/validateConfig";
-import { generateField } from "./generateField";
-import { generateFieldType } from "./generateFieldType";
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
+
+import { generateField } from "~/helpers/generateField";
+import { generateFieldType } from "~/helpers/generateFieldType";
+import { normalizeCase } from "~/utils/normalizeCase";
+import type { Config } from "~/utils/validateConfig";
 
 /**
  * Some of Prisma's default values are implemented in

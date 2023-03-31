@@ -1,5 +1,6 @@
-import { generateImplicitManyToManyModels } from "./generateImplicitManyToManyModels";
 import { DMMF } from "@prisma/generator-helper";
+
+import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 
 test("it respects overrides when generating field types", () => {
   const newModels = generateImplicitManyToManyModels([

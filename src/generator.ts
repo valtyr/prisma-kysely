@@ -1,16 +1,17 @@
-import { GENERATOR_NAME } from "./constants";
-import { generateDatabaseType } from "./helpers/generateDatabaseType";
-import { generateFile } from "./helpers/generateFile";
-import { generateImplicitManyToManyModels } from "./helpers/generateImplicitManyToManyModels";
-import { generateModel } from "./helpers/generateModel";
-import { generateStringLiteralUnion } from "./helpers/generateStringLiteralUnion";
-import { generateTypedAliasDeclaration } from "./helpers/generateTypedAliasDeclaration";
-import { sorted } from "./utils/sorted";
-import { validateConfig } from "./utils/validateConfig";
-import { writeFileSafely } from "./utils/writeFileSafely";
 import type { GeneratorOptions } from "@prisma/generator-helper";
 import { generatorHandler } from "@prisma/generator-helper";
 import path from "path";
+
+import { GENERATOR_NAME } from "~/constants";
+import { generateDatabaseType } from "~/helpers/generateDatabaseType";
+import { generateFile } from "~/helpers/generateFile";
+import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
+import { generateModel } from "~/helpers/generateModel";
+import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
+import { generateTypedAliasDeclaration } from "~/helpers/generateTypedAliasDeclaration";
+import { sorted } from "~/utils/sorted";
+import { validateConfig } from "~/utils/validateConfig";
+import { writeFileSafely } from "~/utils/writeFileSafely";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");

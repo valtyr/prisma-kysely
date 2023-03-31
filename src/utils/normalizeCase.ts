@@ -1,5 +1,5 @@
-import { createCamelCaseMapper } from "./camelCase";
-import type { Config } from "./validateConfig";
+import { createCamelCaseMapper } from "~/utils/camelCase";
+import type { Config } from "~/utils/validateConfig";
 
 const snakeToCamel = createCamelCaseMapper();
 

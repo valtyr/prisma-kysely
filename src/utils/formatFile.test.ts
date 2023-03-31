@@ -1,4 +1,4 @@
-import { formatFile } from "./formatFile";
+import { formatFile } from "~/utils/formatFile";
 
 afterEach(() => {
   jest.clearAllMocks();

@@ -1,4 +1,4 @@
-import { generateFieldType } from "./generateFieldType";
+import { generateFieldType } from "~/helpers/generateFieldType";
 
 test("it respects overrides when generating field types", () => {
   const overrides = {
