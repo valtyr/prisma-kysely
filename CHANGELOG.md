@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.0.10
+
+### Patch Changes
+
+- Add support for CockroachDB (thanks to @yevhenii-horbenko 🥳)
+
 ## 1.0.9
 
 ### Patch Changes
