@@ -6,6 +6,7 @@ export const configValidator = z
     // Meta information (not provided through user input)
     databaseProvider: z.union([
       z.literal("postgresql"),
+      z.literal("cockroachdb"),
       z.literal("mysql"),
       z.literal("sqlite"),
     ]),
