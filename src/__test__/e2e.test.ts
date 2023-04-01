@@ -6,7 +6,7 @@ import { afterEach, beforeAll, beforeEach, expect, test } from "vitest";
 const exec = promisify(execCb);
 
 beforeEach(async () => {
-  await fs.rename("./prisma", "./prisma-old").catch();
+  await fs.rename("./prisma", "./prisma-old").catch(() => {});
 });
 
 afterEach(async () => {
@@ -15,8 +15,8 @@ afterEach(async () => {
       force: true,
       recursive: true,
     })
-    .catch();
-  await fs.rename("./prisma-old", "./prisma").catch();
+    .catch(() => {});
+  await fs.rename("./prisma-old", "./prisma").catch(() => {});
 });
 
 test("End to end test", async () => {
