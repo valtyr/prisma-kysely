@@ -15,9 +15,9 @@
   },
   "scripts": {
     "start": "node dist/bin.js",
-    "dev": "tsc --watch",
-    "build": "tsc",
-    "typecheck": "tsc --noemit",
+    "dev": "ttsc --watch",
+    "build": "ttsc",
+    "typecheck": "ttsc --noemit",
     "prepack": "yarn build",
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",
@@ -41,6 +41,8 @@
     "kysely": "^0.23.4",
     "prettier": "^2.8.4",
     "prisma": "3.12.0",
+    "ttypescript": "^1.5.15",
+    "typescript-transform-paths": "^3.4.6",
     "vite-tsconfig-paths": "^4.0.7",
     "vitest": "^0.29.8"
   },
