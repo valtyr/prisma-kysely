@@ -1,4 +1,5 @@
 import ts from "typescript";
+import { expect, test } from "vitest";
 
 import { generateField } from "~/helpers/generateField";
 import { stringifyTsNode } from "~/utils/testUtils";

@@ -1,4 +1,5 @@
 import ts from "typescript";
+import { expect, test } from "vitest";
 
 import { generateTypedAliasDeclaration } from "~/helpers/generateTypedAliasDeclaration";
 import { stringifyTsNode } from "~/utils/testUtils";

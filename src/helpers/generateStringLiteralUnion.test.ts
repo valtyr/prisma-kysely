@@ -1,4 +1,5 @@
 import assert from "assert";
+import { expect, test } from "vitest";
 
 import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
 import { stringifyTsNode } from "~/utils/testUtils";

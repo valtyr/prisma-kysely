@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { normalizeCase } from "~/utils/normalizeCase";
 
 test("converts names to camel case when config value is set", () => {

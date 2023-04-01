@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
 import { stringifyTsNode } from "~/utils/testUtils";
 

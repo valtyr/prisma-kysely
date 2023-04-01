@@ -1,4 +1,5 @@
 import { DMMF } from "@prisma/generator-helper";
+import { expect, test } from "vitest";
 
 import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 

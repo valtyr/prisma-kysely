@@ -1,7 +1,9 @@
+import { afterEach, expect, test, vi } from "vitest";
+
 import { formatFile } from "~/utils/formatFile";
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 test("formats a file!", () => {

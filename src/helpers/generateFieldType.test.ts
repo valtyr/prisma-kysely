@@ -1,3 +1,5 @@
+import { expect, test } from "vitest";
+
 import { generateFieldType } from "~/helpers/generateFieldType";
 
 test("it respects overrides when generating field types", () => {
