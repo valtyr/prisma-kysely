@@ -1,5 +1,7 @@
-import { stringifyTsNode } from "../utils/testUtils";
-import { generateModel } from "./generateModel";
+import { expect, test } from "vitest";
+
+import { generateModel } from "~/helpers/generateModel";
+import { stringifyTsNode } from "~/utils/testUtils";
 
 test("it generates a model!", () => {
   const model = generateModel(

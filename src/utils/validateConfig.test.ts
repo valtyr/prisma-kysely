@@ -1,12 +1,14 @@
+import { afterEach, expect, test, vi } from "vitest";
+
 import { validateConfig } from "./validateConfig";
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 test("should exit with error code when invalid config encountered", () => {
-  const mockExitFunction = jest.fn<never, never>();
-  const consoleErrorFunction = jest.fn();
+  const mockExitFunction = vi.fn<never, never>();
+  const consoleErrorFunction = vi.fn();
 
   process.exit = mockExitFunction;
   console.error = consoleErrorFunction;

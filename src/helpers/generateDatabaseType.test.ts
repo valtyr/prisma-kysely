@@ -1,5 +1,7 @@
-import { stringifyTsNode } from "../utils/testUtils";
-import { generateDatabaseType } from "./generateDatabaseType";
+import { expect, test } from "vitest";
+
+import { generateDatabaseType } from "~/helpers/generateDatabaseType";
+import { stringifyTsNode } from "~/utils/testUtils";
 
 test("it works for plain vanilla type names", () => {
   const node = generateDatabaseType(
