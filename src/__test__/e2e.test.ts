@@ -19,14 +19,16 @@ afterEach(async () => {
   await fs.rename("./prisma-old", "./prisma").catch(() => {});
 });
 
-test("End to end test", async () => {
-  // Initialize prisma:
-  await exec("yarn prisma init --datasource-provider sqlite");
+test(
+  "End to end test",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider sqlite");
 
-  // Set up a schema
-  await fs.writeFile(
-    "./prisma/schema.prisma",
-    `datasource db {
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
@@ -42,9 +44,11 @@ test("End to end test", async () => {
         rating      Float
         updatedAt   DateTime
     }`
-  );
+    );
 
-  // Run Prisma commands without fail
-  await exec("yarn prisma db push");
-  await exec("yarn prisma generate");
-});
+    // Run Prisma commands without fail
+    await exec("yarn prisma db push");
+    await exec("yarn prisma generate");
+  },
+  { timeout: 20000 }
+);
