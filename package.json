@@ -21,7 +21,8 @@
     "prepack": "yarn build",
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",
-    "test": "yarn build && vitest --passWithNoTests --coverage"
+    "test": "yarn build && vitest --passWithNoTests --coverage",
+    "release": "yarn build && yarn changeset publish"
   },
   "dependencies": {
     "@prisma/generator-helper": "3.12.0",

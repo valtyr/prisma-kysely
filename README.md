@@ -98,7 +98,7 @@ model PostgresUser {
 }
 
 model SQLiteUser {
-   id    String @id @default(dbgenerated("uuid()"))
+   id    String @id @default(dbgenerated("(uuid())"))
 }
 ```
 
