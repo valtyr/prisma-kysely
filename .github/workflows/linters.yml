@@ -129,7 +129,7 @@ jobs:
         with:
           message: |
             <p align="center">
-            <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="200" />
+            <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="400" />
             </p>
 
             ### 📸 Snapshot
