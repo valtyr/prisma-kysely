@@ -121,10 +121,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get version
-        run: echo "package_version=$(jq -r .version package.json)" >> GITHUB_ENV
+      - name: 🥇 Get version
+        run: echo "package_version=$(jq -r .version package.json)" >> $GITHUB_ENV
 
-      - name: Comment on PR
+      - name: 🗣️ Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
