@@ -84,3 +84,33 @@ jobs:
           conclusion: failure
           output: |
             {"summary": "Hrm, seems like you don't have prettier set up properly. Make sure your editor is configured to format code automatically, and that it respects the project's prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to view the Prettier extension for VS Code.\n\n> _**💡 Tip:**_ \n> \n> In the meantime you can run `npm run fix` and commit the changes."}
+
+  snapshot:
+    name: 📸 Release a snapshot
+    runs-on: ubuntu-latest
+    needs: [test, typecheck, lint]
+    if: github.ref != 'refs/heads/master'
+    steps:
+      - name: 🪤 Create .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🆓 Release snapshot
+        run: |
+          yarn build
+          yarn changeset version --snapshot snapshot
+          yarn changeset publish --tag snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 📮 Post published version to GitHub checks
+        run: |
+          name=$(jq -r .name package.json)
+          version=$(jq -r .version package.json)
+          npx action-status --context=$name --state=success --description=$version --url="https://unpkg.com/$name@$version/"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
