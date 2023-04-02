@@ -119,15 +119,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 💾 Save version number
+      - name: 📸 Snapshot version
         run: |
-          echo "version_number=$(jq -r .version package.json)" >> $GITHUB_ENV
-
-      - name: 📮 Post published version to GitHub checks
-        uses: LouisBrunner/checks-action@v1.1.1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: 👋 Snapshot version
-          conclusion: success
-          output: |
-            {"summary": "If you've added a changeset to your pull request, then a snapshot release with\nyour latest changes will have been created with its version number reflected\nbelow:\n\n| Package name    | Version            |\n| --------------- | ------------------ |\n| `prisma-kysely` |  ${{ env.version_number }} |\n\n\nThis can be useful to test your changes in other repos.\n\n\n> _**💡 Tip:**_\n>\n> If you just see a normal version number here, that means that you haven't\n> created a changeset for your PR. You can do this by running the following\n> command:\n>\n> ```bash\n> yarn changeset\n> ```\n>\n> You will be prompted to choose what kind of changes you're making. In most\n> cases this will be "patch".\n"}
+          echo "### 👋 Snapshot version" >> $GITHUB_STEP_SUMMARY
+          echo "If you've added a changeset to your pull request, then a snapshot release with\nyour latest changes will have been created with its version number reflected\nbelow:\n\n| Package name    | Version            |\n| --------------- | ------------------ |\n| `prisma-kysely` |  `$(jq -r .version package.json)` |\n\n\nThis can be useful to test your changes in other repos.\n\n\n> _**💡 Tip:**_\n>\n> If you just see a normal version number here, that means that you haven't\n> created a changeset for your PR. You can do this by running the following\n> command:\n>\n> ```bash\n> yarn changeset\n> ```\n>\n> You will be prompted to choose what kind of changes you're making. In most\n> cases this will be \"patch\".\n"
