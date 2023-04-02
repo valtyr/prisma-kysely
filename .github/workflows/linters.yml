@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+permissions:
+  pull-requests: write
 
 jobs:
   test:
@@ -119,22 +121,54 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 📸 Snapshot version
-        run: |
-          echo "### 👋 Snapshot version" >> $GITHUB_STEP_SUMMARY
-          echo "If you've added a changeset to your pull request, then a snapshot release with" >> $GITHUB_STEP_SUMMARY
-          echo "your latest changes will have been created with its version number reflected below:" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Package name    | Version            |" >> $GITHUB_STEP_SUMMARY
-          echo "| --------------- | ------------------ |" >> $GITHUB_STEP_SUMMARY
-          echo "| \`prisma-kysely\` |  \`$(jq -r .version package.json)\` |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "This can be useful to test your changes in other repos." >> $GITHUB_STEP_SUMMARY
-          echo "> _**💡 Tip:**_" >> $GITHUB_STEP_SUMMARY
-          echo "> If you just see a normal version number here, that means that you haven't" >> $GITHUB_STEP_SUMMARY
-          echo "> created a changeset for your PR. You can do this by running the following command:" >> $GITHUB_STEP_SUMMARY
-          echo "> \`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo "> yarn changeset" >> $GITHUB_STEP_SUMMARY
-          echo "> \`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "> You will be prompted to choose what kind of changes you're making. In most" >> $GITHUB_STEP_SUMMARY
-          echo "> cases this will be patch." >> $GITHUB_STEP_SUMMARY
+      - name: Get version
+        run: echo "package_version=$(jq -r .version package.json)" >> GITHUB_ENV
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            If you've added a changeset to your pull request, then a snapshot release with
+            your latest changes will have been created with its version number reflected
+            below:
+
+            | Package name    | Version            |
+            | --------------- | ------------------ |
+            | `prisma-kysely` |  ${{env.package_version}} |
+
+
+            This can be useful to test your changes in other repos.
+
+
+            > _**💡 Tip:**_
+            >
+            > If you just see a normal version number here, that means that you haven't
+            > created a changeset for your PR. You can do this by running the following
+            > command:
+            >
+            > ```bash
+            > yarn changeset
+            > ```
+            >
+            > You will be prompted to choose what kind of changes you're making. In most
+            > cases this will be "patch".
+
+      # - name: 📸 Snapshot version
+      #   run: |
+      #     echo "### 👋 Snapshot version" >> $GITHUB_STEP_SUMMARY
+      #     echo "If you've added a changeset to your pull request, then a snapshot release with" >> $GITHUB_STEP_SUMMARY
+      #     echo "your latest changes will have been created with its version number reflected below:" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "| Package name    | Version            |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| --------------- | ------------------ |" >> $GITHUB_STEP_SUMMARY
+      #     echo "| \`prisma-kysely\` |  \`$(jq -r .version package.json)\` |" >> $GITHUB_STEP_SUMMARY
+      #     echo "" >> $GITHUB_STEP_SUMMARY
+      #     echo "This can be useful to test your changes in other repos." >> $GITHUB_STEP_SUMMARY
+      #     echo "> _**💡 Tip:**_" >> $GITHUB_STEP_SUMMARY
+      #     echo "> If you just see a normal version number here, that means that you haven't" >> $GITHUB_STEP_SUMMARY
+      #     echo "> created a changeset for your PR. You can do this by running the following command:" >> $GITHUB_STEP_SUMMARY
+      #     echo "> \`\`\`bash" >> $GITHUB_STEP_SUMMARY
+      #     echo "> yarn changeset" >> $GITHUB_STEP_SUMMARY
+      #     echo "> \`\`\`" >> $GITHUB_STEP_SUMMARY
+      #     echo "> You will be prompted to choose what kind of changes you're making. In most" >> $GITHUB_STEP_SUMMARY
+      #     echo "> cases this will be patch." >> $GITHUB_STEP_SUMMARY
