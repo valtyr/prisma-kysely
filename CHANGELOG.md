@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.0.11
+
+### Patch Changes
+
+- 1cb96de: Update README
+
 ## 1.0.10
 
 ### Patch Changes
