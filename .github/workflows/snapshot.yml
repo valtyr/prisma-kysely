@@ -40,7 +40,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 🥇 Get version
-        run: echo "package_version=$(jq -r .version package.json)" >> $GITHUB_ENV
+        run: |
+          echo "package_version=$(jq -r .version package.json)" >> $GITHUB_ENV
+          echo "git_hash=$(git rev-parse --short \"$GITHUB_SHA\")" >> $GITHUB_ENV
 
       - name: 🗣️ Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
@@ -56,9 +58,9 @@ jobs:
             your latest changes will have been created with its version number reflected
             below:
 
-            | Package name    | Version            |
-            | --------------- | ------------------ |
-            | `prisma-kysely` |  ${{env.package_version}} |
+            | Package name    | Version            | Git hash |
+            | --------------- | ------------------ | ---------|
+            | `prisma-kysely` |  ${{env.package_version}} | ${{env.git_hash}}
 
 
             This can be useful to test your changes in other repos.
