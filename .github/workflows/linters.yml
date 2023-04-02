@@ -128,6 +128,12 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           message: |
+            <p align="center">
+            <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="200" />
+            </p>
+
+            ### 📸 Snapshot
+
             If you've added a changeset to your pull request, then a snapshot release with
             your latest changes will have been created with its version number reflected
             below:
