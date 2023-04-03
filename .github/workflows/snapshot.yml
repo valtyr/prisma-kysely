@@ -47,6 +47,7 @@ jobs:
       - name: 🗣️ Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          number: ${{ github.event.issue.number }}
           message: |
             <p align="center">
             <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="400" />
