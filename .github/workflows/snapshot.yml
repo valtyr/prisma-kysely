@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v2
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v2
@@ -47,6 +49,7 @@ jobs:
       - name: 🗣️ Comment on PR
         uses: marocchino/sticky-pull-request-comment@v2
         with:
+          number: ${{ github.event.issue.number }}
           message: |
             <p align="center">
             <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="400" />
