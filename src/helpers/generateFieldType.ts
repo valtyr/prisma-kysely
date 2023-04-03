@@ -15,10 +15,10 @@ type TypeName =
 type TypeMap = Partial<Record<TypeName, string>> & { [x: string]: string };
 
 export const sqliteTypeMap: TypeMap = {
-  BigInt: "bigint",
+  BigInt: "number",
   Boolean: "number",
   Bytes: "Buffer",
-  DateTime: "Timestamp",
+  DateTime: "string",
   Decimal: "number",
   Float: "number",
   Int: "number",
@@ -27,11 +27,11 @@ export const sqliteTypeMap: TypeMap = {
 };
 
 export const mysqlTypeMap: TypeMap = {
-  BigInt: "bigint",
-  Boolean: "boolean",
+  BigInt: "number",
+  Boolean: "number",
   Bytes: "Buffer",
   DateTime: "Timestamp",
-  Decimal: "number",
+  Decimal: "string",
   Float: "number",
   Int: "number",
   Json: "unknown",
@@ -40,11 +40,11 @@ export const mysqlTypeMap: TypeMap = {
 };
 
 export const postgresqlTypeMap: TypeMap = {
-  BigInt: "bigint",
+  BigInt: "string",
   Boolean: "boolean",
   Bytes: "Buffer",
   DateTime: "Timestamp",
-  Decimal: "number",
+  Decimal: "string",
   Float: "number",
   Int: "number",
   Json: "unknown",
