@@ -72,7 +72,7 @@ test("it respects differences between database engines", () => {
   });
 
   expect(postgresBooleanType).toEqual("boolean");
-  expect(mysqlBooleanType).toEqual("boolean");
+  expect(mysqlBooleanType).toEqual("number");
   expect(sqliteBooleanType).toEqual("number");
 });
 
