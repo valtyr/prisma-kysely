@@ -1,0 +1,80 @@
+name: 📸 Snapshot!
+on:
+  issue_comment:
+    types: [created]
+permissions:
+  pull-requests: write
+
+jobs:
+  snapshot:
+    name: 💾 Release a snapshot
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/snapshot')
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏗 Setup repo
+        uses: actions/checkout@v2
+
+      - name: 🏗 Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: yarn
+
+      - name: 📦 Install dependencies
+        run: yarn install
+
+      - name: 🪤 Create .npmrc
+        run: |
+          cat << EOF > "$HOME/.npmrc"
+            //registry.npmjs.org/:_authToken=$NPM_TOKEN
+          EOF
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: 🆓 Release snapshot
+        run: |
+          yarn build
+          yarn changeset version --snapshot snapshot
+          yarn changeset publish --tag snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🥇 Get version
+        run: |
+          echo "package_version=$(jq -r .version package.json)" >> $GITHUB_ENV
+          echo "git_hash=$(git rev-parse --short \"$GITHUB_SHA\")" >> $GITHUB_ENV
+
+      - name: 🗣️ Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          message: |
+            <p align="center">
+            <img src="https://github.com/valtyr/prisma-kysely/raw/main/assets/logo-hero.png" width="400" />
+            </p>
+
+            ### 📸 Snapshot
+
+            If you've added a changeset to your pull request, then a snapshot release with
+            your latest changes will have been created with its version number reflected
+            below:
+
+            | Package name    | Version            | Git hash |
+            | --------------- | ------------------ | ---------|
+            | `prisma-kysely` |  ${{env.package_version}} | ${{env.git_hash}}
+
+
+            This can be useful to test your changes in other repos.
+
+
+            > _**💡 Tip:**_
+            >
+            > If you just see a normal version number here, that means that you haven't
+            > created a changeset for your PR. You can do this by running the following
+            > command:
+            >
+            > ```bash
+            > yarn changeset
+            > ```
+            >
+            > You will be prompted to choose what kind of changes you're making. In most
+            > cases this will be "patch".
