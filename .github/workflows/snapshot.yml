@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: 🏗 Setup repo
         uses: actions/checkout@v2
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: 🏗 Setup Node
         uses: actions/setup-node@v2
