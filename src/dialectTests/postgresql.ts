@@ -5,7 +5,7 @@ import { POSTGRES_URL, preparePrisma } from "~/dialectTests/common";
 
 const main = async () => {
   await preparePrisma("postgresql");
-  const db = new Kysely<any>({
+  const db = new Kysely<never>({
     dialect: new PostgresDialect({
       pool: new Pool({
         connectionString: POSTGRES_URL,

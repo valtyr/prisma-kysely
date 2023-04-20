@@ -5,7 +5,7 @@ import { preparePrisma } from "~/dialectTests/common";
 
 const main = async () => {
   await preparePrisma("mysql");
-  const db = new Kysely<any>({
+  const db = new Kysely<never>({
     dialect: new MysqlDialect({
       pool: createPool({
         user: "root",
