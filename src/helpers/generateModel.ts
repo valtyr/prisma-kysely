@@ -1,5 +1,4 @@
 import type { DMMF } from "@prisma/generator-helper";
-import { logger } from "@prisma/internals";
 import ts from "typescript";
 
 import { generateField } from "~/helpers/generateField";
