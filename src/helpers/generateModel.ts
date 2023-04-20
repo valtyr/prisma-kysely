@@ -37,8 +37,16 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
         field.isList
       );
 
+    /**
+     * The TS types for DMMF.Field are wrong as of right now. Here's
+     * a workaround. Should be safe for now.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dbNameRaw = (field as any).dbName as string | undefined | null;
+    const dbName = typeof dbNameRaw === "string" ? dbNameRaw : null;
+
     return generateField(
-      normalizeCase(field.name, config),
+      normalizeCase(dbName || field.name, config),
       ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(generateFieldType(field.type, config)),
         undefined

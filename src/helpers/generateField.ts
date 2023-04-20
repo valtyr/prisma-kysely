@@ -1,5 +1,7 @@
 import ts from "typescript";
 
+import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
+
 export const generateField = (
   name: string,
   type: ts.TypeNode,
@@ -32,9 +34,13 @@ export const generateField = (
 
   if (list) fieldType = ts.factory.createArrayTypeNode(fieldType);
 
+  const nameIdentifier = isValidTSIdentifier(name)
+    ? ts.factory.createIdentifier(name)
+    : ts.factory.createStringLiteral(name);
+
   return ts.factory.createPropertySignature(
     undefined,
-    ts.factory.createIdentifier(name),
+    nameIdentifier,
     undefined,
     fieldType
   );
