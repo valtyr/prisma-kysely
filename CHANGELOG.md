@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.1.0
+
+### Minor Changes
+
+- 7ab12d5: The first minor version bump 😮. Turns out some of the type maps were wrong. This update corrects `BigInt` and `Decimal` types for all dialects, and corrects the `DateTime` type for SQLite.
+
 ## 1.0.11
 
 ### Patch Changes
