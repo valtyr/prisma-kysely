@@ -1,4 +1,4 @@
-import { logger } from "@prisma/sdk";
+import { logger } from "@prisma/internals";
 import z from "zod";
 
 export const configValidator = z
