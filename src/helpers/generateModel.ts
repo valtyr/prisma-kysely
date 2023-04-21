@@ -25,7 +25,7 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
 
     if (field.kind === "object" || field.kind === "unsupported") return [];
     if (field.kind === "enum") {
-      const x = generateField({
+      return generateField({
         name: field.name,
         type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(field.type),
@@ -36,8 +36,6 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
         list: field.isList,
         documentation: field.documentation,
       });
-
-      return x;
     }
 
     return generateField({
