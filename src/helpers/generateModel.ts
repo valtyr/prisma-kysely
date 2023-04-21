@@ -24,28 +24,33 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
       );
 
     if (field.kind === "object" || field.kind === "unsupported") return [];
-    if (field.kind === "enum")
-      return generateField(
-        field.name,
-        ts.factory.createTypeReferenceNode(
+    if (field.kind === "enum") {
+      const x = generateField({
+        name: field.name,
+        type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(field.type),
           undefined
         ),
-        !field.isRequired,
-        isGenerated,
-        field.isList
-      );
+        nullable: !field.isRequired,
+        generated: isGenerated,
+        list: field.isList,
+        documentation: field.documentation,
+      });
 
-    return generateField(
-      normalizeCase(field.name, config),
-      ts.factory.createTypeReferenceNode(
+      return x;
+    }
+
+    return generateField({
+      name: normalizeCase(field.name, config),
+      type: ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(generateFieldType(field.type, config)),
         undefined
       ),
-      !field.isRequired,
-      isGenerated,
-      field.isList
-    );
+      nullable: !field.isRequired,
+      generated: isGenerated,
+      list: field.isList,
+      documentation: field.documentation,
+    });
   });
 
   return {
