@@ -1,11 +1,11 @@
 import Database from "better-sqlite3";
 import { Kysely, SqliteDialect } from "kysely";
 
-import { POSTGRES_URL, preparePrisma } from "~/dialectTests/common";
+import { preparePrisma } from "~/dialectTests/common";
 
 const main = async () => {
   await preparePrisma("sqlite");
-  const db = new Kysely<any>({
+  const db = new Kysely<never>({
     dialect: new SqliteDialect({
       database: new Database("./prisma/dev.db"),
     }),
