@@ -37,9 +37,10 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
         documentation: field.documentation,
       });
     }
+    const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
     return generateField({
-      name: normalizeCase(field.name, config),
+      name: normalizeCase(dbName || field.name, config),
       type: ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(generateFieldType(field.type, config)),
         undefined
