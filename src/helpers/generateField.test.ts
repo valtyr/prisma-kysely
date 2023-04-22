@@ -88,5 +88,5 @@ test("it prepends a JSDoc comment if documentation is provided", () => {
   });
   const result = stringifyTsNode(node);
 
-  expect(result).toEqual("/** This is a comment */\nname: string;");
+  expect(result).toEqual("/**\n * This is a comment\n */\nname: string;");
 });

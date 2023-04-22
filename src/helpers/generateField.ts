@@ -1,5 +1,6 @@
 import ts from "typescript";
 
+import { applyJSDocWorkaround } from "~/utils/applyJSDocWorkaround";
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 
 type GenerateFieldArgs = {
@@ -53,12 +54,7 @@ export const generateField = (args: GenerateFieldArgs) => {
     return ts.addSyntheticLeadingComment(
       propertySignature,
       ts.SyntaxKind.MultiLineCommentTrivia,
-      // This is a bit hacky and I'm not sure if there's a better way to do this
-      // while returning a PropertySignature type.
-      // This methods results to: /*${documentation}*/
-      // Which is clearly not a JSDoc comment. So to get around it, we add a
-      // leading asterisk + surrounding spaces so the result is: /** ${documentation} */
-      `* ${documentation} `,
+      applyJSDocWorkaround(documentation),
       true
     );
   }
