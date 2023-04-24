@@ -1,5 +1,12 @@
 # prisma-kysely
 
+## 1.2.0
+
+### Minor Changes
+
+- 533e41e: Pass Prisma comments on Prisma fields to the generated TypeScript types
+- 8892135: Add support for field level @map and update core dependencies
+
 ## 1.1.0
 
 ### Minor Changes
