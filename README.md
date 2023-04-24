@@ -105,7 +105,6 @@ model SQLiteUser {
 [Check out the Prisma Docs for more
 info.](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#attribute-functions)
 
-
 ### Contributions
 
 OMG you actually want to contribute? I'm so thankful! 🙇‍♂️
@@ -116,7 +115,7 @@ Here's everything you need to do (let me know if something's missing...)
 2. Run `yarn install` and `yarn dev` to start `tsc` in watch mode.
 3. Make changes to the source code
 4. Test your changes by creating `prisma/schema.prisma`, running `yarn prisma
-   generate` and checking the output in `prisma/types.ts`. The provider must be set
+generate` and checking the output in `prisma/types.ts`. The provider must be set
    as follows to reference the dev build:
    ```prisma
    generator kysely {
