@@ -105,16 +105,6 @@ model SQLiteUser {
 [Check out the Prisma Docs for more
 info.](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#attribute-functions)
 
-#### Field level `@map` not supported
-
-Regrettably, `prisma-kysely` doesn't support
-[mapping](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#map)
-field names to different columns. This is due the fact that Prisma's "Data Model
-Meta Format" doesn't supply custom generators with the info needed. There's no
-easy way to implement this besides re-parsing the schema ourselves, so for now
-we have to wait until Prisma fix this upstream. We're keeping track of the issue
-here: https://github.com/valtyr/prisma-kysely/issues/4. In the meantime you can
-get around the issue by naming the field directly after the column.
 
 ### Contributions
 
@@ -125,8 +115,14 @@ Here's everything you need to do (let me know if something's missing...)
 1. Fork and pull the repository
 2. Run `yarn install` and `yarn dev` to start `tsc` in watch mode.
 3. Make changes to the source code
-4. Test your changes by editing `prisma/schema.prisma`, running `yarn prisma
-generate` and checking the output in `prisma/types.ts`.
+4. Test your changes by creating `prisma/schema.prisma`, running `yarn prisma
+   generate` and checking the output in `prisma/types.ts`. The provider must be set
+   as follows to reference the dev build:
+   ```prisma
+   generator kysely {
+       provider = "node ./dist/bin.js"
+   }
+   ```
 5. Create a pull request! If your changes make sense, I'll try my best to review
    and merge them quickly.
 
