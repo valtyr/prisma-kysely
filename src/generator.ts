@@ -7,11 +7,11 @@ import { generateDatabaseType } from "~/helpers/generateDatabaseType";
 import { generateFile } from "~/helpers/generateFile";
 import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 import { generateModel } from "~/helpers/generateModel";
-import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
-import { generateTypedAliasDeclaration } from "~/helpers/generateTypedAliasDeclaration";
 import { sorted } from "~/utils/sorted";
 import { validateConfig } from "~/utils/validateConfig";
 import { writeFileSafely } from "~/utils/writeFileSafely";
+
+import { generateEnumType } from "./helpers/generateEnumType";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");
@@ -33,11 +33,7 @@ generatorHandler({
 
     // Generate enum types
     const enums = options.dmmf.datamodel.enums.flatMap(({ name, values }) => {
-      const type = generateStringLiteralUnion(values.map((v) => v.name));
-      if (!type) return [];
-
-      const declaration = generateTypedAliasDeclaration(name, type);
-      return declaration;
+      return generateEnumType(name, values);
     });
 
     // Generate DMMF models for implicit many to many tables
