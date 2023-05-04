@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.2.1
+
+### Patch Changes
+
+- ff5bc59: Add object declarations for enums, that can be used (among other things) for runtime validation. Thanks @jvandenaardweg for the idea! 😎👍
+
 ## 1.2.0
 
 ### Minor Changes
