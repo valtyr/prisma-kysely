@@ -1,1 +1,1 @@
-prisma/generated/*
+packages/prisma-kysely/prisma/generated/*

@@ -1,5 +1,12 @@
 {
-  "folders": [{ "name": "🔑\tprisma-kysely", "path": "." }],
+  "folders": [
+    { "name": "🔑\tprisma-kysely", "path": "./packages/prisma-kysely" },
+    {
+      "name": "🛝\tprisma-kysely-playground",
+      "path": "./apps/prisma-kysely-playground"
+    },
+    { "name": "🌳\tRoot", "path": "." }
+  ],
   "settings": {
     "typescript.preferences.importModuleSpecifier": "non-relative"
   }

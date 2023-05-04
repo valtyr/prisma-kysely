@@ -17,6 +17,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "newLine": "lf",
+    "declaration": true,
     "paths": {
       "~/*": ["./src/*"]
     },
