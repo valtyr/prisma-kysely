@@ -70,9 +70,7 @@ generatorHandler({
                 [...models.map((m) => m.definition), databaseType],
                 {
                   withEnumImport: {
-                    importPath: path
-                      .relative(config.fileName, config.enumFileName)
-                      .substring(1),
+                    importPath: `./${path.basename(config.enumFileName)}`,
                     names: options.dmmf.datamodel.enums.map((e) => e.name),
                   },
                 }
