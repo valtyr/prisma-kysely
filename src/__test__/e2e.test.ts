@@ -96,6 +96,7 @@ test(
       encoding: "utf-8",
     });
     expect(typeFile).not.toContain("export const");
+    expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
 
     const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
       encoding: "utf-8",
