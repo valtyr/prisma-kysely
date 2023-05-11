@@ -56,18 +56,42 @@ generatorHandler({
       config
     );
 
-    // Print it all into a string
-    const file = generateFile([
-      ...enums,
-      ...models.map((m) => m.definition),
-      databaseType,
-    ]);
+    // Parse it all into a string. Either 1 or 2 files depending on user config
+    const files =
+      config.enumFileName !== config.fileName
+        ? [
+            {
+              filepath: config.enumFileName,
+              content: generateFile([...enums, databaseType]),
+            },
+            {
+              filepath: config.fileName,
+              content: generateFile([
+                ...models.map((m) => m.definition),
+                databaseType,
+              ]),
+            },
+          ]
+        : [
+            {
+              filepath: config.fileName,
+              content: generateFile([
+                ...enums,
+                ...models.map((m) => m.definition),
+                databaseType,
+              ]),
+            },
+          ];
 
     // And write it to a file!
-    const writeLocation = path.join(
-      options.generator.output?.value || "",
-      config.fileName
+    await Promise.allSettled(
+      files.map(({ filepath, content }) => {
+        const writeLocation = path.join(
+          options.generator.output?.value || "",
+          filepath
+        );
+        return writeFileSafely(writeLocation, content);
+      })
     );
-    await writeFileSafely(writeLocation, file);
   },
 });
