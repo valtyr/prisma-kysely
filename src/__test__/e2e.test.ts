@@ -1,7 +1,7 @@
 import { exec as execCb } from "child_process";
 import fs from "fs/promises";
 import { promisify } from "util";
-import { afterEach, beforeAll, beforeEach, expect, test } from "vitest";
+import { afterEach, beforeEach, expect, test } from "vitest";
 
 const exec = promisify(execCb);
 
@@ -53,7 +53,7 @@ test(
   { timeout: 20000 }
 );
 
-test.only(
+test(
   "End to end test - separate entrypoints",
   async () => {
     // Initialize prisma:
@@ -64,7 +64,7 @@ test.only(
       "./prisma/schema.prisma",
       `datasource db {
         provider = "mysql"
-        url      = "mysql:./dev.db"
+        url      = "mysql://root:password@localhost:3306/test"
     }
 
     generator kysely {
@@ -92,17 +92,21 @@ test.only(
     // await exec("yarn prisma db push"); -- can't push to mysql, enums not supported in sqlite
     await exec("yarn prisma generate"); //   so just generate
 
-    const typesExists = await fs
-      .access("./prisma/generated/types.ts")
-      .then(() => true)
-      .catch(() => false);
-    expect(typesExists).toBe(true);
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+    expect(typeFile).not.toContain("export const");
 
-    const enumsExists = await fs
-      .access("./prisma/generated/enums.ts")
-      .then(() => true)
-      .catch(() => false);
-    expect(enumsExists).toBe(true);
+    const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
+      encoding: "utf-8",
+    });
+    expect(enumFile).toEqual(`export type TestEnum = "A" | "B" | "C";
+export const TestEnum = {
+  A: "A",
+  B: "B",
+  C: "C",
+};
+`);
   },
   { timeout: 20000 }
 );
