@@ -84,7 +84,7 @@ test.only(
         age         Int
         rating      Float
         updatedAt   DateTime
-        enum        TestEnum
+        abc         TestEnum
     }`
     );
 
