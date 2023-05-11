@@ -52,3 +52,57 @@ test(
   },
   { timeout: 20000 }
 );
+
+test.only(
+  "End to end test - separate entrypoints",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider mysql");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
+        provider = "mysql"
+        url      = "mysql:./dev.db"
+    }
+
+    generator kysely {
+        provider  = "node ./dist/bin.js"
+        enumFileName = "enums.ts"
+    }
+
+    enum TestEnum {
+        A
+        B
+        C
+    }
+    
+    model TestUser {
+        id          String @id
+        name        String
+        age         Int
+        rating      Float
+        updatedAt   DateTime
+        enum        TestEnum
+    }`
+    );
+
+    // Run Prisma commands without fail
+    // await exec("yarn prisma db push"); -- can't push to mysql, enums not supported in sqlite
+    await exec("yarn prisma generate"); //   so just generate
+
+    const typesExists = await fs
+      .access("./prisma/generated/types.ts")
+      .then(() => true)
+      .catch(() => false);
+    expect(typesExists).toBe(true);
+
+    const enumsExists = await fs
+      .access("./prisma/generated/enums.ts")
+      .then(() => true)
+      .catch(() => false);
+    expect(enumsExists).toBe(true);
+  },
+  { timeout: 20000 }
+);

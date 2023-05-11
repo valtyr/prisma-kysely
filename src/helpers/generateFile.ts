@@ -2,7 +2,14 @@ import ts from "typescript";
 
 const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
-export const generateFile = (statements: readonly ts.Statement[]) => {
+type Options = {
+  withEnumImport: false | { importPath: string; names: string[] };
+};
+
+export const generateFile = (
+  statements: readonly ts.Statement[],
+  { withEnumImport }: Options
+) => {
   const file = ts.factory.createSourceFile(
     statements,
     ts.factory.createToken(ts.SyntaxKind.EndOfFileToken),
@@ -17,5 +24,13 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
     : ColumnType<T, T | undefined, T>;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;`;
 
-  return `${leader}\n${result}`;
+  if (withEnumImport) {
+    const withEnumImportPath = withEnumImport.importPath.replace(".ts", "");
+    const enumImportStatement = `import type { ${withEnumImport.names.join(
+      ", "
+    )} } from "${withEnumImportPath}";`;
+
+    return `${leader}\n\n${enumImportStatement}\n\n${result}`;
+  }
+  return result;
 };
