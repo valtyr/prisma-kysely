@@ -30,12 +30,10 @@ export type Timestamp = ColumnType<Date, Date | string, Date | string>;`;
       ", "
     )} } from "${withEnumImport.importPath}";`;
 
-    return `${leader}\n\n${enumImportStatement}\n\n${result}`;
+    return withLeader
+      ? `${leader}\n\n${enumImportStatement}\n\n${result}`
+      : `${enumImportStatement}\n\n${result}`;
   }
 
-  if (withLeader) {
-    return `${leader}\n\n${result}`;
-  }
-
-  return result;
+  return withLeader ? `${leader}\n\n${result}` : result;
 };
