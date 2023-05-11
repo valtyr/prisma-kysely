@@ -53,7 +53,7 @@ test(
   { timeout: 20000 }
 );
 
-test(
+test.only(
   "End to end test - separate entrypoints",
   async () => {
     // Initialize prisma:

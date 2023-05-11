@@ -62,7 +62,10 @@ generatorHandler({
         ? [
             {
               filepath: config.enumFileName,
-              content: generateFile(enums, { withEnumImport: false }),
+              content: generateFile(enums, {
+                withEnumImport: false,
+                withLeader: false,
+              }),
             },
             {
               filepath: config.fileName,
@@ -70,9 +73,10 @@ generatorHandler({
                 [...models.map((m) => m.definition), databaseType],
                 {
                   withEnumImport: {
-                    importPath: `./${path.basename(config.enumFileName)}`,
+                    importPath: `./${path.parse(config.enumFileName).name}`,
                     names: options.dmmf.datamodel.enums.map((e) => e.name),
                   },
+                  withLeader: true,
                 }
               ),
             },
@@ -82,7 +86,7 @@ generatorHandler({
               filepath: config.fileName,
               content: generateFile(
                 [...enums, ...models.map((m) => m.definition), databaseType],
-                { withEnumImport: false }
+                { withEnumImport: false, withLeader: true }
               ),
             },
           ];

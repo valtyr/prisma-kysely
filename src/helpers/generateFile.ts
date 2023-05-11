@@ -4,11 +4,12 @@ const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 
 type Options = {
   withEnumImport: false | { importPath: string; names: string[] };
+  withLeader: boolean;
 };
 
 export const generateFile = (
   statements: readonly ts.Statement[],
-  { withEnumImport }: Options
+  { withEnumImport, withLeader }: Options
 ) => {
   const file = ts.factory.createSourceFile(
     statements,
@@ -25,12 +26,16 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;`;
 
   if (withEnumImport) {
-    const withEnumImportPath = withEnumImport.importPath.replace(".ts", "");
     const enumImportStatement = `import type { ${withEnumImport.names.join(
       ", "
-    )} } from "${withEnumImportPath}";`;
+    )} } from "${withEnumImport.importPath}";`;
 
     return `${leader}\n\n${enumImportStatement}\n\n${result}`;
   }
+
+  if (withLeader) {
+    return `${leader}\n\n${result}`;
+  }
+
   return result;
 };
