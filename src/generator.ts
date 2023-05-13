@@ -4,7 +4,7 @@ import path from "path";
 
 import { GENERATOR_NAME } from "~/constants";
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
-import { generateFile } from "~/helpers/generateFile";
+import { generateFiles } from "~/helpers/generateFiles";
 import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 import { generateModel } from "~/helpers/generateModel";
 import { sorted } from "~/utils/sorted";
@@ -57,39 +57,14 @@ generatorHandler({
     );
 
     // Parse it all into a string. Either 1 or 2 files depending on user config
-    const files =
-      config.enumFileName !== config.fileName
-        ? [
-            {
-              filepath: config.enumFileName,
-              content: generateFile(enums, {
-                withEnumImport: false,
-                withLeader: false,
-              }),
-            },
-            {
-              filepath: config.fileName,
-              content: generateFile(
-                [...models.map((m) => m.definition), databaseType],
-                {
-                  withEnumImport: {
-                    importPath: `./${path.parse(config.enumFileName).name}`,
-                    names: options.dmmf.datamodel.enums.map((e) => e.name),
-                  },
-                  withLeader: true,
-                }
-              ),
-            },
-          ]
-        : [
-            {
-              filepath: config.fileName,
-              content: generateFile(
-                [...enums, ...models.map((m) => m.definition), databaseType],
-                { withEnumImport: false, withLeader: true }
-              ),
-            },
-          ];
+    const files = generateFiles({
+      databaseType,
+      modelDefinitions: models.map((m) => m.definition),
+      enumNames: options.dmmf.datamodel.enums.map((e) => e.name),
+      enums,
+      enumsOutfile: config.enumFileName,
+      typesOutfile: config.fileName,
+    });
 
     // And write it to a file!
     await Promise.allSettled(

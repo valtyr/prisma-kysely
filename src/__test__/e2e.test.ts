@@ -111,3 +111,51 @@ export const TestEnum = {
   },
   { timeout: 20000 }
 );
+
+test(
+  "End to end test - separate entrypoints but no enums",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider sqlite");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
+        provider = "sqlite"
+        url      = "file:./dev.db"
+    }
+
+    generator kysely {
+        provider  = "node ./dist/bin.js"
+        enumFileName = "enums.ts"
+    }
+    
+    model TestUser {
+        id          String @id
+        name        String
+        age         Int
+        rating      Float
+        updatedAt   DateTime
+    }`
+    );
+
+    // Run Prisma commands without fail
+    await exec("yarn prisma db push");
+    await exec("yarn prisma generate");
+
+    // Shouldn't have an empty import statement
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+    expect(typeFile).not.toContain('from "./enums"');
+
+    // Shouldn't have generated an empty file
+    expect(
+      fs.readFile("./prisma/generated/enums.ts", {
+        encoding: "utf-8",
+      })
+    ).rejects.toThrow();
+  },
+  { timeout: 20000 }
+);
