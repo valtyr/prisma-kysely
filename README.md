@@ -38,6 +38,8 @@ without losing the safety of the TypeScript type system?
        // and a filename of your choice
        output = "../src/db"
        fileName = "types.ts"
+       // Optionally generate runtime enums to a separate file
+        enumFileName = "enums.ts"
    }
    ```
 
@@ -76,6 +78,7 @@ hope it's just as useful for you! 😎
 | :----------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `output`                 | The directory where generated code will be saved                                                                                                                                                                                                                                                                                                                                    |
 | `fileName`               | The filename for the generated file                                                                                                                                                                                                                                                                                                                                                 |
+| `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file.                                                                                                                                                                                                                                                                                 |
 | `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |
 
