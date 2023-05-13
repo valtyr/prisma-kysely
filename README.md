@@ -117,8 +117,7 @@ Here's everything you need to do (let me know if something's missing...)
 1. Fork and pull the repository
 2. Run `yarn install` and `yarn dev` to start `tsc` in watch mode.
 3. Make changes to the source code
-4. Test your changes by creating `prisma/schema.prisma`, running `yarn prisma
-generate` and checking the output in `prisma/types.ts`. The provider must be set
+4. Test your changes by creating `prisma/schema.prisma`, running `yarn prisma generate` and checking the output in `prisma/types.ts`. The provider must be set
    as follows to reference the dev build:
    ```prisma
    generator kysely {
