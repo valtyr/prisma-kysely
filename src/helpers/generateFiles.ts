@@ -1,5 +1,6 @@
 import path from "path";
 import type { TypeAliasDeclaration, VariableStatement } from "typescript";
+
 import { generateFile } from "~/helpers/generateFile";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
