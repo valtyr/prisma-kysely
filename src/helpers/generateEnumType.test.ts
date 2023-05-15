@@ -20,6 +20,6 @@ test("it generates the enum type", () => {
   expect(result).toEqual(`export const Name = {
     FOO: "FOO",
     BAR: "BAR"
-};
+} as const;
 export type Name = (typeof Name)[keyof typeof Name];\n`);
 });

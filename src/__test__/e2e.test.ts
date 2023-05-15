@@ -105,7 +105,7 @@ test(
   A: "A",
   B: "B",
   C: "C",
-};
+} as const;
 export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
   },
