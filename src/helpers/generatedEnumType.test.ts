@@ -17,11 +17,11 @@ test("it generates the enum type", () => {
     ts.createSourceFile("", "", ts.ScriptTarget.Latest)
   );
 
-  expect(result).toEqual(`export type Name = "FOO" | "BAR";
-export const Name = {
+  expect(result).toEqual(`export const Name = {
     FOO: "FOO",
     BAR: "BAR"
-};\n`);
+} as const;
+export type Name = (typeof Name)[keyof typeof Name];\n`);
 });
 
 test("it generates the enum type when using Prisma's @map()", () => {
@@ -38,9 +38,9 @@ test("it generates the enum type when using Prisma's @map()", () => {
     ts.createSourceFile("", "", ts.ScriptTarget.Latest)
   );
 
-  expect(result).toEqual(`export type Name = "FOO" | "BAR";
-export const Name = {
+  expect(result).toEqual(`export const Name = {
     FOO: "foo",
     BAR: "bar"
-};\n`);
+} as const;
+export type Name = (typeof Name)[keyof typeof Name];\n`);
 });
