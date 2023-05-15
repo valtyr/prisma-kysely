@@ -82,7 +82,7 @@ test("it respects overrides when generating field types", () => {
   expect(newModels).toEqual<DMMF.Model[]>([
     {
       name: "CategoryToPost",
-      dbName: null,
+      dbName: "_CategoryToPost",
       fields: [
         {
           hasDefaultValue: false,

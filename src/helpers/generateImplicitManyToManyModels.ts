@@ -48,8 +48,8 @@ function generateModels(
   }
 
   manyToManyTables.push({
-    dbName: null,
-    name: manyFirst?.relationName || "",
+    dbName: `_${manyFirst.relationName}`,
+    name: manyFirst.relationName || "",
     primaryKey: null,
     uniqueFields: [],
     uniqueIndexes: [],

@@ -66,6 +66,9 @@ test(
   B: string;
 };`)
     ).toBeTruthy();
+    expect(
+      generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
+    ).toBeTruthy();
   },
   { timeout: 20000 }
 );
