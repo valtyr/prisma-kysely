@@ -101,12 +101,12 @@ test(
     const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
       encoding: "utf-8",
     });
-    expect(enumFile).toEqual(`export type TestEnum = "A" | "B" | "C";
-export const TestEnum = {
+    expect(enumFile).toEqual(`export const TestEnum = {
   A: "A",
   B: "B",
   C: "C",
-};
+} as const;
+export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
   },
   { timeout: 20000 }
