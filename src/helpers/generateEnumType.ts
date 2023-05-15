@@ -19,18 +19,25 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
           name,
           undefined,
           undefined,
-          ts.factory.createObjectLiteralExpression(
-            values.map((v) => {
-              const identifier = isValidTSIdentifier(v.name)
-                ? ts.factory.createIdentifier(v.name)
-                : ts.factory.createStringLiteral(v.name);
 
-              return ts.factory.createPropertyAssignment(
-                identifier,
-                ts.factory.createStringLiteral(v.name)
-              );
-            }),
-            true
+          ts.factory.createAsExpression(
+            ts.factory.createObjectLiteralExpression(
+              values.map((v) => {
+                const identifier = isValidTSIdentifier(v.name)
+                  ? ts.factory.createIdentifier(v.name)
+                  : ts.factory.createStringLiteral(v.name);
+
+                return ts.factory.createPropertyAssignment(
+                  identifier,
+                  ts.factory.createStringLiteral(v.name)
+                );
+              }),
+              true
+            ),
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier("const"),
+              undefined
+            )
           )
         ),
       ],
