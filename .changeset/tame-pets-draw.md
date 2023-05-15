@@ -2,4 +2,4 @@
 "prisma-kysely": minor
 ---
 
-allow generation of runtime enums to a separate entrypoint
+Add option to output runtime enums to a separate file (Thank you @juliusmarminge! 🇸🇪🎉)
