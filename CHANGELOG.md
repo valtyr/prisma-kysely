@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.3.1
+
+### Patch Changes
+
+- 2659cc3: Now using narrower types for enum objects bringing `prisma-kysely`'s enums in line with `prisma-client-js` (Thank you @jvandenaardweg 🎉)
+
 ## 1.3.0
 
 ### Minor Changes
