@@ -19,7 +19,6 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
           name,
           undefined,
           undefined,
-
           ts.factory.createAsExpression(
             ts.factory.createObjectLiteralExpression(
               values.map((v) => {
@@ -29,7 +28,8 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
 
                 return ts.factory.createPropertyAssignment(
                   identifier,
-                  ts.factory.createStringLiteral(v.name)
+                  // dbName holds the "@map("value")" value from the Prisma schema if it exists, otherwise fallback to the name
+                  ts.factory.createStringLiteral(v.dbName || v.name)
                 );
               }),
               true
