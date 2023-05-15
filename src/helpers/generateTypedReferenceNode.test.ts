@@ -4,7 +4,7 @@ import { stringifyTsNode } from "~/utils/testUtils";
 
 import { generateTypedReferenceNode } from "./generateTypedReferenceNode";
 
-test("it creates correct annotation for non-nullable types", () => {
+test("it generated the typed reference node", () => {
   const node = generateTypedReferenceNode("Name");
 
   const result = stringifyTsNode(node);
