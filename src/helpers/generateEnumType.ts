@@ -4,7 +4,7 @@ import ts from "typescript";
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 
 import { generateStringLiteralUnion } from "./generateStringLiteralUnion";
-import { generateTypedAliasDeclaration } from "./generateTypedAliasDeclaration";
+import { generateTypedReferenceNode } from "./generateTypedReferenceNode";
 
 export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
   const type = generateStringLiteralUnion(values.map((v) => v.name));
@@ -38,7 +38,7 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
     )
   );
 
-  const typeDeclaration = generateTypedAliasDeclaration(name, type);
+  const typeDeclaration = generateTypedReferenceNode(name);
 
-  return [typeDeclaration, objectDeclaration];
+  return [objectDeclaration, typeDeclaration];
 };
