@@ -47,26 +47,25 @@ test(
     }
     
     model Sprocket {
-        id          String @id
+        id          Int @id
         users       TestUser[]
     }`
     );
 
     // Run Prisma commands without fail
-    await exec("yarn prisma db push");
     await exec("yarn prisma generate");
 
     const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
       encoding: "utf-8",
     });
-    expect(generatedSource.includes("SprocketToTestUser")).toBeTruthy();
 
-    // const sourceFile = ts.createSourceFile(
-    //   "./prisma/generated/types.ts",
-    //   generatedSource,
-    //   ts.ScriptTarget.ES2022,
-    //   true
-    // );
+    // Expect many to many models to have been generated
+    expect(
+      generatedSource.includes(`export type SprocketToTestUser = {
+  A: number;
+  B: string;
+};`)
+    ).toBeTruthy();
   },
   { timeout: 20000 }
 );
