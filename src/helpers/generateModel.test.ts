@@ -91,6 +91,7 @@ test("it generates a model!", () => {
     {
       databaseProvider: "sqlite",
       fileName: "",
+      enumFileName: "",
       camelCase: false,
     }
   );
@@ -147,6 +148,7 @@ test("it respects camelCase option", () => {
     {
       databaseProvider: "sqlite",
       fileName: "",
+      enumFileName: "",
       camelCase: true,
     }
   );

@@ -8,6 +8,7 @@ test("converts names to camel case when config value is set", () => {
     camelCase: true,
     databaseProvider: "postgresql",
     fileName: "",
+    enumFileName: "",
   });
 
   expect(newName).toEqual("userId");
@@ -19,6 +20,7 @@ test("doesn't convert names to camel case when config value isn't set", () => {
     camelCase: false,
     databaseProvider: "postgresql",
     fileName: "",
+    enumFileName: "",
   });
 
   expect(newName).toEqual("user_id");

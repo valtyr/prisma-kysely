@@ -4,14 +4,14 @@ import path from "path";
 
 import { GENERATOR_NAME } from "~/constants";
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
-import { generateFile } from "~/helpers/generateFile";
+import { generateFiles } from "~/helpers/generateFiles";
 import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 import { generateModel } from "~/helpers/generateModel";
-import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
-import { generateTypedAliasDeclaration } from "~/helpers/generateTypedAliasDeclaration";
 import { sorted } from "~/utils/sorted";
 import { validateConfig } from "~/utils/validateConfig";
 import { writeFileSafely } from "~/utils/writeFileSafely";
+
+import { generateEnumType } from "./helpers/generateEnumType";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");
@@ -33,11 +33,7 @@ generatorHandler({
 
     // Generate enum types
     const enums = options.dmmf.datamodel.enums.flatMap(({ name, values }) => {
-      const type = generateStringLiteralUnion(values.map((v) => v.name));
-      if (!type) return [];
-
-      const declaration = generateTypedAliasDeclaration(name, type);
-      return declaration;
+      return generateEnumType(name, values);
     });
 
     // Generate DMMF models for implicit many to many tables
@@ -60,18 +56,25 @@ generatorHandler({
       config
     );
 
-    // Print it all into a string
-    const file = generateFile([
-      ...enums,
-      ...models.map((m) => m.definition),
+    // Parse it all into a string. Either 1 or 2 files depending on user config
+    const files = generateFiles({
       databaseType,
-    ]);
+      modelDefinitions: models.map((m) => m.definition),
+      enumNames: options.dmmf.datamodel.enums.map((e) => e.name),
+      enums,
+      enumsOutfile: config.enumFileName,
+      typesOutfile: config.fileName,
+    });
 
     // And write it to a file!
-    const writeLocation = path.join(
-      options.generator.output?.value || "",
-      config.fileName
+    await Promise.allSettled(
+      files.map(({ filepath, content }) => {
+        const writeLocation = path.join(
+          options.generator.output?.value || "",
+          filepath
+        );
+        return writeFileSafely(writeLocation, content);
+      })
     );
-    await writeFileSafely(writeLocation, file);
   },
 });

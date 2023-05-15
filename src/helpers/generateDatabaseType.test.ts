@@ -13,6 +13,7 @@ test("it works for plain vanilla type names", () => {
     {
       databaseProvider: "postgresql",
       fileName: "",
+      enumFileName: "",
       camelCase: false,
     }
   );
@@ -35,6 +36,7 @@ test("it respects camelCase option names", () => {
     {
       databaseProvider: "postgresql",
       fileName: "",
+      enumFileName: "",
       camelCase: true,
     }
   );
@@ -57,6 +59,7 @@ test("it works for table names with spaces and weird symbols", () => {
     {
       databaseProvider: "postgresql",
       fileName: "",
+      enumFileName: "",
       camelCase: false,
     }
   );
