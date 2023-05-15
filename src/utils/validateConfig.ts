@@ -1,6 +1,13 @@
 import { logger } from "@prisma/internals";
 import z from "zod";
 
+const booleanStringLiteral = z
+  .union([z.boolean(), z.literal("true"), z.literal("false")])
+  .transform((arg) => {
+    if (typeof arg === "boolean") return arg;
+    return arg === "true";
+  });
+
 export const configValidator = z
   .object({
     // Meta information (not provided through user input)
@@ -28,13 +35,10 @@ export const configValidator = z
     unsupportedTypeOverride: z.string().optional(),
 
     // Support the Kysely camel case plugin
-    camelCase: z
-      .union([z.boolean(), z.literal("true"), z.literal("false")])
-      .transform((arg) => {
-        if (typeof arg === "boolean") return arg;
-        return arg === "true";
-      })
-      .default(false),
+    camelCase: booleanStringLiteral.default(false),
+
+    // Use GeneratedAlways for IDs instead of Generated
+    readOnlyIds: booleanStringLiteral.default(false),
   })
   .strict();
 

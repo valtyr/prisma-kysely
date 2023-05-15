@@ -8,11 +8,17 @@ type GenerateFieldArgs = {
   type: ts.TypeNode;
   nullable: boolean;
   generated: boolean;
+  isId: boolean;
   list: boolean;
   documentation?: string;
+
+  config: {
+    readOnlyIds: boolean;
+  };
 };
 export const generateField = (args: GenerateFieldArgs) => {
-  const { name, type, nullable, generated, list, documentation } = args;
+  const { name, type, nullable, generated, list, documentation, isId, config } =
+    args;
 
   /*
    * I'm not totally sure in which order these should be applied when it comes
@@ -31,11 +37,19 @@ export const generateField = (args: GenerateFieldArgs) => {
       ),
     ]);
 
-  if (generated)
-    fieldType = ts.factory.createTypeReferenceNode(
-      ts.factory.createIdentifier("Generated"),
-      [fieldType]
-    );
+  if (generated) {
+    if (isId && config.readOnlyIds) {
+      fieldType = ts.factory.createTypeReferenceNode(
+        ts.factory.createIdentifier("GeneratedAlways"),
+        [fieldType]
+      );
+    } else {
+      fieldType = ts.factory.createTypeReferenceNode(
+        ts.factory.createIdentifier("Generated"),
+        [fieldType]
+      );
+    }
+  }
 
   if (list) fieldType = ts.factory.createArrayTypeNode(fieldType);
 

@@ -19,10 +19,7 @@ export const generateFile = (
 
   const result = printer.printFile(file);
 
-  const leader = `import type { ColumnType } from "kysely";
-export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
-    ? ColumnType<S, I | undefined, U>
-    : ColumnType<T, T | undefined, T>;
+  const leader = `import type { ColumnType, Generated, GeneratedAlways } from "kysely";
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;`;
 
   if (withEnumImport) {
