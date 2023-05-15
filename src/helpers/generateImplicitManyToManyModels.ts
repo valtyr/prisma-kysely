@@ -103,12 +103,17 @@ function generateJoinFields(
 function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
   const joinIdField = models
     .filter((model) => model.name === joinField.type)
-    .map(
-      (model) =>
-        model.fields.find(
-          (field) => field.name === joinField.relationToFields![0]
-        )!
+    .map((model) =>
+      model.fields.find(
+        (field) => field.name === joinField.relationToFields?.[0]
+      )
     )[0];
+
+  if (!joinIdField?.type) {
+    throw new Error(
+      `Could not find join type on relation "${joinField.relationName}"`
+    );
+  }
 
   return joinIdField.type;
 }
