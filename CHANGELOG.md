@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.3.0
+
+### Minor Changes
+
+- a96f2d7: Add option to output runtime enums to a separate file (Thank you @juliusmarminge! 🇸🇪🎉)
+
 ## 1.2.1
 
 ### Patch Changes
