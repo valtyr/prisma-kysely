@@ -4,7 +4,7 @@ import ts from "typescript";
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 
 import { generateStringLiteralUnion } from "./generateStringLiteralUnion";
-import { generateTypedAliasDeclaration } from "./generateTypedAliasDeclaration";
+import { generateTypedReferenceNode } from "./generateTypedReferenceNode";
 
 export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
   const type = generateStringLiteralUnion(values.map((v) => v.name));
@@ -19,18 +19,25 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
           name,
           undefined,
           undefined,
-          ts.factory.createObjectLiteralExpression(
-            values.map((v) => {
-              const identifier = isValidTSIdentifier(v.name)
-                ? ts.factory.createIdentifier(v.name)
-                : ts.factory.createStringLiteral(v.name);
 
-              return ts.factory.createPropertyAssignment(
-                identifier,
-                ts.factory.createStringLiteral(v.name)
-              );
-            }),
-            true
+          ts.factory.createAsExpression(
+            ts.factory.createObjectLiteralExpression(
+              values.map((v) => {
+                const identifier = isValidTSIdentifier(v.name)
+                  ? ts.factory.createIdentifier(v.name)
+                  : ts.factory.createStringLiteral(v.name);
+
+                return ts.factory.createPropertyAssignment(
+                  identifier,
+                  ts.factory.createStringLiteral(v.name)
+                );
+              }),
+              true
+            ),
+            ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier("const"),
+              undefined
+            )
           )
         ),
       ],
@@ -38,7 +45,7 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
     )
   );
 
-  const typeDeclaration = generateTypedAliasDeclaration(name, type);
+  const typeDeclaration = generateTypedReferenceNode(name);
 
-  return [typeDeclaration, objectDeclaration];
+  return [objectDeclaration, typeDeclaration];
 };
