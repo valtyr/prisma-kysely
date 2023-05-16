@@ -1,5 +1,17 @@
 # prisma-kysely
 
+## 1.4.0
+
+### Minor Changes
+
+- 3288b72: Support @map statement for enum values (Thank you @jvandenaardweg 🔥🇳🇱)
+- 299de40: Adds support for Kysely's `GeneratedAlways` through a new config parameter `readOnlyIds`. The generated type file no longer includes and exports the `Generated` generic.
+- 66019e8: Brings back support for implicit many to many models after DMMF changes introduced in new version of Prisma
+
+### Patch Changes
+
+- 2659cc3: Now using narrower types for enum objects bringing `prisma-kysely`'s enums in line with `prisma-client-js` (Thank you @jvandenaardweg 🎉)
+
 ## 1.3.0
 
 ### Minor Changes
