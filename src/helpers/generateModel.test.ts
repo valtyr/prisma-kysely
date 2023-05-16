@@ -93,6 +93,7 @@ test("it generates a model!", () => {
       fileName: "",
       enumFileName: "",
       camelCase: false,
+      readOnlyIds: false,
     }
   );
 
@@ -150,6 +151,7 @@ test("it respects camelCase option", () => {
       fileName: "",
       enumFileName: "",
       camelCase: true,
+      readOnlyIds: false,
     }
   );
 

@@ -16,6 +16,10 @@ test("it creates correct annotation for non-nullable types", () => {
     nullable: false,
     generated: false,
     list: false,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
@@ -29,6 +33,10 @@ test("it creates correct annotation for nullable types", () => {
     nullable: true,
     generated: false,
     list: false,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
@@ -42,6 +50,10 @@ test("it creates correct annotation for generated types", () => {
     nullable: false,
     generated: true,
     list: false,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
@@ -55,6 +67,10 @@ test("it creates correct annotation for list types", () => {
     nullable: false,
     generated: false,
     list: true,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
@@ -71,6 +87,10 @@ test("it creates correct annotation for generated nullable list types (do these 
     nullable: true,
     generated: true,
     list: true,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
@@ -84,9 +104,30 @@ test("it prepends a JSDoc comment if documentation is provided", () => {
     nullable: false,
     generated: false,
     list: false,
+    isId: false,
     documentation: "This is a comment",
+    config: {
+      readOnlyIds: false,
+    },
   });
   const result = stringifyTsNode(node);
 
   expect(result).toEqual("/**\n * This is a comment\n */\nname: string;");
+});
+
+test("it uses generated always for ids if config item is specified", () => {
+  const node = generateField({
+    name: "id",
+    type: stringTypeNode,
+    nullable: false,
+    generated: true,
+    list: false,
+    isId: true,
+    config: {
+      readOnlyIds: true,
+    },
+  });
+  const result = stringifyTsNode(node);
+
+  expect(result).toEqual("id: GeneratedAlways<string>;");
 });
