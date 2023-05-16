@@ -22,6 +22,7 @@ export function generateImplicitManyToManyModels(
   models: DMMF.Model[]
 ): DMMF.Model[] {
   const manyToManyFields = filterManyToManyRelationFields(models);
+
   if (manyToManyFields.length === 0) {
     return [];
   }
@@ -47,8 +48,8 @@ function generateModels(
   }
 
   manyToManyTables.push({
-    dbName: null,
-    name: manyFirst?.relationName || "",
+    dbName: `_${manyFirst.relationName}`,
+    name: manyFirst.relationName || "",
     primaryKey: null,
     uniqueFields: [],
     uniqueIndexes: [],
@@ -65,7 +66,7 @@ function generateModels(
 }
 
 function generateJoinFields(
-  fields: DMMF.Field[],
+  fields: [DMMF.Field, DMMF.Field],
   models: DMMF.Model[]
 ): DMMF.Field[] {
   if (fields.length !== 2) throw new Error("Huh?");
@@ -101,21 +102,13 @@ function generateJoinFields(
 }
 
 function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
-  const joinIdField = models
-    .filter((model) => model.name === joinField.type)
-    .map((model) =>
-      model.fields.find(
-        (field) => field.name === joinField.relationToFields?.[0]
-      )
-    )[0];
+  const joinedModel = models.find((m) => m.name === joinField.type);
+  if (!joinedModel) throw new Error("Could not find referenced model");
 
-  if (!joinIdField?.type) {
-    throw new Error(
-      `Could not find join type on relation "${joinField.relationName}"`
-    );
-  }
+  const idField = joinedModel.fields.find((f) => f.isId);
+  if (!idField) throw new Error("No ID field on referenced model");
 
-  return joinIdField.type;
+  return idField.type;
 }
 
 function filterManyToManyRelationFields(models: DMMF.Model[]): DMMF.Field[] {
@@ -127,7 +120,7 @@ function filterManyToManyRelationFields(models: DMMF.Model[]): DMMF.Field[] {
             field.relationName &&
             field.isList &&
             field.relationFromFields?.length === 0 &&
-            field.relationToFields?.length
+            field.relationToFields?.length === 0
         )
         .map((field) => field)
     )

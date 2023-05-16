@@ -43,12 +43,32 @@ test(
         age         Int
         rating      Float
         updatedAt   DateTime
+        sprockets   Sprocket[]
+    }
+    
+    model Sprocket {
+        id          Int @id
+        users       TestUser[]
     }`
     );
 
     // Run Prisma commands without fail
-    await exec("yarn prisma db push");
     await exec("yarn prisma generate");
+
+    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    // Expect many to many models to have been generated
+    expect(
+      generatedSource.includes(`export type SprocketToTestUser = {
+  A: number;
+  B: string;
+};`)
+    ).toBeTruthy();
+    expect(
+      generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
+    ).toBeTruthy();
   },
   { timeout: 20000 }
 );

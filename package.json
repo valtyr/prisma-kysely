@@ -22,7 +22,8 @@
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",
     "test": "yarn build && vitest --passWithNoTests --coverage",
-    "release": "yarn build && yarn changeset publish"
+    "release": "yarn build && yarn changeset publish",
+    "edit": "code ."
   },
   "dependencies": {
     "@prisma/generator-helper": "4.13.0",
