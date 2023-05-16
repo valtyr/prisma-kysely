@@ -31,7 +31,7 @@ test("it respects overrides when generating field types", () => {
           hasDefaultValue: false,
           relationName: "CategoryToPost",
           relationFromFields: [],
-          relationToFields: ["id"],
+          relationToFields: [],
           isGenerated: false,
           isUpdatedAt: false,
         },
@@ -67,7 +67,7 @@ test("it respects overrides when generating field types", () => {
           hasDefaultValue: false,
           relationName: "CategoryToPost",
           relationFromFields: [],
-          relationToFields: ["id"],
+          relationToFields: [],
           isGenerated: false,
           isUpdatedAt: false,
         },
@@ -82,7 +82,7 @@ test("it respects overrides when generating field types", () => {
   expect(newModels).toEqual<DMMF.Model[]>([
     {
       name: "CategoryToPost",
-      dbName: null,
+      dbName: "_CategoryToPost",
       fields: [
         {
           hasDefaultValue: false,
