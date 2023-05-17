@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.4.1
+
+### Patch Changes
+
+- 36393b6: Bugfix: revert to own generated type, that supports ColumnType
+
 ## 1.4.0
 
 ### Minor Changes
