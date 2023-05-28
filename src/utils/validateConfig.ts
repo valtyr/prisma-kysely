@@ -20,7 +20,7 @@ export const configValidator = z
 
     // Output overrides
     fileName: z.string().optional().default("types.ts"),
-    enumFileName: z.string().optional().default("types.ts"),
+    enumFileName: z.string().optional(),
 
     // Typescript type overrides
     stringTypeOverride: z.string().optional(),
@@ -40,7 +40,14 @@ export const configValidator = z
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
   })
-  .strict();
+  .strict()
+  .transform((config) => {
+    if (!config.enumFileName) {
+      config.enumFileName = config.fileName;
+    }
+    return config as Omit<typeof config, "enumFileName"> &
+      Required<Pick<typeof config, "enumFileName">>;
+  });
 
 export type Config = z.infer<typeof configValidator>;
 
