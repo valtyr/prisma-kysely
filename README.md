@@ -143,7 +143,7 @@ you can think of.
   partly stolen from
   [`prisma-dbml-generator`](https://github.com/notiz-dev/prisma-dbml-generator/blob/752f89cf40257a9698913294b38843ac742f8345/src/generator/many-to-many-tables.ts).
   Many-too-many thanks to them!
-- Igal Klebanov ([@igalk](https://github.com/igalklebanov)) and Jökull Sólberg ([@jokull](https://github.com/jokull)) for being this library's
+- Igal Klebanov ([@igalklebanov](https://github.com/igalklebanov)) and Jökull Sólberg ([@jokull](https://github.com/jokull)) for being this library's
   main proponents on Twitter!
 - The authors and maintainers of Kysely ❤️‍🔥
 
