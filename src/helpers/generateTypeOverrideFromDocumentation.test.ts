@@ -4,7 +4,7 @@ import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFro
 
 test("finds a type override", () => {
   const docString =
-    "this is some property \n here is the type override @typeOverride('admin' | 'member') ";
+    "this is some property \n here is the type override @kyselyType('admin' | 'member') ";
 
   expect(generateTypeOverrideFromDocumentation(docString)).toEqual(
     "'admin' | 'member'"
@@ -13,7 +13,7 @@ test("finds a type override", () => {
 
 test("supports parentheses in type", () => {
   const docString =
-    "this is some property \n here is the type override @typeOverride(('admin' | 'member')) ";
+    "this is some property \n here is the type override @kyselyType(('admin' | 'member')) ";
 
   expect(generateTypeOverrideFromDocumentation(docString)).toEqual(
     "('admin' | 'member')"
@@ -22,14 +22,14 @@ test("supports parentheses in type", () => {
 
 test("reacts correctly to unbalanced parens", () => {
   const docString =
-    "this is some property \n here is the type override @typeOverride(('admin' | 'member') ";
+    "this is some property \n here is the type override @kyselyType(('admin' | 'member') ";
 
   expect(generateTypeOverrideFromDocumentation(docString)).toEqual(null);
 });
 
 test("reacts correctly to extra parens", () => {
   const docString =
-    "this is some property \n here is the type override @typeOverride(('admin' | 'member'))) ";
+    "this is some property \n here is the type override @kyselyType(('admin' | 'member'))) ";
 
   expect(generateTypeOverrideFromDocumentation(docString)).toEqual(
     "('admin' | 'member')"
@@ -38,7 +38,7 @@ test("reacts correctly to extra parens", () => {
 
 test("finds type following incomplete one", () => {
   const docString =
-    "this is some property \n here is the type @typeOverride( override @typeOverride('admin' | 'member') ";
+    "this is some property \n here is the type @kyselyType( override @kyselyType('admin' | 'member') ";
 
   expect(generateTypeOverrideFromDocumentation(docString)).toEqual(
     "'admin' | 'member'"

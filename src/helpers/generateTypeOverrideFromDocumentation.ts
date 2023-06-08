@@ -1,7 +1,7 @@
-const START_LEXEME = "@typeOverride(";
+const START_LEXEME = "@kyselyType(";
 
 /**
- * Searches the field for a string matching @typeOverride(...) and uses
+ * Searches the field for a string matching @kyselyType(...) and uses
  * that as the typescript type of the field.
  *
  * @param documentation - The documentation string of the field

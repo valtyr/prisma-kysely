@@ -95,7 +95,7 @@ test(
         id          String @id
         name        String
 
-        /// @typeOverride('member' | 'owner')
+        /// @kyselyType('member' | 'owner')
         role        String
     }`
     );
@@ -113,7 +113,7 @@ test(
   id: string;
   name: string;
   /**
-   * @typeOverride('member' | 'owner')
+   * @kyselyType('member' | 'owner')
    */
   role: "member" | "owner";
 };`)

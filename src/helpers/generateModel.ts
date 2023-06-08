@@ -3,7 +3,7 @@ import ts from "typescript";
 
 import { generateField } from "~/helpers/generateField";
 import { generateFieldType } from "~/helpers/generateFieldType";
-import { generateTypeOverrideFromDocumentation } from "~/utils/generateTypeOverrideFromDocumentation";
+import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
 import { normalizeCase } from "~/utils/normalizeCase";
 import type { Config } from "~/utils/validateConfig";
 
