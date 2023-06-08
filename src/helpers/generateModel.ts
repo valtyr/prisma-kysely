@@ -3,6 +3,7 @@ import ts from "typescript";
 
 import { generateField } from "~/helpers/generateField";
 import { generateFieldType } from "~/helpers/generateFieldType";
+import { generateTypeOverrideFromDocumentation } from "~/utils/generateTypeOverrideFromDocumentation";
 import { normalizeCase } from "~/utils/normalizeCase";
 import type { Config } from "~/utils/validateConfig";
 
@@ -22,6 +23,10 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
         "name" in field.default &&
         defaultTypesImplementedInJS.includes(field.default.name)
       );
+
+    const typeOverride = field.documentation
+      ? generateTypeOverrideFromDocumentation(field.documentation)
+      : null;
 
     if (field.kind === "object" || field.kind === "unsupported") return [];
     if (field.kind === "enum") {
@@ -44,7 +49,9 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
     return generateField({
       name: normalizeCase(dbName || field.name, config),
       type: ts.factory.createTypeReferenceNode(
-        ts.factory.createIdentifier(generateFieldType(field.type, config)),
+        ts.factory.createIdentifier(
+          generateFieldType(field.type, config, typeOverride)
+        ),
         undefined
       ),
       nullable: !field.isRequired,

@@ -77,21 +77,33 @@ export const overrideType = (type: string, config: Config) => {
   }
 };
 
-export const generateFieldTypeInner = (type: string, config: Config) => {
+export const generateFieldTypeInner = (
+  type: string,
+  config: Config,
+  typeOverride: string | null
+) => {
   switch (config.databaseProvider) {
     case "sqlite":
-      return overrideType(type, config) || sqliteTypeMap[type];
+      return typeOverride || overrideType(type, config) || sqliteTypeMap[type];
     case "mysql":
-      return overrideType(type, config) || mysqlTypeMap[type];
+      return typeOverride || overrideType(type, config) || mysqlTypeMap[type];
     case "postgresql":
-      return overrideType(type, config) || postgresqlTypeMap[type];
+      return (
+        typeOverride || overrideType(type, config) || postgresqlTypeMap[type]
+      );
     case "cockroachdb":
-      return overrideType(type, config) || postgresqlTypeMap[type];
+      return (
+        typeOverride || overrideType(type, config) || postgresqlTypeMap[type]
+      );
   }
 };
 
-export const generateFieldType = (type: string, config: Config) => {
-  const fieldType = generateFieldTypeInner(type, config);
+export const generateFieldType = (
+  type: string,
+  config: Config,
+  typeOverride?: string | null
+) => {
+  const fieldType = generateFieldTypeInner(type, config, typeOverride || null);
   if (!fieldType)
     throw new Error(
       `Unsupported type ${type} for database ${config.databaseProvider}`
