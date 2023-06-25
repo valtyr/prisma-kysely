@@ -24,10 +24,13 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
       );
 
     if (field.kind === "object" || field.kind === "unsupported") return [];
+
+    const dbName = typeof field.dbName === "string" ? field.dbName : null;
+
     if (field.kind === "enum") {
       return generateField({
         isId: field.isId,
-        name: field.name,
+        name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(field.type),
           undefined
@@ -39,7 +42,6 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
         config,
       });
     }
-    const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
     return generateField({
       name: normalizeCase(dbName || field.name, config),
