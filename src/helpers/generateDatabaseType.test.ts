@@ -70,7 +70,7 @@ test("it works for table names with spaces and weird symbols", () => {
 
   expect(result).toEqual(`export type DB = {
     Bookmark: Bookmark;
-    "user session_*table ;D": Session;
     User: User;
+    "user session_*table ;D": Session;
 };`);
 });

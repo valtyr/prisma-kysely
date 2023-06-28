@@ -2,13 +2,18 @@ import ts from "typescript";
 
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 import { normalizeCase } from "~/utils/normalizeCase";
+import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
 
 export const generateDatabaseType = (
   models: { tableName: string; typeName: string }[],
   config: Config
 ) => {
-  const properties = models.map((field) => {
+  const sortedModels = sorted(models, (a, b) =>
+    a.tableName.localeCompare(b.tableName)
+  );
+
+  const properties = sortedModels.map((field) => {
     const caseNormalizedTableName = normalizeCase(field.tableName, config);
 
     /*
