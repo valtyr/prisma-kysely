@@ -12,6 +12,7 @@ import { validateConfig } from "~/utils/validateConfig";
 import { writeFileSafely } from "~/utils/writeFileSafely";
 
 import { generateEnumType } from "./helpers/generateEnumType";
+import { convertToMultiSchemaModels } from "./helpers/multiSchemaHelpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");
@@ -45,10 +46,15 @@ generatorHandler({
     );
 
     // Generate model types
-    const models = sorted(
+    let models = sorted(
       [...options.dmmf.datamodel.models, ...implicitManyToManyModels],
       (a, b) => a.name.localeCompare(b.name)
     ).map((m) => generateModel(m, config));
+
+    // Extend model table names with schema names if using multi-schemas
+    if (options.generator.previewFeatures?.includes("multiSchema")) {
+      models = convertToMultiSchemaModels(models, options.datamodel);
+    }
 
     // Generate the database type that ties it all together
     const databaseType = generateDatabaseType(
