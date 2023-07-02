@@ -1,5 +1,17 @@
 # prisma-kysely
 
+## 1.5.0
+
+### Minor Changes
+
+- 3ec4465: Support `multiSchema` preview feature. (Thanks to @duniul 🇸🇪🪅)
+
+### Patch Changes
+
+- 7923981: Adds per field type overrides
+- 6a50fe8: Respect mapped names for fields with enum types. (Thank you @fehnomenal 🇩🇪🎉)
+- 3ec4465: Sort DB properties by table name instead of type name. (Thank you @duniul 🇸🇪🪅)
+
 ## 1.4.2
 
 ### Patch Changes
