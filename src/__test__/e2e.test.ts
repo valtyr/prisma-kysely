@@ -74,6 +74,55 @@ test(
 );
 
 test(
+  "End to end test - with custom type override",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider sqlite");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
+        provider = "sqlite"
+        url      = "file:./dev.db"
+    }
+
+    generator kysely {
+        provider  = "node ./dist/bin.js"
+    }
+    
+    model TestUser {
+        id          String @id
+        name        String
+
+        /// @kyselyType('member' | 'owner')
+        role        String
+    }`
+    );
+
+    // Run Prisma commands without fail
+    await exec("yarn prisma generate");
+
+    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    // Expect many to many models to have been generated
+    expect(
+      generatedSource.includes(`export type TestUser = {
+  id: string;
+  name: string;
+  /**
+   * @kyselyType('member' | 'owner')
+   */
+  role: "member" | "owner";
+};`)
+    ).toBeTruthy();
+  },
+  { timeout: 20000 }
+);
+
+test(
   "End to end test - separate entrypoints",
   async () => {
     // Initialize prisma:

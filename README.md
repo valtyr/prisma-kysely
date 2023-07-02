@@ -83,6 +83,40 @@ hope it's just as useful for you! 😎
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |
 
+### Per-field type overrides
+
+In some cases, you might want to override a type for a specific field. This
+could be useful, for example, for constraining string types to certain literal
+values. Be aware though that this does not of course come with any runtime
+validation, and in most cases won't be guaranteed to match the actual data in
+the database.
+
+That disclaimer aside, here's how it works: Add a `@kyselyType(...)` declaration
+to the Prisma docstring (deliniated using three slashes `///`) for the field
+with your type inside the parentheses.
+
+```prisma
+model User {
+  id          String @id
+  name        String
+
+  /// @kyselyType('member' | 'admin')
+  role        String
+}
+```
+
+The parentheses can include any valid TS type declaration.
+
+The output for the example above would be as follows:
+
+```ts
+export type User = {
+  id: string;
+  name: string;
+  role: "member" | "owner";
+};
+```
+
 ### Gotchas
 
 #### Default values
