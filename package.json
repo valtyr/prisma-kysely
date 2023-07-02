@@ -40,7 +40,7 @@
     "@types/prettier": "2.4.2",
     "@typescript-eslint/eslint-plugin": "^5.54.0",
     "@typescript-eslint/parser": "^5.54.0",
-    "@vitest/coverage-c8": "^0.29.8",
+    "@vitest/coverage-v8": "^0.32.2",
     "better-sqlite3": "^8.2.0",
     "eslint": "^8.35.0",
     "kysely": "^0.23.4",
