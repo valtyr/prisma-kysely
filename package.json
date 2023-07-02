@@ -47,11 +47,11 @@
     "mysql2": "^3.2.0",
     "pg": "^8.10.0",
     "prettier": "^2.8.4",
-    "prisma": "4.13.0",
+    "prisma": "4.16.2",
     "ttypescript": "^1.5.15",
     "typescript-transform-paths": "^3.4.6",
     "vite-tsconfig-paths": "^4.0.7",
-    "vitest": "^0.29.8"
+    "vitest": "^0.32.2"
   },
   "prettier": {
     "importOrder": [
