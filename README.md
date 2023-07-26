@@ -32,7 +32,7 @@ without losing the safety of the TypeScript type system?
 
    ```prisma
    generator kysely {
-       provider = "prisma-kysely"
+       provider = "npx prisma-kysely"
 
        // Optionally provide a destination directory for the generated file
        // and a filename of your choice
@@ -154,11 +154,13 @@ Here's everything you need to do (let me know if something's missing...)
 3. Make changes to the source code
 4. Test your changes by creating `prisma/schema.prisma`, running `yarn prisma generate` and checking the output in `prisma/types.ts`. The provider must be set
    as follows to reference the dev build:
+
    ```prisma
    generator kysely {
        provider = "node ./dist/bin.js"
    }
    ```
+
 5. Create a pull request! If your changes make sense, I'll try my best to review
    and merge them quickly.
 
