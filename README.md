@@ -21,13 +21,7 @@ without losing the safety of the TypeScript type system?
 
 ### Setup
 
-1. Install `prisma-kysely` using your package manager of choice:
-
-   ```sh
-   yarn add prisma-kysely
-   ```
-
-2. Replace (or augment) the default client generator in your `schema.prisma`
+1. Replace (or augment) the default client generator in your `schema.prisma`
    file with the following:
 
    ```prisma
@@ -39,11 +33,11 @@ without losing the safety of the TypeScript type system?
        output = "../src/db"
        fileName = "types.ts"
        // Optionally generate runtime enums to a separate file
-        enumFileName = "enums.ts"
+       enumFileName = "enums.ts"
    }
    ```
 
-3. Run `prisma migrate dev` or `prisma generate` and use your freshly generated
+2. Run `prisma migrate dev` or `prisma generate` and use your freshly generated
    types when instantiating Kysely!
 
 ### Motivation
