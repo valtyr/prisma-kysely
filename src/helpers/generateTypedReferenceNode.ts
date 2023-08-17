@@ -2,7 +2,6 @@ import ts from "typescript";
 
 export const generateTypedReferenceNode = (name: string) => {
   return ts.factory.createTypeAliasDeclaration(
-    undefined,
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
     name,
     undefined,
