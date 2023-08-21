@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.6.0
+
+### Minor Changes
+
+- defb3fa: Update typescript to 5 and migrate from ttypescript to ts-patch (Thank you @alandotcom! 🎉)
+
 ## 1.5.0
 
 ### Minor Changes
