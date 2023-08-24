@@ -247,13 +247,13 @@ test("it filters out many-to-one relations safely", () => {
           relationToFields: [],
           isGenerated: false,
           isUpdatedAt: false,
-        }
+        },
       ],
       primaryKey: null,
       dbName: null,
       uniqueFields: [],
       uniqueIndexes: [],
-    }
+    },
   ]);
 
   expect(newModels).toEqual<DMMF.Model[]>([

@@ -125,7 +125,7 @@ function filterManyToManyRelationFields(models: DMMF.Model[]) {
 
   const notManyToMany = new Set<string>(nonManyToManyRelationNames);
 
-  return relationFields.filter((field) =>
-    !notManyToMany.has(field.relationName)
+  return relationFields.filter(
+    (field) => !notManyToMany.has(field.relationName)
   );
 }
