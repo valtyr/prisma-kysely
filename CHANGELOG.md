@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 1.7.0
+
+### Minor Changes
+
+- bf0ccf6: Implicit many to many relations are finally fixed thanks to @dextertanyj 🇸🇬🎉🥂. Huge thanks to him!
+
 ## 1.6.0
 
 ### Minor Changes
