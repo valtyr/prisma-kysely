@@ -111,18 +111,21 @@ function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
   return idField.type;
 }
 
-function filterManyToManyRelationFields(models: DMMF.Model[]): DMMF.Field[] {
-  return models
-    .map((model) =>
-      model.fields
-        .filter(
-          (field) =>
-            field.relationName &&
-            field.isList &&
-            field.relationFromFields?.length === 0 &&
-            field.relationToFields?.length === 0
-        )
-        .map((field) => field)
-    )
-    .flat();
+function filterManyToManyRelationFields(models: DMMF.Model[]) {
+  const fields = models.flatMap((model) => model.fields);
+
+  const relationFields = fields.filter(
+    (field): field is DMMF.Field & Required<Pick<DMMF.Field, "relationName">> =>
+      !!field.relationName
+  );
+
+  const nonManyToManyRelationNames = relationFields
+    .filter((field) => !field.isList)
+    .map((field) => field.relationName);
+
+  const notManyToMany = new Set<string>(nonManyToManyRelationNames);
+
+  return relationFields.filter(
+    (field) => !notManyToMany.has(field.relationName)
+  );
 }
