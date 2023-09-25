@@ -77,6 +77,23 @@ test("it creates correct annotation for list types", () => {
   expect(result).toEqual("name: string[];");
 });
 
+test("it creates correct annotation for generated list types", () => {
+  const node = generateField({
+    name: "name",
+    type: stringTypeNode,
+    nullable: false,
+    generated: true,
+    list: true,
+    isId: false,
+    config: {
+      readOnlyIds: false,
+    },
+  });
+  const result = stringifyTsNode(node);
+
+  expect(result).toEqual("name: Generated<string[]>;");
+});
+
 test("it creates correct annotation for generated nullable list types (do these exist?)", () => {
   // Is this how these work? I have no clue. I don't even know if Kysely supports these.
   // If you run into problems here, please file an issue or create a pull request.
@@ -94,7 +111,7 @@ test("it creates correct annotation for generated nullable list types (do these 
   });
   const result = stringifyTsNode(node);
 
-  expect(result).toEqual("name: Generated<string | null>[];");
+  expect(result).toEqual("name: Generated<(string | null)[]>;");
 });
 
 test("it prepends a JSDoc comment if documentation is provided", () => {
