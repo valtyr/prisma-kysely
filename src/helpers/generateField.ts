@@ -37,6 +37,8 @@ export const generateField = (args: GenerateFieldArgs) => {
       ),
     ]);
 
+  if (list) fieldType = ts.factory.createArrayTypeNode(fieldType);
+
   if (generated) {
     if (isId && config.readOnlyIds) {
       fieldType = ts.factory.createTypeReferenceNode(
@@ -50,8 +52,6 @@ export const generateField = (args: GenerateFieldArgs) => {
       );
     }
   }
-
-  if (list) fieldType = ts.factory.createArrayTypeNode(fieldType);
 
   const nameIdentifier = isValidTSIdentifier(name)
     ? ts.factory.createIdentifier(name)
