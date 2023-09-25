@@ -1,5 +1,12 @@
 # prisma-kysely
 
+## 1.7.1
+
+### Patch Changes
+
+- 22a1e5c: Fixes array types (Thanks Karrui! 🥳🇸🇬)
+- 21980b2: Updates dependencies that were throwing deprectaion warnings. (Thank you @delight! 🍺)
+
 ## 1.7.0
 
 ### Minor Changes
