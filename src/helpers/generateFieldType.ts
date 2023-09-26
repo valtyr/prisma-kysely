@@ -31,7 +31,7 @@ export const mysqlTypeMap: TypeMap = {
   Boolean: "number",
   Bytes: "Buffer",
   DateTime: "Timestamp",
-  Decimal: "string",
+  Decimal: "number",
   Float: "number",
   Int: "number",
   Json: "unknown",
@@ -40,11 +40,11 @@ export const mysqlTypeMap: TypeMap = {
 };
 
 export const postgresqlTypeMap: TypeMap = {
-  BigInt: "string",
+  BigInt: "number",
   Boolean: "boolean",
   Bytes: "Buffer",
   DateTime: "Timestamp",
-  Decimal: "string",
+  Decimal: "number",
   Float: "number",
   Int: "number",
   Json: "unknown",
