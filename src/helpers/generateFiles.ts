@@ -7,8 +7,21 @@ import { capitalize } from "~/utils/words";
 
 import type { EnumType } from "./generateEnumType";
 import type { ModelType } from "./generateModel";
+import { convertToWrappedTypes } from "./wrappedTypeHelpers";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
+type MultiDefsModelType = Omit<ModelType, "definition"> & {
+  definitions: ts.TypeAliasDeclaration[];
+};
+
+const toMultiDefsModelType =
+  (exportWrappedTypes: boolean) =>
+  ({ definition, ...rest }: ModelType): MultiDefsModelType => ({
+    ...rest,
+    definitions: exportWrappedTypes
+      ? convertToWrappedTypes(definition)
+      : [definition],
+  });
 
 export function generateFiles(opts: {
   typesOutfile: string;
@@ -20,7 +33,10 @@ export function generateFiles(opts: {
   groupBySchema: boolean;
   defaultSchema: string;
   importExtension: string;
+  exportWrappedTypes: boolean;
 }) {
+  const models = opts.models.map(toMultiDefsModelType(opts.exportWrappedTypes));
+
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
     let statements: Iterable<ts.Statement>;
@@ -28,14 +44,10 @@ export function generateFiles(opts: {
     if (!opts.groupBySchema) {
       statements = [
         ...opts.enums.flatMap((e) => [e.objectDeclaration, e.typeDeclaration]),
-        ...opts.models.map((m) => m.definition),
+        ...models.flatMap((m) => m.definitions),
       ];
     } else {
-      statements = groupModelsAndEnum(
-        opts.enums,
-        opts.models,
-        opts.defaultSchema
-      );
+      statements = groupModelsAndEnum(opts.enums, models, opts.defaultSchema);
     }
 
     const typesFileWithEnums: File = {
@@ -43,6 +55,7 @@ export function generateFiles(opts: {
       content: generateFile([...statements, opts.databaseType], {
         withEnumImport: false,
         withLeader: true,
+        exportWrappedTypes: opts.exportWrappedTypes,
       }),
     };
 
@@ -52,13 +65,14 @@ export function generateFiles(opts: {
   const typesFileWithoutEnums: File = {
     filepath: opts.typesOutfile,
     content: generateFile(
-      [...opts.models.map((m) => m.definition), opts.databaseType],
+      [...models.flatMap((m) => m.definitions), opts.databaseType],
       {
         withEnumImport: {
           importPath: `./${path.parse(opts.enumsOutfile).name}${opts.importExtension}`,
           names: opts.enumNames,
         },
         withLeader: true,
+        exportWrappedTypes: opts.exportWrappedTypes,
       }
     ),
   };
@@ -72,6 +86,7 @@ export function generateFiles(opts: {
       {
         withEnumImport: false,
         withLeader: false,
+        exportWrappedTypes: opts.exportWrappedTypes,
       }
     ),
   };
@@ -81,7 +96,7 @@ export function generateFiles(opts: {
 
 export function* groupModelsAndEnum(
   enums: EnumType[],
-  models: ModelType[],
+  models: MultiDefsModelType[],
   defaultSchema: string
 ): Generator<ts.Statement, void, void> {
   const groupsMap = new Map<string, ts.Statement[]>();
@@ -107,16 +122,16 @@ export function* groupModelsAndEnum(
 
   for (const model of models) {
     if (!model.schema || model.schema === defaultSchema) {
-      yield model.definition;
+      yield* model.definitions;
       continue;
     }
 
     const group = groupsMap.get(model.schema);
 
     if (!group) {
-      groupsMap.set(model.schema, [model.definition]);
+      groupsMap.set(model.schema, model.definitions);
     } else {
-      group.push(model.definition);
+      group.push(...model.definitions);
     }
   }
 
