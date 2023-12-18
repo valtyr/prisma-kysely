@@ -71,7 +71,7 @@ function generateJoinFields(
 ): DMMF.Field[] {
   if (fields.length !== 2) throw new Error("Huh?");
 
-  const sortedFields = sorted(fields, (a, b) => a.name.localeCompare(b.name));
+  const sortedFields = sorted(fields, (a, b) => a.type.localeCompare(b.type));
   const A = sortedFields[0];
   const B = sortedFields[1];
 
