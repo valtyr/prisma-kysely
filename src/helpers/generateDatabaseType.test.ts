@@ -20,7 +20,7 @@ test("it works for plain vanilla type names", () => {
   );
   const result = stringifyTsNode(node);
 
-  expect(result).toEqual(`export type DB = {
+  expect(result).toEqual(`export type Database = {
     Bookmark: Bookmark;
     Session: Session;
     User: User;
@@ -44,7 +44,7 @@ test("it respects camelCase option names", () => {
   );
   const result = stringifyTsNode(node);
 
-  expect(result).toEqual(`export type DB = {
+  expect(result).toEqual(`export type Database = {
     bookMark: Bookmark;
     session: Session;
     userTable: User;
@@ -68,7 +68,7 @@ test("it works for table names with spaces and weird symbols", () => {
   );
   const result = stringifyTsNode(node);
 
-  expect(result).toEqual(`export type DB = {
+  expect(result).toEqual(`export type Database = {
     Bookmark: Bookmark;
     User: User;
     "user session_*table ;D": Session;

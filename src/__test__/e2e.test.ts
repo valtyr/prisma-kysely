@@ -273,7 +273,7 @@ test(
       encoding: "utf-8",
     });
 
-    expect(typeFile).toContain(`export type DB = {
+    expect(typeFile).toContain(`export type Database = {
   "birds.eagles": Eagle;
   "mammals.elephants": Elephant;
 };`);

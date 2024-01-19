@@ -37,7 +37,7 @@ export const generateDatabaseType = (
 
   return ts.factory.createTypeAliasDeclaration(
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-    ts.factory.createIdentifier("DB"),
+    ts.factory.createIdentifier("Database"),
     undefined,
     ts.factory.createTypeLiteralNode(properties)
   );
