@@ -9,3 +9,5 @@ pnpm-debug.log
 .DS_Store
 
 prisma
+
+.idea
