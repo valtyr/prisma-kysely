@@ -30,12 +30,16 @@ export function generateFiles(opts: {
     return [typesFileWithEnums];
   }
 
-  const enumImportExtension = opts.importExtension ? `.${opts.importExtension}` : "";
+  const enumImportExtension = opts.importExtension
+    ? `.${opts.importExtension}`
+    : "";
   const typesFileWithoutEnums: File = {
     filepath: opts.typesOutfile,
     content: generateFile([...opts.modelDefinitions, opts.databaseType], {
       withEnumImport: {
-        importPath: `./${path.parse(opts.enumsOutfile).name}${enumImportExtension}`,
+        importPath: `./${
+          path.parse(opts.enumsOutfile).name
+        }${enumImportExtension}`,
         names: opts.enumNames,
       },
       withLeader: true,
