@@ -70,6 +70,7 @@ generatorHandler({
       enums,
       enumsOutfile: config.enumFileName,
       typesOutfile: config.fileName,
+      importExtension: config.importExtension
     });
 
     // And write it to a file!
