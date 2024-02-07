@@ -52,6 +52,19 @@ export const postgresqlTypeMap: TypeMap = {
   Unsupported: "unknown",
 };
 
+export const sqlServerTypeMap: TypeMap = {
+  BigInt: "number",
+  Boolean: "boolean",
+  Bytes: "Buffer",
+  DateTime: "Timestamp",
+  Decimal: "string",
+  Float: "number",
+  Int: "number",
+  Json: "unknown",
+  String: "string",
+  Unsupported: "unknown",
+};
+
 export const overrideType = (type: string, config: Config) => {
   switch (type) {
     case "String":
@@ -94,6 +107,10 @@ export const generateFieldTypeInner = (
     case "cockroachdb":
       return (
         typeOverride || overrideType(type, config) || postgresqlTypeMap[type]
+      );
+    case "sqlserver":
+      return (
+        typeOverride || overrideType(type, config) || sqlServerTypeMap[type]
       );
   }
 };
