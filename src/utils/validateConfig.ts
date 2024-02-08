@@ -16,6 +16,7 @@ export const configValidator = z
       z.literal("cockroachdb"),
       z.literal("mysql"),
       z.literal("sqlite"),
+      z.literal("sqlserver"),
     ]),
 
     // Output overrides
