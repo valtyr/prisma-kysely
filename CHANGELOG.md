@@ -1,5 +1,15 @@
 # prisma-kysely
 
+## 1.8.0
+
+### Minor Changes
+
+- 4526321: Added support for the Kysely SQL Server dialect Awesome work from @dylel 🎊
+
+### Patch Changes
+
+- 04de4dc: Fixed automatic relation code generation bug. Thanks @Bayezid1989 🥳
+
 ## 1.7.1
 
 ### Patch Changes
