@@ -40,6 +40,9 @@ export const configValidator = z
 
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
+
+    // Export Kysely wrapped types such as `Selectable<Model>`
+    exportWrappedTypes: booleanStringLiteral.default(false),
   })
   .strict()
   .transform((config) => {

@@ -16,6 +16,7 @@ test("it works for plain vanilla type names", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
+      exportWrappedTypes: false,
     }
   );
   const result = stringifyTsNode(node);
@@ -40,6 +41,7 @@ test("it respects camelCase option names", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
+      exportWrappedTypes: false,
     }
   );
   const result = stringifyTsNode(node);
@@ -48,6 +50,31 @@ test("it respects camelCase option names", () => {
     bookMark: Bookmark;
     session: Session;
     userTable: User;
+};`);
+});
+
+test("it respects exportWrappedTypes option", () => {
+  const node = generateDatabaseType(
+    [
+      { tableName: "book_mark", typeName: "Bookmark" },
+      { tableName: "session", typeName: "Session" },
+      { tableName: "user_table", typeName: "User" },
+    ],
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      exportWrappedTypes: true,
+    }
+  );
+  const result = stringifyTsNode(node);
+
+  expect(result).toEqual(`export type DB = {
+    book_mark: BookmarkTable;
+    session: SessionTable;
+    user_table: UserTable;
 };`);
 });
 
@@ -64,6 +91,7 @@ test("it works for table names with spaces and weird symbols", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
+      exportWrappedTypes: false,
     }
   );
   const result = stringifyTsNode(node);

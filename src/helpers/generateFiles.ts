@@ -3,6 +3,8 @@ import type { TypeAliasDeclaration, VariableStatement } from "typescript";
 
 import { generateFile } from "~/helpers/generateFile";
 
+import { convertToWrappedTypes } from "./wrappedTypeHelpers";
+
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 
 export function generateFiles(opts: {
@@ -12,16 +14,22 @@ export function generateFiles(opts: {
   enumsOutfile: string;
   databaseType: TypeAliasDeclaration;
   modelDefinitions: TypeAliasDeclaration[];
+  exportWrappedTypes: boolean;
 }) {
+  const modelDefinitions = opts.exportWrappedTypes
+    ? convertToWrappedTypes(opts.modelDefinitions)
+    : opts.modelDefinitions;
+
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
     const typesFileWithEnums: File = {
       filepath: opts.typesOutfile,
       content: generateFile(
-        [...opts.enums, ...opts.modelDefinitions, opts.databaseType],
+        [...opts.enums, ...modelDefinitions, opts.databaseType],
         {
           withEnumImport: false,
           withLeader: true,
+          exportWrappedTypes: opts.exportWrappedTypes,
         }
       ),
     };
@@ -31,12 +39,13 @@ export function generateFiles(opts: {
 
   const typesFileWithoutEnums: File = {
     filepath: opts.typesOutfile,
-    content: generateFile([...opts.modelDefinitions, opts.databaseType], {
+    content: generateFile([...modelDefinitions, opts.databaseType], {
       withEnumImport: {
         importPath: `./${path.parse(opts.enumsOutfile).name}`,
         names: opts.enumNames,
       },
       withLeader: true,
+      exportWrappedTypes: opts.exportWrappedTypes,
     }),
   };
 
@@ -47,6 +56,7 @@ export function generateFiles(opts: {
     content: generateFile(opts.enums, {
       withEnumImport: false,
       withLeader: false,
+      exportWrappedTypes: opts.exportWrappedTypes,
     }),
   };
 

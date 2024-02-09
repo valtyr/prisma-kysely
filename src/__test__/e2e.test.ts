@@ -69,6 +69,9 @@ test(
     expect(
       generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
     ).toBeTruthy();
+
+    // Expect no Kysely wrapped types to be exported since we don't enable exportWrappedTypes
+    expect(generatedSource).not.toContain("Insertable");
   },
   { timeout: 20000 }
 );
@@ -277,6 +280,55 @@ test(
   "birds.eagles": Eagle;
   "mammals.elephants": Elephant;
 };`);
+  },
+  { timeout: 20000 }
+);
+
+test(
+  "End to end test - exportWrappedTypes",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider sqlite");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
+          provider = "sqlite"
+          url      = "file:./dev.db"
+      }
+  
+      generator kysely {
+          provider           = "node ./dist/bin.js"
+          exportWrappedTypes = true
+      }
+      
+      model User {
+          id   String @id
+          name String
+      }`
+    );
+
+    // Run Prisma commands without fail
+    await exec("yarn prisma generate");
+
+    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(generatedSource).toContain("export type UserTable = {");
+    expect(generatedSource).toContain(
+      "export type User = Selectable<UserTable>;"
+    );
+    expect(generatedSource).toContain(
+      "export type NewUser = Insertable<UserTable>;"
+    );
+    expect(generatedSource).toContain(
+      "export type UserUpdate = Updateable<UserTable>;"
+    );
+    expect(generatedSource).toContain(
+      "export type DB = {\n  User: UserTable;\n};"
+    );
   },
   { timeout: 20000 }
 );
