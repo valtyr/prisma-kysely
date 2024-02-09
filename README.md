@@ -2,6 +2,7 @@
 
 <p align="center">
 <a href="https://www.npmjs.com/package/prisma-kysely"><img src="https://badge.fury.io/js/prisma-kysely.svg"></a>
+<a href="https://ko-fi.com/N4N7QQZVA"><img height=20 src="https://ko-fi.com/img/githubbutton_sm.svg"></a>
 </p>
 
 <br/>
