@@ -4,7 +4,7 @@
 
 ### Minor Changes
 
-- 4526321: Added support for the Kysely SQL Server dialect
+- 4526321: Added support for the Kysely SQL Server dialect Awesome work from @dylel 🎊
 
 ### Patch Changes
 
