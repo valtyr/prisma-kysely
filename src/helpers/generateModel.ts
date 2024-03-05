@@ -32,27 +32,11 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
 
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
-    if (field.kind === "enum") {
-      return generateField({
-        isId: field.isId,
-        name: normalizeCase(dbName || field.name, config),
-        type: ts.factory.createTypeReferenceNode(
-          ts.factory.createIdentifier(field.type),
-          undefined
-        ),
-        nullable: !field.isRequired,
-        generated: isGenerated,
-        list: field.isList,
-        documentation: field.documentation,
-        config,
-      });
-    }
-
     return generateField({
       name: normalizeCase(dbName || field.name, config),
       type: ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(
-          generateFieldType(field.type, config, typeOverride)
+          field.kind === "enum" ? field.type : generateFieldType(field.type, config, typeOverride)
         ),
         undefined
       ),
