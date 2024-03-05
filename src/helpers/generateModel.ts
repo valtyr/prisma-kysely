@@ -36,7 +36,9 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
       name: normalizeCase(dbName || field.name, config),
       type: ts.factory.createTypeReferenceNode(
         ts.factory.createIdentifier(
-          field.kind === "enum" ? field.type : generateFieldType(field.type, config, typeOverride)
+          field.kind === "enum"
+            ? field.type
+            : generateFieldType(field.type, config, typeOverride)
         ),
         undefined
       ),
