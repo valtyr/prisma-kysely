@@ -6,16 +6,16 @@ export const formatFile = async (content: string) => {
 
   try {
     const { default: prettier } = await import("prettier");
-    
-    const prettierMajorVersion = parseInt(prettier.version.split('.')[0]);
+
+    const prettierMajorVersion = parseInt(prettier.version.split(".")[0]);
     let config: Options | null = null;
 
-    if (prettierMajorVersion>=3) {
-      config = await prettier.resolveConfig(process.cwd() + '/.prettierrc');
+    if (prettierMajorVersion >= 3) {
+      config = await prettier.resolveConfig(process.cwd() + "/.prettierrc");
     } else {
       config = await prettier.resolveConfig(process.cwd());
     }
-    
+
     if (!config) return content;
 
     const formatted = prettier.format(content, {
