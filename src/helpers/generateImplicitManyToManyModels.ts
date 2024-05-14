@@ -72,14 +72,14 @@ function generateJoinFields(
   if (fields.length !== 2) throw new Error("Huh?");
 
   const sortedFields = sorted(fields, (a, b) => a.type.localeCompare(b.type));
-  const A = sortedFields[0];
-  const B = sortedFields[1];
+  const joinedA = getJoinIdField(sortedFields[0], models);
+  const joinedB = getJoinIdField(sortedFields[1], models);
 
   return [
     {
       name: "A",
-      type: getJoinIdType(A, models),
-      kind: "scalar",
+      type: joinedA.type,
+      kind: joinedA.kind,
       isRequired: true,
       isList: false,
       isUnique: false,
@@ -89,8 +89,8 @@ function generateJoinFields(
     },
     {
       name: "B",
-      type: getJoinIdType(B, models),
-      kind: "scalar",
+      type: joinedB.type,
+      kind: joinedB.kind,
       isRequired: true,
       isList: false,
       isUnique: false,
@@ -101,14 +101,17 @@ function generateJoinFields(
   ];
 }
 
-function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
+function getJoinIdField(
+  joinField: DMMF.Field,
+  models: DMMF.Model[]
+): DMMF.Field {
   const joinedModel = models.find((m) => m.name === joinField.type);
   if (!joinedModel) throw new Error("Could not find referenced model");
 
   const idField = joinedModel.fields.find((f) => f.isId);
   if (!idField) throw new Error("No ID field on referenced model");
 
-  return idField.type;
+  return idField;
 }
 
 function filterManyToManyRelationFields(models: DMMF.Model[]) {
