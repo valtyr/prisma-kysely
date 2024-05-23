@@ -4,6 +4,7 @@ import path from "path";
 
 import { GENERATOR_NAME } from "~/constants";
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
+import { generateEnumCastHelper } from "~/helpers/generateEnumCastHelper";
 import { generateFiles } from "~/helpers/generateFiles";
 import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
 import { generateModel } from "~/helpers/generateModel";
@@ -12,7 +13,10 @@ import { validateConfig } from "~/utils/validateConfig";
 import { writeFileSafely } from "~/utils/writeFileSafely";
 
 import { generateEnumType } from "./helpers/generateEnumType";
-import { convertToMultiSchemaModels } from "./helpers/multiSchemaHelpers";
+import {
+  buildMultiSchemaMap,
+  convertToMultiSchemaModels,
+} from "./helpers/multiSchemaHelpers";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require("../package.json");
@@ -52,9 +56,18 @@ generatorHandler({
     ).map((m) => generateModel(m, config));
 
     // Extend model table names with schema names if using multi-schemas
+    let multiSchemaMap: Map<string, string> | undefined;
     if (options.generator.previewFeatures?.includes("multiSchema")) {
-      models = convertToMultiSchemaModels(models, options.datamodel);
+      multiSchemaMap = buildMultiSchemaMap(options.datamodel);
+      console.error(JSON.stringify(multiSchemaMap));
+      models = convertToMultiSchemaModels(multiSchemaMap, models);
     }
+
+    // Generate the enum casting helper
+    const enumCastHelper = generateEnumCastHelper(
+      options.dmmf.datamodel.enums,
+      multiSchemaMap
+    );
 
     // Generate the database type that ties it all together
     const databaseType = generateDatabaseType(
@@ -68,6 +81,7 @@ generatorHandler({
       modelDefinitions: models.map((m) => m.definition),
       enumNames: options.dmmf.datamodel.enums.map((e) => e.name),
       enums,
+      enumCastHelper,
       enumsOutfile: config.enumFileName,
       typesOutfile: config.fileName,
     });

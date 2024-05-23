@@ -1,5 +1,6 @@
 import {
   type BlockAttribute,
+  type Enum,
   type Model,
   getSchema,
 } from "@mrleebo/prisma-ast";
@@ -10,29 +11,30 @@ type ModelLike = {
 };
 
 /**
- * Appends schema names to the table names of models.
+ * Matches model/enum names to schema names.
  *
  * Prisma supports multi-schema databases, but currently doens't include the schema name in the DMMT output.
- * As a workaround, this function parses the schema separately and matches the schema to the model name.
+ * As a workaround, this function parses the schema separately and matches the schema to the model/enum name.
  *
- * TODO: Remove this when @prisma/generator-helper exposes schema names in the models by default.
+ * TODO: Remove this when @prisma/generator-helper exposes schema names in the models/enums by default.
  *       See thread: https://github.com/prisma/prisma/issues/19987
  *
- * @param models list of model names
  * @param dataModelStr the full datamodel string (schema.prisma contents)
- * @returns list of models with schema names appended to the table names ("schema.table")
+ * @returns map of model/enum names to schema names
  */
-export const convertToMultiSchemaModels = <T extends ModelLike>(
-  models: T[],
-  dataModelStr: string
-): T[] => {
+export const buildMultiSchemaMap = (dataModelStr: string) => {
   const parsedSchema = getSchema(dataModelStr);
 
-  const multiSchemaMap = new Map(
+  return new Map(
     parsedSchema.list
-      .filter((block): block is Model => block.type === "model")
-      .map((model) => {
-        const schemaProperty = model.properties.find(
+      .filter(
+        (block): block is Model | Enum =>
+          block.type === "model" || block.type === "enum"
+      )
+      .map((block) => {
+        const schemaProperty = (
+          block.type === "model" ? block.properties : block.enumerators
+        ).find(
           (prop): prop is BlockAttribute =>
             prop.type === "attribute" && prop.name === "schema"
         );
@@ -40,13 +42,24 @@ export const convertToMultiSchemaModels = <T extends ModelLike>(
         const schemaName = schemaProperty?.args?.[0].value;
 
         if (typeof schemaName !== "string") {
-          return [model.name, ""];
+          return [block.name, ""];
         }
 
-        return [model.name, schemaName.replace(/"/g, "")];
+        return [block.name, schemaName.replace(/"/g, "")];
       })
   );
+};
 
+/**
+ * Appends schema names to the table names of models.
+ *
+ * @param multiSchemaMap map of model names to schema names
+ * @param models list of model names
+ */
+export const convertToMultiSchemaModels = <T extends ModelLike>(
+  multiSchemaMap: Map<string, string>,
+  models: T[]
+): T[] => {
   return models.map((model) => {
     const schemaName = multiSchemaMap.get(model.typeName);
 

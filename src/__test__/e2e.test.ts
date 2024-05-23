@@ -170,12 +170,35 @@ test(
     const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
       encoding: "utf-8",
     });
-    expect(enumFile).toEqual(`export const TestEnum = {
+    expect(enumFile)
+      .toEqual(`import { ColumnType, ExpressionWrapper, RawBuilder, sql } from "kysely";
+
+export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S, I | undefined, U>
+  : ColumnType<T, T | undefined, T>;
+export type Timestamp = ColumnType<Date, Date | string, Date | string>;
+
+export const TestEnum = {
   A: "A",
   B: "B",
   C: "C",
 } as const;
 export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
+const EnumNames = {
+  TestEnum: TestEnum,
+} as const;
+type EnumNames = typeof EnumNames;
+type EnumValues<Name extends keyof EnumNames> =
+  EnumNames[Name][keyof EnumNames[Name]];
+export function castEnumValue<
+  Name extends keyof EnumNames,
+  Value extends EnumValues<Name> | null
+>(
+  value: Value | ExpressionWrapper<any, any, Value>,
+  name: Name
+): RawBuilder<Value> {
+  return sql<Value>\`\${value}::\${sql.id(name)}\`;
+}
 `);
   },
   { timeout: 20000 }
@@ -263,6 +286,13 @@ test(
     
         @@map("eagles")
         @@schema("birds")
+    }
+        
+    enum BirdKind {
+        EAGLE
+
+        @@map("bird_kind")
+        @@schema("birds")
     }`
     );
 
@@ -277,6 +307,10 @@ test(
   "birds.eagles": Eagle;
   "mammals.elephants": Elephant;
 };`);
+
+    expect(typeFile).toContain(`const EnumNames = {
+  "birds.bird_kind": BirdKind,
+} as const;`);
   },
   { timeout: 20000 }
 );
