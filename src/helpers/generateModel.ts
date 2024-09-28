@@ -36,10 +36,20 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type: ts.factory.createTypeReferenceNode(
-          ts.factory.createIdentifier(field.type),
-          undefined
-        ),
+        type: field.isList
+          ? ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier("EnumArray"),
+              [
+                ts.factory.createTypeReferenceNode(
+                  ts.factory.createIdentifier(field.type),
+                  undefined
+                ),
+              ]
+            )
+          : ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier(field.type),
+              undefined
+            ),
         nullable: !field.isRequired,
         generated: isGenerated,
         list: field.isList,

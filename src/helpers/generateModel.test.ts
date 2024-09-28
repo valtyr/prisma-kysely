@@ -165,3 +165,42 @@ test("it respects camelCase option", () => {
     userName: string | null;
 };`);
 });
+
+test("it respects enum array values", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "permissions",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "UserPermissions",
+          hasDefaultValue: true,
+          isList: true,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+      ],
+      primaryKey: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+      dbName: null,
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "env(DATABASE_URL)",
+      enumFileName: "",
+      camelCase: true,
+      readOnlyIds: false,
+    }
+  );
+
+  const source = stringifyTsNode(model.definition);
+
+  expect(source).toEqual(`export type User = {
+    permissions: EnumArray<UserPermissions>;
+};`);
+});
