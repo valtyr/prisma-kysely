@@ -33,23 +33,27 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
     if (field.kind === "enum") {
+      console.log(field);
+
+      const type = field.isList
+        ? ts.factory.createTypeReferenceNode(
+            ts.factory.createIdentifier("EnumArray"),
+            [
+              ts.factory.createTypeReferenceNode(
+                ts.factory.createIdentifier(field.type),
+                undefined
+              ),
+            ]
+          )
+        : ts.factory.createTypeReferenceNode(
+            ts.factory.createIdentifier(field.type),
+            undefined
+          );
+
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type: field.isList
-          ? ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier("EnumArray"),
-              [
-                ts.factory.createTypeReferenceNode(
-                  ts.factory.createIdentifier(field.type),
-                  undefined
-                ),
-              ]
-            )
-          : ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier(field.type),
-              undefined
-            ),
+        type,
         nullable: !field.isRequired,
         generated: isGenerated,
         // Enum list values are handled as strings, so we don't need to wrap them in a list
