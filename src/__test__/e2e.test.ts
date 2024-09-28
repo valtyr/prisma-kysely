@@ -156,7 +156,7 @@ test(
         C
     }
     
-    model TestUser {  
+    model TestUser {
         id          String @id
         name        String
         age         Int
@@ -173,8 +173,6 @@ test(
     const typeFile = await fs.readFile("./prisma/generated/types.ts", {
       encoding: "utf-8",
     });
-
-    console.log(typeFile);
 
     expect(typeFile).not.toContain("export const");
     expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
