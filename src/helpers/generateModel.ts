@@ -33,8 +33,6 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
     if (field.kind === "enum") {
-      console.log(field);
-
       const type = field.isList
         ? ts.factory.createTypeReferenceNode(
             ts.factory.createIdentifier("EnumArray"),
