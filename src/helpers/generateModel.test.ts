@@ -177,7 +177,7 @@ test("it respects enum array values", () => {
           isGenerated: false,
           kind: "enum",
           type: "UserPermissions",
-          hasDefaultValue: true,
+          hasDefaultValue: false,
           isList: true,
           isReadOnly: false,
           isRequired: true,

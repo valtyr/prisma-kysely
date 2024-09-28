@@ -52,7 +52,8 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
             ),
         nullable: !field.isRequired,
         generated: isGenerated,
-        list: field.isList,
+        // Enum list values are handled as strings, so we don't need to wrap them in a list
+        list: false,
         documentation: field.documentation,
         config,
       });
