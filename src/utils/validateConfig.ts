@@ -51,9 +51,9 @@ export const configValidator = z
     }
 
     if (config.groupBySchema && config.enumFileName !== config.fileName) {
-      throw new Error(
-        "groupBySchema cannot be defined if enumFileName is defined"
-      );
+      // would require https://www.typescriptlang.org/docs/handbook/namespaces.html#splitting-across-files
+      // which is considered a bad practice
+      throw new Error("groupBySchema is not compatible with enumFileName");
     }
 
     return config as Omit<typeof config, "enumFileName"> &
