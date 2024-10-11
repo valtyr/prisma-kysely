@@ -351,6 +351,9 @@ enum Color {
     expect(typeFile).toContain(`export namespace Mammals {
   export const Color = {`);
 
+    // correctly references the color enum
+    expect(typeFile).toContain("color: Mammals.Color;");
+
     expect(typeFile).toContain(`export type DB = {
   "birds.eagles": Birds.Eagle;
   "mammals.elephants": Mammals.Elephant;
