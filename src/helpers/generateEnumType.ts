@@ -6,10 +6,22 @@ import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 import { generateStringLiteralUnion } from "./generateStringLiteralUnion";
 import { generateTypedReferenceNode } from "./generateTypedReferenceNode";
 
-export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
+export type EnumType = {
+  objectDeclaration: ts.VariableStatement;
+  typeDeclaration: ts.TypeAliasDeclaration;
+  schema?: string;
+  typeName: string;
+};
+
+export const generateEnumType = (
+  name: string,
+  values: DMMF.EnumValue[]
+): EnumType | undefined => {
   const type = generateStringLiteralUnion(values.map((v) => v.name));
 
-  if (!type) return [];
+  if (!type) {
+    return undefined;
+  }
 
   const objectDeclaration = ts.factory.createVariableStatement(
     [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
@@ -47,5 +59,9 @@ export const generateEnumType = (name: string, values: DMMF.EnumValue[]) => {
 
   const typeDeclaration = generateTypedReferenceNode(name);
 
-  return [objectDeclaration, typeDeclaration];
+  return {
+    typeName: name,
+    objectDeclaration,
+    typeDeclaration,
+  };
 };

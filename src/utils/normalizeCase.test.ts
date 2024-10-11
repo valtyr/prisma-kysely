@@ -10,6 +10,7 @@ test("converts names to camel case when config value is set", () => {
     fileName: "",
     enumFileName: "",
     readOnlyIds: false,
+    groupBySchema: false,
   });
 
   expect(newName).toEqual("userId");
@@ -23,6 +24,7 @@ test("doesn't convert names to camel case when config value isn't set", () => {
     fileName: "",
     enumFileName: "",
     readOnlyIds: false,
+    groupBySchema: false,
   });
 
   expect(newName).toEqual("user_id");

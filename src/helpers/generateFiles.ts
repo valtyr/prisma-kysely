@@ -1,29 +1,42 @@
 import path from "path";
-import type { TypeAliasDeclaration, VariableStatement } from "typescript";
+import type { TypeAliasDeclaration } from "typescript";
+import ts from "typescript";
 
 import { generateFile } from "~/helpers/generateFile";
+
+import type { EnumType } from "./generateEnumType";
+import type { ModelType } from "./generateModel";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 
 export function generateFiles(opts: {
   typesOutfile: string;
-  enums: (VariableStatement | TypeAliasDeclaration)[];
+  enums: EnumType[];
+  models: ModelType[];
   enumNames: string[];
   enumsOutfile: string;
   databaseType: TypeAliasDeclaration;
-  modelDefinitions: TypeAliasDeclaration[];
+  groupBySchema: boolean;
 }) {
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
+    let statements: Iterable<ts.Statement>;
+
+    if (!opts.groupBySchema) {
+      statements = [
+        ...opts.enums.flatMap((e) => [e.objectDeclaration, e.typeDeclaration]),
+        ...opts.models.map((m) => m.definition),
+      ];
+    } else {
+      statements = groupModelsAndEnum(opts.enums, opts.models);
+    }
+
     const typesFileWithEnums: File = {
       filepath: opts.typesOutfile,
-      content: generateFile(
-        [...opts.enums, ...opts.modelDefinitions, opts.databaseType],
-        {
-          withEnumImport: false,
-          withLeader: true,
-        }
-      ),
+      content: generateFile([...statements, opts.databaseType], {
+        withEnumImport: false,
+        withLeader: true,
+      }),
     };
 
     return [typesFileWithEnums];
@@ -31,24 +44,80 @@ export function generateFiles(opts: {
 
   const typesFileWithoutEnums: File = {
     filepath: opts.typesOutfile,
-    content: generateFile([...opts.modelDefinitions, opts.databaseType], {
-      withEnumImport: {
-        importPath: `./${path.parse(opts.enumsOutfile).name}`,
-        names: opts.enumNames,
-      },
-      withLeader: true,
-    }),
+    content: generateFile(
+      [...opts.models.map((m) => m.definition), opts.databaseType],
+      {
+        withEnumImport: {
+          importPath: `./${path.parse(opts.enumsOutfile).name}`,
+          names: opts.enumNames,
+        },
+        withLeader: true,
+      }
+    ),
   };
 
   if (opts.enums.length === 0) return [typesFileWithoutEnums];
 
   const enumFile: File = {
     filepath: opts.enumsOutfile,
-    content: generateFile(opts.enums, {
-      withEnumImport: false,
-      withLeader: false,
-    }),
+    content: generateFile(
+      opts.enums.flatMap((e) => [e.objectDeclaration, e.typeDeclaration]),
+      {
+        withEnumImport: false,
+        withLeader: false,
+      }
+    ),
   };
 
   return [typesFileWithoutEnums, enumFile];
+}
+
+export function* groupModelsAndEnum(
+  enums: EnumType[],
+  models: ModelType[]
+): Generator<ts.Statement, void, void> {
+  const groupsMap = new Map<string, ts.Statement[]>();
+
+  for (const enumType of enums) {
+    if (!enumType.schema) {
+      yield enumType.objectDeclaration;
+      yield enumType.typeDeclaration;
+      continue;
+    }
+
+    const group = groupsMap.get(enumType.schema);
+
+    if (!group) {
+      groupsMap.set(enumType.schema, [
+        enumType.objectDeclaration,
+        enumType.typeDeclaration,
+      ]);
+    } else {
+      group.push(enumType.objectDeclaration, enumType.typeDeclaration);
+    }
+  }
+
+  for (const model of models) {
+    if (!model.schema) {
+      yield model.definition;
+      continue;
+    }
+
+    const group = groupsMap.get(model.schema);
+
+    if (!group) {
+      groupsMap.set(model.schema, [model.definition]);
+    } else {
+      group.push(model.definition);
+    }
+  }
+
+  for (const [schema, group] of groupsMap) {
+    yield ts.factory.createModuleDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      ts.factory.createIdentifier(schema),
+      ts.factory.createModuleBlock(group),
+      ts.NodeFlags.Namespace
+    );
+  }
 }

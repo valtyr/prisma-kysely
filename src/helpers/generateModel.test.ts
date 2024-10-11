@@ -94,7 +94,9 @@ test("it generates a model!", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-    }
+      groupBySchema: false,
+    },
+    false
   );
 
   expect(model.tableName).toEqual("User");
@@ -152,7 +154,9 @@ test("it respects camelCase option", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
-    }
+      groupBySchema: false,
+    },
+    false
   );
 
   expect(model.tableName).toEqual("User");

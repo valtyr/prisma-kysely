@@ -40,12 +40,22 @@ export const configValidator = z
 
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
+
+    // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
+    groupBySchema: booleanStringLiteral.default(false),
   })
   .strict()
   .transform((config) => {
     if (!config.enumFileName) {
       config.enumFileName = config.fileName;
     }
+
+    if (config.groupBySchema && config.enumFileName !== config.fileName) {
+      throw new Error(
+        "groupBySchema cannot be defined if enumFileName is defined"
+      );
+    }
+
     return config as Omit<typeof config, "enumFileName"> &
       Required<Pick<typeof config, "enumFileName">>;
   });
@@ -64,6 +74,7 @@ export const validateConfig = (config: unknown) => {
     Object.values(parsed.error.flatten().formErrors).forEach((value) => {
       logger.error(`${value}`);
     });
+
     process.exit(1);
   }
   return parsed.data;

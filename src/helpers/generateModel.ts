@@ -14,7 +14,19 @@ import type { Config } from "~/utils/validateConfig";
  */
 const defaultTypesImplementedInJS = ["cuid", "uuid"];
 
-export const generateModel = (model: DMMF.Model, config: Config) => {
+export type ModelType = {
+  typeName: string;
+  tableName: string;
+  definition: ts.TypeAliasDeclaration;
+  schema?: string;
+};
+
+export const generateModel = (
+  model: DMMF.Model,
+  config: Config,
+  groupBySchema: boolean,
+  multiSchemaMap?: Map<string, string>
+): ModelType => {
   const properties = model.fields.flatMap((field) => {
     const isGenerated =
       field.hasDefaultValue &&
@@ -32,12 +44,16 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
 
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
+    const schemaPrefix = groupBySchema && multiSchemaMap?.get(field.type);
+
     if (field.kind === "enum") {
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
-          ts.factory.createIdentifier(field.type),
+          ts.factory.createIdentifier(
+            schemaPrefix ? `${schemaPrefix}.${field.type}` : field.type
+          ),
           undefined
         ),
         nullable: !field.isRequired,

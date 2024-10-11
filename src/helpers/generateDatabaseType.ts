@@ -4,9 +4,10 @@ import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 import { normalizeCase } from "~/utils/normalizeCase";
 import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
+import type { ModelType } from "~/helpers/generateModel";
 
 export const generateDatabaseType = (
-  models: { tableName: string; typeName: string }[],
+  models: Omit<ModelType, "definition">[],
   config: Config
 ) => {
   const sortedModels = sorted(models, (a, b) =>

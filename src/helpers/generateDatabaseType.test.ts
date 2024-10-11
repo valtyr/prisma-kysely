@@ -16,6 +16,7 @@ test("it works for plain vanilla type names", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
+      groupBySchema: false,
     }
   );
   const result = stringifyTsNode(node);
@@ -40,6 +41,7 @@ test("it respects camelCase option names", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
+      groupBySchema: false,
     }
   );
   const result = stringifyTsNode(node);
@@ -64,6 +66,7 @@ test("it works for table names with spaces and weird symbols", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
+      groupBySchema: false,
     }
   );
   const result = stringifyTsNode(node);
