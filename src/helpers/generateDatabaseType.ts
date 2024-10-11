@@ -1,13 +1,12 @@
 import ts from "typescript";
 
-import type { ModelType } from "~/helpers/generateModel";
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 import { normalizeCase } from "~/utils/normalizeCase";
 import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
 
 export const generateDatabaseType = (
-  models: Pick<ModelType, "tableName" | "typeName">[],
+  models: { tableName: string; typeName: string }[],
   config: Config
 ) => {
   const sortedModels = sorted(models, (a, b) =>
