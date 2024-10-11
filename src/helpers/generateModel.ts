@@ -53,7 +53,9 @@ export const generateModel = (
         name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(
-            schemaPrefix ? `${capitalize(schemaPrefix)}.${field.type}` : field.type
+            schemaPrefix
+              ? `${capitalize(schemaPrefix)}.${field.type}`
+              : field.type
           ),
           undefined
         ),

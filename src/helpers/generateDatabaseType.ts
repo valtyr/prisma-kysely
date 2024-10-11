@@ -1,10 +1,10 @@
 import ts from "typescript";
 
+import type { ModelType } from "~/helpers/generateModel";
 import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
 import { normalizeCase } from "~/utils/normalizeCase";
 import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
-import type { ModelType } from "~/helpers/generateModel";
 
 export const generateDatabaseType = (
   models: Omit<ModelType, "definition">[],

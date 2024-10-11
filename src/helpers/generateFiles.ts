@@ -3,10 +3,10 @@ import type { TypeAliasDeclaration } from "typescript";
 import ts from "typescript";
 
 import { generateFile } from "~/helpers/generateFile";
+import { capitalize } from "~/utils/camelCase";
 
 import type { EnumType } from "./generateEnumType";
 import type { ModelType } from "./generateModel";
-import { capitalize } from "~/utils/camelCase";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 
