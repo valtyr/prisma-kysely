@@ -6,6 +6,7 @@ import { generateFile } from "~/helpers/generateFile";
 
 import type { EnumType } from "./generateEnumType";
 import type { ModelType } from "./generateModel";
+import { capitalize } from "~/utils/camelCase";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 
@@ -115,7 +116,7 @@ export function* groupModelsAndEnum(
   for (const [schema, group] of groupsMap) {
     yield ts.factory.createModuleDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      ts.factory.createIdentifier(schema),
+      ts.factory.createIdentifier(capitalize(schema)),
       ts.factory.createModuleBlock(group),
       ts.NodeFlags.Namespace
     );

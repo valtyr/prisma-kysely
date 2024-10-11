@@ -16,7 +16,7 @@ type ModelLike = {
  * @param multiSchemaMap map of model names to schema names
  * @returns list of models with schema names appended to the table names ("schema.table")
  */
-export const convertToMultiSchemaModels = <T extends ModelLike>(
+export const convertToMultiSchemaModels = <const T extends ModelLike>(
   models: T[],
   groupBySchema: boolean,
   multiSchemaMap?: Map<string, string>
@@ -32,12 +32,12 @@ export const convertToMultiSchemaModels = <T extends ModelLike>(
       ...model,
       typeName:
         groupBySchema && schemaName
-          ? `${schemaName}.${model.typeName}`
+          ? `${capitalize(schemaName)}.${model.typeName}`
           : model.typeName,
       tableName: model.tableName
         ? `${schemaName}.${model.tableName}`
         : undefined,
-      schema: schemaName,
+      schema: groupBySchema ? schemaName : undefined,
     };
   });
 };
@@ -96,8 +96,8 @@ export function parseMultiSchemaMap(dataModelStr: string) {
         );
       }
 
-      // capitalize schemas because usually they are in lowercase
-      multiSchemaMap.set(block.name, capitalize(schema));
+      // don't capitalize it here because the DB key is case-sensitive
+      multiSchemaMap.set(block.name, schema);
     }
   }
 

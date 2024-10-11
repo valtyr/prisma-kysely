@@ -4,6 +4,7 @@ import ts from "typescript";
 import { generateField } from "~/helpers/generateField";
 import { generateFieldType } from "~/helpers/generateFieldType";
 import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
+import { capitalize } from "~/utils/camelCase";
 import { normalizeCase } from "~/utils/normalizeCase";
 import type { Config } from "~/utils/validateConfig";
 
@@ -52,7 +53,7 @@ export const generateModel = (
         name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(
-            schemaPrefix ? `${schemaPrefix}.${field.type}` : field.type
+            schemaPrefix ? `${capitalize(schemaPrefix)}.${field.type}` : field.type
           ),
           undefined
         ),
