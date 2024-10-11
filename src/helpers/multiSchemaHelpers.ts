@@ -45,7 +45,7 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
 // https://github.com/microsoft/TypeScript/blob/a53c37d59aa0c20f566dec7e5498f05afe45dc6b/src/compiler/scanner.ts#L985
 const isIdentifierText: (
   name: string,
-  languageVersion: ts.ScriptTarget | undefined,
+  languageVersion?: ts.ScriptTarget | undefined,
   identifierVariant?: ts.LanguageVariant
 ) => boolean =
   // @ts-expect-error - Internal TS API
@@ -87,10 +87,7 @@ export function parseMultiSchemaMap(dataModelStr: string) {
     } else {
       const schema: string = JSON.parse(schemaName).toString();
 
-      if (
-        isIdentifierText &&
-        !isIdentifierText(schema, ts.ScriptTarget.Latest)
-      ) {
+      if (isIdentifierText && !isIdentifierText(schema)) {
         throw new Error(
           `Cannot generate identifier for schema "${schema}" in model "${block.name}" because it is not a valid Identifier, please disable \`groupBySchema\` or rename it.`
         );

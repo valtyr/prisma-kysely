@@ -1,0 +1,17 @@
+datasource db {
+        provider = "sqlite"
+        url      = "file:./dev.db"
+    }
+
+    generator kysely {
+        provider  = "node ./dist/bin.js"
+        enumFileName = "enums.ts"
+    }
+    
+    model TestUser {
+        id          String @id
+        name        String
+        age         Int
+        rating      Float
+        updatedAt   DateTime
+    }
