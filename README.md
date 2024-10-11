@@ -40,7 +40,7 @@ without losing the safety of the TypeScript type system?
        output = "../src/db"
        fileName = "types.ts"
        // Optionally generate runtime enums to a separate file
-        enumFileName = "enums.ts"
+       enumFileName = "enums.ts"
    }
    ```
 
@@ -83,6 +83,7 @@ hope it's just as useful for you! 😎
 | `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |
+| `groupBySchema`          | When using `multiSchema` preview features, group all models and enums for a schema into their own namespace. (Ex: `model Dog { @@schema("animals") }` will be available under `Animals.Dog`)                                                                                                                                                                                        |
 
 ### Per-field type overrides
 
