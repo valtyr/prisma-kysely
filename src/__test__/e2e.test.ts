@@ -29,14 +29,19 @@ test(
     await fs.writeFile(
       "./prisma/schema.prisma",
       `datasource db {
-        provider = "sqlite"
-        url      = "file:./dev.db"
+        provider = "postgresql"
+        url      = "env(DATABASE_URL)"
     }
 
     generator kysely {
         provider  = "node ./dist/bin.js"
     }
     
+    enum TestEnum {
+      FOO
+      BAR
+    }
+
     model TestUser {
         id          String @id
         name        String
@@ -44,6 +49,7 @@ test(
         rating      Float
         updatedAt   DateTime
         sprockets   Sprocket[]
+        abc         TestEnum[]
     }
     
     model Sprocket {
@@ -66,6 +72,9 @@ test(
   B: string;
 };`)
     ).toBeTruthy();
+
+    expect(generatedSource.includes(`abc: EnumArray<TestEnum>;`)).toBeTruthy();
+
     expect(
       generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
     ).toBeTruthy();
@@ -164,8 +173,10 @@ test(
     const typeFile = await fs.readFile("./prisma/generated/types.ts", {
       encoding: "utf-8",
     });
+
     expect(typeFile).not.toContain("export const");
     expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
+    expect(typeFile.includes(`abc: TestEnum`)).toBeTruthy();
 
     const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
       encoding: "utf-8",
