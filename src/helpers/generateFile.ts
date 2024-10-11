@@ -27,7 +27,7 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   : ColumnType<T, T | undefined, T>;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 export type EnumArrayInner<T extends string, All extends string> = T extends infer Single extends string ? T | \`\${Single},\${Exclude<All, Single>}\` : never
-export type EnumArray<T extends string> = \`{\${EnumArrayInner<T, T>}}\`;`;
+export type EnumArray<T extends string> = '{}' | \`{\${EnumArrayInner<T, T>}}\`;`;
 
   if (withEnumImport) {
     const enumImportStatement = `import type { ${withEnumImport.names.join(
