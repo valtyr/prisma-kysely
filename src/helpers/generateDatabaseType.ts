@@ -7,7 +7,7 @@ import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
 
 export const generateDatabaseType = (
-  models: Omit<ModelType, "definition">[],
+  models: Pick<ModelType, "tableName" | "typeName">[],
   config: Config
 ) => {
   const sortedModels = sorted(models, (a, b) =>
