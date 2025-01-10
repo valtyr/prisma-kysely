@@ -14,31 +14,41 @@ type ModelLike = {
  *
  * @param models list of model names
  * @param multiSchemaMap map of model names to schema names
+ * @param groupBySchema whether to group models by schema
+ * @param filterBySchema set of schema names to filter by. Use `null` to disable filtering.
  * @returns list of models with schema names appended to the table names ("schema.table")
  */
 export const convertToMultiSchemaModels = <const T extends ModelLike>(
   models: T[],
   groupBySchema: boolean,
+  filterBySchema: Set<string> | null,
   multiSchemaMap?: Map<string, string>
 ): T[] => {
-  return models.map((model) => {
+  return models.flatMap((model) => {
     const schemaName = multiSchemaMap?.get(model.typeName);
 
     if (!schemaName) {
       return model;
     }
 
-    return {
-      ...model,
-      typeName:
-        groupBySchema && schemaName
-          ? `${capitalize(schemaName)}.${model.typeName}`
-          : model.typeName,
-      tableName: model.tableName
-        ? `${schemaName}.${model.tableName}`
-        : undefined,
-      schema: groupBySchema ? schemaName : undefined,
-    };
+    // Filter out models that don't match the schema filter
+    if (filterBySchema && !filterBySchema.has(schemaName)) {
+      return [];
+    }
+
+    return [
+      {
+        ...model,
+        typeName:
+          groupBySchema && schemaName
+            ? `${capitalize(schemaName)}.${model.typeName}`
+            : model.typeName,
+        tableName: model.tableName
+          ? `${schemaName}.${model.tableName}`
+          : undefined,
+        schema: groupBySchema ? schemaName : undefined,
+      },
+    ];
   });
 };
 

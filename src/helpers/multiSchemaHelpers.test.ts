@@ -41,11 +41,30 @@ test("returns a list of models with schemas appended to the table name", () => {
   const result = convertToMultiSchemaModels(
     initialModels,
     false,
+    null,
     parseMultiSchemaMap(testDataModel)
   );
 
   expect(result).toEqual([
     { typeName: "Elephant", tableName: "mammals.elephants" },
     { typeName: "Eagle", tableName: "birds.eagles" },
+  ]);
+});
+
+test("returns a list of models with schemas appended to the table name filtered by schema", () => {
+  const initialModels = [
+    { typeName: "Elephant", tableName: "elephants" },
+    { typeName: "Eagle", tableName: "eagles" },
+  ];
+
+  const result = convertToMultiSchemaModels(
+    initialModels,
+    false,
+    new Set(["mammals"]),
+    parseMultiSchemaMap(testDataModel)
+  );
+
+  expect(result).toEqual([
+    { typeName: "Elephant", tableName: "mammals.elephants" },
   ]);
 });

@@ -43,6 +43,9 @@ export const configValidator = z
 
     // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
     groupBySchema: booleanStringLiteral.default(false),
+
+    // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
+    filterBySchema: z.array(z.string()).optional(),
   })
   .strict()
   .transform((config) => {

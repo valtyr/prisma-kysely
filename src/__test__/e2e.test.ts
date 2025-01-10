@@ -1,6 +1,6 @@
-import { exec as execCb } from "child_process";
-import fs from "fs/promises";
-import { promisify } from "util";
+import { exec as execCb } from "node:child_process";
+import fs from "node:fs/promises";
+import { promisify } from "node:util";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
 const exec = promisify(execCb);
@@ -282,6 +282,58 @@ test(
 );
 
 test(
+  "End to end test - multi-schema support",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider postgresql");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `generator kysely {
+        provider  = "node ./dist/bin.js"
+        previewFeatures = ["multiSchema"]
+        filterBySchema = ["mammals"]
+    }
+    
+    datasource db {
+        provider = "postgresql"
+        schemas  = ["mammals", "birds"]
+        url      = env("TEST_DATABASE_URL")
+    }
+    
+    model Elephant {
+        id   Int    @id
+        name String
+    
+        @@map("elephants")
+        @@schema("mammals")
+    }
+    
+    model Eagle {
+        id   Int    @id
+        name String
+    
+        @@map("eagles")
+        @@schema("birds")
+    }`
+    );
+
+    await exec("yarn prisma generate");
+
+    // Shouldn't have an empty import statement
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(typeFile).toContain(`export type DB = {
+  "mammals.elephants": Elephant;
+};`);
+  },
+  { timeout: 20000 }
+);
+
+test(
   "End to end test - multi-schema and groupBySchema support",
   async () => {
     // Initialize prisma:
@@ -356,6 +408,87 @@ enum Color {
 
     expect(typeFile).toContain(`export type DB = {
   "birds.eagles": Birds.Eagle;
+  "mammals.elephants": Mammals.Elephant;
+};`);
+  },
+  { timeout: 20000 }
+);
+
+test(
+  "End to end test - multi-schema, groupBySchema and filterBySchema support",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider postgresql");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `
+generator kysely {
+    provider        = "node ./dist/bin.js"
+    previewFeatures = ["multiSchema"]
+    groupBySchema   = true
+    filterBySchema = ["mammals", "world"]
+}
+
+datasource db {
+    provider = "postgresql"
+    schemas  = ["mammals", "birds", "world"]
+    url      = env("TEST_DATABASE_URL")
+}
+
+model Elephant {
+    id      Int     @id
+    name    String
+    ability Ability @default(WALK)
+    color  Color
+
+    @@map("elephants")
+    @@schema("mammals")
+}
+
+model Eagle {
+    id      Int     @id
+    name    String
+    ability Ability @default(FLY)
+
+    @@map("eagles")
+    @@schema("birds")
+}
+
+enum Ability {
+    FLY
+    WALK
+
+    @@schema("world")
+}
+
+enum Color {
+  GRAY
+  PINK
+
+  @@schema("mammals")
+}
+    `
+    );
+
+    await exec("yarn prisma generate");
+
+    // Shouldn't have an empty import statement
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(typeFile).not.toContain(`export namespace Birds {
+  export type Eagle = {`);
+
+    expect(typeFile).toContain(`export namespace Mammals {
+  export const Color = {`);
+
+    // correctly references the color enum
+    expect(typeFile).toContain("color: Mammals.Color;");
+
+    expect(typeFile).toContain(`export type DB = {
   "mammals.elephants": Mammals.Elephant;
 };`);
   },

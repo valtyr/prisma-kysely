@@ -1,6 +1,6 @@
 import type { GeneratorOptions } from "@prisma/generator-helper";
 import { generatorHandler } from "@prisma/generator-helper";
-import path from "path";
+import path from "node:path";
 
 import { GENERATOR_NAME } from "~/constants";
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
@@ -64,14 +64,21 @@ generatorHandler({
 
     // Extend model table names with schema names if using multi-schemas
     if (options.generator.previewFeatures?.includes("multiSchema")) {
+      const filterBySchema = config.filterBySchema
+        ? new Set(config.filterBySchema)
+        : null;
+
       models = convertToMultiSchemaModels(
         models,
         config.groupBySchema,
+        filterBySchema,
         multiSchemaMap
       );
+
       enums = convertToMultiSchemaModels(
         enums,
         config.groupBySchema,
+        filterBySchema,
         multiSchemaMap
       );
     }
