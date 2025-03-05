@@ -18,7 +18,7 @@ export function generateFiles(opts: {
   enumsOutfile: string;
   databaseType: TypeAliasDeclaration;
   groupBySchema: boolean;
-  defaultSchema: string,
+  defaultSchema: string;
 }) {
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
@@ -30,7 +30,11 @@ export function generateFiles(opts: {
         ...opts.models.map((m) => m.definition),
       ];
     } else {
-      statements = groupModelsAndEnum(opts.enums, opts.models, opts.defaultSchema);
+      statements = groupModelsAndEnum(
+        opts.enums,
+        opts.models,
+        opts.defaultSchema
+      );
     }
 
     const typesFileWithEnums: File = {

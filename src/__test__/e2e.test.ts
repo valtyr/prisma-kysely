@@ -414,7 +414,6 @@ enum Color {
   { timeout: 20000 }
 );
 
-
 test(
   "End to end test - multi-schema, groupBySchema and defaultSchema support",
   async () => {
@@ -495,7 +494,7 @@ enum Color {
     expect(typeFile).toContain(`export namespace Mammals {
   export const Color = {`);
 
-  // outside of enum
+    // outside of enum
     expect(typeFile).toContain("export type Shark = {");
 
     // correctly references the color enum
