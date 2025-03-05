@@ -95,6 +95,7 @@ test("it generates a model!", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     },
     false
   );
@@ -155,6 +156,7 @@ test("it respects camelCase option", () => {
       camelCase: true,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     },
     false
   );

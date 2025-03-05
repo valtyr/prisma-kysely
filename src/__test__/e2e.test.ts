@@ -282,7 +282,7 @@ test(
 );
 
 test(
-  "End to end test - multi-schema support",
+  "End to end test - multi-schema and filterBySchema support",
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider postgresql");
@@ -408,6 +408,102 @@ enum Color {
 
     expect(typeFile).toContain(`export type DB = {
   "birds.eagles": Birds.Eagle;
+  "mammals.elephants": Mammals.Elephant;
+};`);
+  },
+  { timeout: 20000 }
+);
+
+
+test(
+  "End to end test - multi-schema, groupBySchema and defaultSchema support",
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider postgresql");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `
+generator kysely {
+    provider        = "node ./dist/bin.js"
+    previewFeatures = ["multiSchema"]
+    groupBySchema   = true
+    defaultSchema   = "fish"
+}
+
+datasource db {
+    provider = "postgresql"
+    schemas  = ["mammals", "birds", "world", "fish"]
+    url      = env("TEST_DATABASE_URL")
+}
+
+model Elephant {
+    id      Int     @id
+    name    String
+    ability Ability @default(WALK)
+    color  Color
+
+    @@map("elephants")
+    @@schema("mammals")
+}
+
+model Eagle {
+    id      Int     @id
+    name    String
+    ability Ability @default(FLY)
+
+    @@map("eagles")
+    @@schema("birds")
+}
+
+model Shark {
+    id      Int     @id
+    name    String
+    color  Color
+
+    @@map("shark")
+    @@schema("fish")
+}
+
+enum Ability {
+    FLY
+    WALK
+
+    @@schema("world")
+}
+
+enum Color {
+  GRAY
+  PINK
+
+  @@schema("mammals")
+}
+    `
+    );
+
+    await exec("yarn prisma generate");
+
+    // Shouldn't have an empty import statement
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(typeFile).toContain(`export namespace Birds {
+  export type Eagle = {`);
+
+    expect(typeFile).toContain(`export namespace Mammals {
+  export const Color = {`);
+
+  // outside of enum
+    expect(typeFile).toContain("export type Shark = {");
+
+    // correctly references the color enum
+    expect(typeFile).toContain("color: Mammals.Color;");
+
+    expect(typeFile).toContain(`export type DB = {
+  "birds.eagles": Birds.Eagle;
+  "fish.shark": Shark;
   "mammals.elephants": Mammals.Elephant;
 };`);
   },

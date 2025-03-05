@@ -17,6 +17,7 @@ test("it works for plain vanilla type names", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     }
   );
   const result = stringifyTsNode(node);
@@ -42,6 +43,7 @@ test("it respects camelCase option names", () => {
       camelCase: true,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     }
   );
   const result = stringifyTsNode(node);
@@ -67,6 +69,7 @@ test("it works for table names with spaces and weird symbols", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     }
   );
   const result = stringifyTsNode(node);

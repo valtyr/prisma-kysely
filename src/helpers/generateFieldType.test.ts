@@ -24,6 +24,7 @@ test("it respects overrides when generating field types", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
+    defaultSchema: "public",
   };
 
   const sourceTypes = [
@@ -53,6 +54,7 @@ test("it respects overrides when generating field types", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
+    defaultSchema: "public",
   });
 
   expect(node).toEqual("cheese");
@@ -66,6 +68,7 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
+    defaultSchema: "public",
   });
 
   const mysqlBooleanType = generateFieldType("Boolean", {
@@ -75,6 +78,7 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
+    defaultSchema: "public",
   });
 
   const sqliteBooleanType = generateFieldType("Boolean", {
@@ -84,6 +88,7 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
+    defaultSchema: "public",
   });
 
   expect(postgresBooleanType).toEqual("boolean");
@@ -100,6 +105,7 @@ test("it throws an error when unsupported type is encountered", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
+      defaultSchema: "public",
     })
   ).toThrowError(new Error("Unsupported type Json for database sqlite"));
 });

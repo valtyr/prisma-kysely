@@ -71,6 +71,7 @@ generatorHandler({
       models = convertToMultiSchemaModels(
         models,
         config.groupBySchema,
+        config.defaultSchema,
         filterBySchema,
         multiSchemaMap
       );
@@ -78,6 +79,7 @@ generatorHandler({
       enums = convertToMultiSchemaModels(
         enums,
         config.groupBySchema,
+        config.defaultSchema,
         filterBySchema,
         multiSchemaMap
       );
@@ -95,6 +97,7 @@ generatorHandler({
       enumsOutfile: config.enumFileName,
       typesOutfile: config.fileName,
       groupBySchema: config.groupBySchema,
+      defaultSchema: config.defaultSchema,
     });
 
     // And write it to a file!

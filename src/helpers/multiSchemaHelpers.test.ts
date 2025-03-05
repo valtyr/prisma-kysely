@@ -30,17 +30,29 @@ model Eagle {
 
   @@map("eagles")
   @@schema("birds")
-}`;
+}
+
+model Fish {
+  id   Int    @id
+  name String
+
+  @@map("fish")
+  @@schema("public")
+}
+
+`;
 
 test("returns a list of models with schemas appended to the table name", () => {
   const initialModels = [
     { typeName: "Elephant", tableName: "elephants" },
     { typeName: "Eagle", tableName: "eagles" },
+    { typeName: "Fish", tableName: "fish" },
   ];
 
   const result = convertToMultiSchemaModels(
     initialModels,
     false,
+    "public",
     null,
     parseMultiSchemaMap(testDataModel)
   );
@@ -48,6 +60,7 @@ test("returns a list of models with schemas appended to the table name", () => {
   expect(result).toEqual([
     { typeName: "Elephant", tableName: "mammals.elephants" },
     { typeName: "Eagle", tableName: "birds.eagles" },
+    { typeName: "Fish", tableName: "public.fish" },
   ]);
 });
 
@@ -60,6 +73,7 @@ test("returns a list of models with schemas appended to the table name filtered 
   const result = convertToMultiSchemaModels(
     initialModels,
     false,
+    "public",
     new Set(["mammals"]),
     parseMultiSchemaMap(testDataModel)
   );

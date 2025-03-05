@@ -21,6 +21,7 @@ type ModelLike = {
 export const convertToMultiSchemaModels = <const T extends ModelLike>(
   models: T[],
   groupBySchema: boolean,
+  defaultSchema: string,
   filterBySchema: Set<string> | null,
   multiSchemaMap?: Map<string, string>
 ): T[] => {
@@ -40,7 +41,7 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
       {
         ...model,
         typeName:
-          groupBySchema && schemaName
+          groupBySchema && schemaName !== defaultSchema
             ? `${capitalize(schemaName)}.${model.typeName}`
             : model.typeName,
         tableName: model.tableName
