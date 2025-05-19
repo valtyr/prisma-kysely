@@ -4,7 +4,7 @@ import ts from "typescript";
 import { generateField } from "~/helpers/generateField";
 import { generateFieldType } from "~/helpers/generateFieldType";
 import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
-import { capitalize } from "~/utils/camelCase";
+import { capitalize } from "~/utils/words";
 import { normalizeCase } from "~/utils/normalizeCase";
 import type { Config } from "~/utils/validateConfig";
 

@@ -1,7 +1,7 @@
 import { type BlockAttribute, getSchema } from "@mrleebo/prisma-ast";
 import ts from "typescript";
 
-import { capitalize } from "~/utils/camelCase";
+import { capitalize } from "~/utils/words";
 
 type ModelLike = {
   typeName: string;

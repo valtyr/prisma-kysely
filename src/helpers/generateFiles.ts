@@ -3,7 +3,7 @@ import type { TypeAliasDeclaration } from "typescript";
 import ts from "typescript";
 
 import { generateFile } from "~/helpers/generateFile";
-import { capitalize } from "~/utils/camelCase";
+import { capitalize } from "~/utils/words";
 
 import type { EnumType } from "./generateEnumType";
 import type { ModelType } from "./generateModel";
