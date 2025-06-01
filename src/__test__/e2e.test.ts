@@ -19,16 +19,14 @@ afterEach(async () => {
   await fs.rename("./prisma-old", "./prisma").catch(() => {});
 });
 
-test(
-  "End to end test",
-  async () => {
-    // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider sqlite");
+test("End to end test", { timeout: 20000 }, async () => {
+  // Initialize prisma:
+  await exec("yarn prisma init --datasource-provider sqlite");
 
-    // Set up a schema
-    await fs.writeFile(
-      "./prisma/schema.prisma",
-      `datasource db {
+  // Set up a schema
+  await fs.writeFile(
+    "./prisma/schema.prisma",
+    `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
@@ -50,31 +48,30 @@ test(
         id          Int @id
         users       TestUser[]
     }`
-    );
+  );
 
-    // Run Prisma commands without fail
-    await exec("yarn prisma generate");
+  // Run Prisma commands without fail
+  await exec("yarn prisma generate");
 
-    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
-      encoding: "utf-8",
-    });
+  const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+    encoding: "utf-8",
+  });
 
-    // Expect many to many models to have been generated
-    expect(
-      generatedSource.includes(`export type SprocketToTestUser = {
+  // Expect many to many models to have been generated
+  expect(
+    generatedSource.includes(`export type SprocketToTestUser = {
   A: number;
   B: string;
 };`)
-    ).toBeTruthy();
-    expect(
-      generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
-    ).toBeTruthy();
-  },
-  { timeout: 20000 }
-);
+  ).toBeTruthy();
+  expect(
+    generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
+  ).toBeTruthy();
+});
 
 test(
   "End to end test - with custom type override",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider sqlite");
@@ -118,20 +115,17 @@ test(
   role: "member" | "owner";
 };`)
     ).toBeTruthy();
-  },
-  { timeout: 20000 }
+  }
 );
 
-test(
-  "End to end test - separate entrypoints",
-  async () => {
-    // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider mysql");
+test("End to end test - separate entrypoints", { timeout: 20000 }, async () => {
+  // Initialize prisma:
+  await exec("yarn prisma init --datasource-provider mysql");
 
-    // Set up a schema
-    await fs.writeFile(
-      "./prisma/schema.prisma",
-      `datasource db {
+  // Set up a schema
+  await fs.writeFile(
+    "./prisma/schema.prisma",
+    `datasource db {
         provider = "mysql"
         url      = "mysql://root:password@localhost:3306/test"
     }
@@ -155,34 +149,33 @@ test(
         updatedAt   DateTime
         abc         TestEnum
     }`
-    );
+  );
 
-    // Run Prisma commands without fail
-    // await exec("yarn prisma db push"); -- can't push to mysql, enums not supported in sqlite
-    await exec("yarn prisma generate"); //   so just generate
+  // Run Prisma commands without fail
+  // await exec("yarn prisma db push"); -- can't push to mysql, enums not supported in sqlite
+  await exec("yarn prisma generate"); //   so just generate
 
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
-      encoding: "utf-8",
-    });
-    expect(typeFile).not.toContain("export const");
-    expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
+  const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    encoding: "utf-8",
+  });
+  expect(typeFile).not.toContain("export const");
+  expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
 
-    const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
-      encoding: "utf-8",
-    });
-    expect(enumFile).toEqual(`export const TestEnum = {
+  const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
+    encoding: "utf-8",
+  });
+  expect(enumFile).toEqual(`export const TestEnum = {
   A: "A",
   B: "B",
   C: "C",
 } as const;
 export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
-  },
-  { timeout: 20000 }
-);
+});
 
 test(
   "End to end test - separate entrypoints but no enums",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider sqlite");
@@ -220,25 +213,22 @@ test(
     expect(typeFile).not.toContain('from "./enums"');
 
     // Shouldn't have generated an empty file
-    expect(
+    await expect(
       fs.readFile("./prisma/generated/enums.ts", {
         encoding: "utf-8",
       })
     ).rejects.toThrow();
-  },
-  { timeout: 20000 }
+  }
 );
 
-test(
-  "End to end test - multi-schema support",
-  async () => {
-    // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+test("End to end test - multi-schema support", { timeout: 20000 }, async () => {
+  // Initialize prisma:
+  await exec("yarn prisma init --datasource-provider postgresql");
 
-    // Set up a schema
-    await fs.writeFile(
-      "./prisma/schema.prisma",
-      `generator kysely {
+  // Set up a schema
+  await fs.writeFile(
+    "./prisma/schema.prisma",
+    `generator kysely {
         provider  = "node ./dist/bin.js"
         previewFeatures = ["multiSchema"]
     }
@@ -264,25 +254,24 @@ test(
         @@map("eagles")
         @@schema("birds")
     }`
-    );
+  );
 
-    await exec("yarn prisma generate");
+  await exec("yarn prisma generate");
 
-    // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
-      encoding: "utf-8",
-    });
+  // Shouldn't have an empty import statement
+  const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    encoding: "utf-8",
+  });
 
-    expect(typeFile).toContain(`export type DB = {
+  expect(typeFile).toContain(`export type DB = {
   "birds.eagles": Eagle;
   "mammals.elephants": Elephant;
 };`);
-  },
-  { timeout: 20000 }
-);
+});
 
 test(
   "End to end test - multi-schema and filterBySchema support",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider postgresql");
@@ -329,12 +318,12 @@ test(
     expect(typeFile).toContain(`export type DB = {
   "mammals.elephants": Elephant;
 };`);
-  },
-  { timeout: 20000 }
+  }
 );
 
 test(
   "End to end test - multi-schema and groupBySchema support",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider postgresql");
@@ -410,12 +399,12 @@ enum Color {
   "birds.eagles": Birds.Eagle;
   "mammals.elephants": Mammals.Elephant;
 };`);
-  },
-  { timeout: 20000 }
+  }
 );
 
 test(
   "End to end test - multi-schema, groupBySchema and defaultSchema support",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider postgresql");
@@ -505,12 +494,12 @@ enum Color {
   "fish.shark": Shark;
   "mammals.elephants": Mammals.Elephant;
 };`);
-  },
-  { timeout: 20000 }
+  }
 );
 
 test(
   "End to end test - multi-schema, groupBySchema and filterBySchema support",
+  { timeout: 20000 },
   async () => {
     // Initialize prisma:
     await exec("yarn prisma init --datasource-provider postgresql");
@@ -586,6 +575,5 @@ enum Color {
     expect(typeFile).toContain(`export type DB = {
   "mammals.elephants": Mammals.Elephant;
 };`);
-  },
-  { timeout: 20000 }
+  }
 );
