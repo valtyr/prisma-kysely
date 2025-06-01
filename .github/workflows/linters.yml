@@ -21,7 +21,7 @@ jobs:
       - name: 🏗 Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
@@ -42,7 +42,7 @@ jobs:
       - name: 🏗 Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
@@ -64,7 +64,7 @@ jobs:
       - name: 🏗 Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
