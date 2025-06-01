@@ -5,6 +5,10 @@ on:
 permissions:
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   snapshot:
     name: 💾 Release a snapshot
