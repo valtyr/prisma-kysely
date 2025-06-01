@@ -2,4 +2,4 @@
 "prisma-kysely": minor
 ---
 
-Added groupBySchema option
+Add `groupBySchema` to group types and enums under a namespace
