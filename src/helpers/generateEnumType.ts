@@ -15,7 +15,7 @@ export type EnumType = {
 
 export const generateEnumType = (
   name: string,
-  values: DMMF.EnumValue[]
+  values: readonly DMMF.EnumValue[]
 ): EnumType | undefined => {
   const type = generateStringLiteralUnion(values.map((v) => v.name));
 

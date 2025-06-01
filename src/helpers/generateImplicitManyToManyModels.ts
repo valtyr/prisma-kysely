@@ -19,7 +19,7 @@ export const getModelByType = (
 };
 
 export function generateImplicitManyToManyModels(
-  models: DMMF.Model[]
+  models: readonly DMMF.Model[]
 ): DMMF.Model[] {
   const manyToManyFields = filterManyToManyRelationFields(models);
 
@@ -31,7 +31,7 @@ export function generateImplicitManyToManyModels(
 
 function generateModels(
   manyToManyFields: DMMF.Field[],
-  models: DMMF.Model[],
+  models: readonly DMMF.Model[],
   manyToManyTables: DMMF.Model[] = []
 ): DMMF.Model[] {
   const manyFirst = manyToManyFields.shift();
@@ -51,6 +51,7 @@ function generateModels(
     dbName: `_${manyFirst.relationName}`,
     name: manyFirst.relationName || "",
     primaryKey: null,
+    schema: null,
     uniqueFields: [],
     uniqueIndexes: [],
     fields: generateJoinFields([manyFirst, manySecond], models),
@@ -67,7 +68,7 @@ function generateModels(
 
 function generateJoinFields(
   fields: [DMMF.Field, DMMF.Field],
-  models: DMMF.Model[]
+  models: readonly DMMF.Model[]
 ): DMMF.Field[] {
   if (fields.length !== 2) throw new Error("Huh?");
 
@@ -101,7 +102,10 @@ function generateJoinFields(
   ];
 }
 
-function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
+function getJoinIdType(
+  joinField: DMMF.Field,
+  models: readonly DMMF.Model[]
+): string {
   const joinedModel = models.find((m) => m.name === joinField.type);
   if (!joinedModel) throw new Error("Could not find referenced model");
 
@@ -111,7 +115,7 @@ function getJoinIdType(joinField: DMMF.Field, models: DMMF.Model[]): string {
   return idField.type;
 }
 
-function filterManyToManyRelationFields(models: DMMF.Model[]) {
+function filterManyToManyRelationFields(models: readonly DMMF.Model[]) {
   const fields = models.flatMap((model) => model.fields);
 
   const relationFields = fields.filter(

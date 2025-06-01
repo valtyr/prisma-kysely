@@ -1,6 +1,0 @@
-{
-  "folders": [{ "name": "🔑\tprisma-kysely", "path": "." }],
-  "settings": {
-    "typescript.preferences.importModuleSpecifier": "non-relative"
-  }
-}

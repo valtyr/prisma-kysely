@@ -1,6 +1,6 @@
-import { exec as execCb } from "child_process";
-import fs from "fs/promises";
-import { promisify } from "util";
+import { exec as execCb } from "node:child_process";
+import fs from "node:fs/promises";
+import { promisify } from "node:util";
 
 const exec = promisify(execCb);
 

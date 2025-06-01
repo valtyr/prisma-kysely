@@ -31,6 +31,10 @@ class KyselyNodeSQLiteStatement implements SqliteStatement {
     this.statement = statement;
   }
 
+  iterate(parameters: ReadonlyArray<SQLInputValue>): IterableIterator<unknown> {
+    return this.statement.iterate(...parameters);
+  }
+
   reader: boolean;
   all(parameters: ReadonlyArray<SQLInputValue>): unknown[] {
     return this.statement.all(...parameters);

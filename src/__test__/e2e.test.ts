@@ -57,16 +57,12 @@ test("End to end test", { timeout: 20000 }, async () => {
     encoding: "utf-8",
   });
 
-  // Expect many to many models to have been generated
-  expect(
-    generatedSource.includes(`export type SprocketToTestUser = {
-  A: number;
-  B: string;
-};`)
-  ).toBeTruthy();
-  expect(
-    generatedSource.includes("_SprocketToTestUser: SprocketToTestUser")
-  ).toBeTruthy();
+  expect(generatedSource).toContain(`export type SprocketToTestUser = {
+    A: number;
+    B: string;
+};`);
+
+  expect(generatedSource).toContain("_SprocketToTestUser: SprocketToTestUser");
 });
 
 test(
@@ -105,16 +101,16 @@ test(
     });
 
     // Expect many to many models to have been generated
-    expect(
-      generatedSource.includes(`export type TestUser = {
-  id: string;
-  name: string;
-  /**
-   * @kyselyType('member' | 'owner')
-   */
-  role: "member" | "owner";
-};`)
-    ).toBeTruthy();
+    expect(generatedSource).toContain(
+      `export type TestUser = {
+    id: string;
+    name: string;
+    /**
+     * @kyselyType('member' | 'owner')
+     */
+    role: 'member' | 'owner';
+};`
+    );
   }
 );
 
@@ -165,9 +161,9 @@ test("End to end test - separate entrypoints", { timeout: 20000 }, async () => {
     encoding: "utf-8",
   });
   expect(enumFile).toEqual(`export const TestEnum = {
-  A: "A",
-  B: "B",
-  C: "C",
+    A: "A",
+    B: "B",
+    C: "C"
 } as const;
 export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
@@ -264,8 +260,8 @@ test("End to end test - multi-schema support", { timeout: 20000 }, async () => {
   });
 
   expect(typeFile).toContain(`export type DB = {
-  "birds.eagles": Eagle;
-  "mammals.elephants": Elephant;
+    "birds.eagles": Eagle;
+    "mammals.elephants": Elephant;
 };`);
 });
 
@@ -316,7 +312,7 @@ test(
     });
 
     expect(typeFile).toContain(`export type DB = {
-  "mammals.elephants": Elephant;
+    "mammals.elephants": Elephant;
 };`);
   }
 );
@@ -387,17 +383,17 @@ enum Color {
     });
 
     expect(typeFile).toContain(`export namespace Birds {
-  export type Eagle = {`);
+    export type Eagle = {`);
 
     expect(typeFile).toContain(`export namespace Mammals {
-  export const Color = {`);
+    export const Color = {`);
 
     // correctly references the color enum
     expect(typeFile).toContain("color: Mammals.Color;");
 
     expect(typeFile).toContain(`export type DB = {
-  "birds.eagles": Birds.Eagle;
-  "mammals.elephants": Mammals.Elephant;
+    "birds.eagles": Birds.Eagle;
+    "mammals.elephants": Mammals.Elephant;
 };`);
   }
 );
@@ -478,10 +474,10 @@ enum Color {
     });
 
     expect(typeFile).toContain(`export namespace Birds {
-  export type Eagle = {`);
+    export type Eagle = {`);
 
     expect(typeFile).toContain(`export namespace Mammals {
-  export const Color = {`);
+    export const Color = {`);
 
     // outside of enum
     expect(typeFile).toContain("export type Shark = {");
@@ -490,9 +486,9 @@ enum Color {
     expect(typeFile).toContain("color: Mammals.Color;");
 
     expect(typeFile).toContain(`export type DB = {
-  "birds.eagles": Birds.Eagle;
-  "fish.shark": Shark;
-  "mammals.elephants": Mammals.Elephant;
+    "birds.eagles": Birds.Eagle;
+    "fish.shark": Shark;
+    "mammals.elephants": Mammals.Elephant;
 };`);
   }
 );
@@ -564,16 +560,16 @@ enum Color {
     });
 
     expect(typeFile).not.toContain(`export namespace Birds {
-  export type Eagle = {`);
+    export type Eagle = {`);
 
     expect(typeFile).toContain(`export namespace Mammals {
-  export const Color = {`);
+    export const Color = {`);
 
     // correctly references the color enum
     expect(typeFile).toContain("color: Mammals.Color;");
 
     expect(typeFile).toContain(`export type DB = {
-  "mammals.elephants": Mammals.Elephant;
+    "mammals.elephants": Mammals.Elephant;
 };`);
   }
 );
