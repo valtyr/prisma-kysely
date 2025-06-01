@@ -2,9 +2,7 @@
   "compilerOptions": {
     "target": "ES2018",
     "module": "commonjs",
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["esnext"],
     "strict": true,
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
@@ -20,9 +18,7 @@
     "rootDir": "./src",
     "newLine": "lf",
     "paths": {
-      "~/*": [
-        "./src/*"
-      ]
+      "~/*": ["./src/*"]
     },
     "plugins": [
       {
@@ -34,11 +30,6 @@
       }
     ]
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "**/node_modules",
-    "**/dest"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["**/node_modules", "**/dest"]
 }

@@ -1,11 +1,11 @@
-const esbuild = require('esbuild');
+const esbuild = require("esbuild");
 
-console.time('⭐ Built Kysely Prisma generator');
+console.time("⭐ Built Kysely Prisma generator");
 esbuild.build({
-  entryPoints: ['src/bin.ts'],
+  entryPoints: ["src/bin.ts"],
   bundle: true,
-  outfile: 'dist/bin.js',
-  platform: 'node',
-  packages: 'external',
+  outfile: "dist/bin.js",
+  platform: "node",
+  packages: "external",
 });
-console.timeLog('⭐ Built Kysely Prisma generator');
+console.timeLog("⭐ Built Kysely Prisma generator");
