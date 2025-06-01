@@ -52,5 +52,13 @@
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.3"
   },
+  "peerDependencies": {
+    "prisma": "^6.8.2"
+  },
+  "peerDependenciesMeta": {
+    "prisma": {
+      "optional": true
+    }
+  },
   "packageManager": "yarn@1.22.22"
 }
