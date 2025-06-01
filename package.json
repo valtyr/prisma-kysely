@@ -3,7 +3,7 @@
   "version": "1.8.0",
   "description": "Generate Kysely database types from a Prisma schema",
   "repository": {
-    "url": "https://github.com/valtyr/prisma-kysely"
+    "url": "git+https://github.com/valtyr/prisma-kysely.git"
   },
   "license": "MIT",
   "main": "dist/generator.js",
