@@ -40,10 +40,9 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
     return [
       {
         ...model,
-        typeName:
-          groupBySchema
-            ? `${capitalize(schemaName)}.${model.typeName}`
-            : model.typeName,
+        typeName: groupBySchema
+          ? `${capitalize(schemaName)}.${model.typeName}`
+          : model.typeName,
         tableName: model.tableName
           ? `${schemaName}.${model.tableName}`
           : undefined,

@@ -111,7 +111,7 @@ test("it throws an error when unsupported type is encountered", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
-    dbTypeName: "DB",
+      dbTypeName: "DB",
     })
   ).toThrowError(new Error("Unsupported type Json for database sqlite"));
 });

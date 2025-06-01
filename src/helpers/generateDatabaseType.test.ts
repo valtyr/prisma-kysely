@@ -18,7 +18,7 @@ test("it works for plain vanilla type names", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
-    dbTypeName: "DB",
+      dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
@@ -45,7 +45,7 @@ test("it respects camelCase option names", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
-    dbTypeName: "DB",
+      dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
@@ -72,7 +72,7 @@ test("it works for table names with spaces and weird symbols", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
-    dbTypeName: "DB",
+      dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
@@ -101,7 +101,7 @@ test("ensure dbTypeName works", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
-    dbTypeName:random,
+      dbTypeName: random,
     }
   );
   const result = stringifyTsNode(node);
