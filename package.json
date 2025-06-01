@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tspc",
     "dev": "tspc --watch",
-    "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "fix": "prettier --write .",
     "lint": "eslint ./src",
     "prepack": "yarn build",
     "release": "yarn build && yarn changeset publish",

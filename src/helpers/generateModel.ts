@@ -1,5 +1,6 @@
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
+
 import { generateField } from "~/helpers/generateField";
 import { generateFieldType } from "~/helpers/generateFieldType";
 import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
