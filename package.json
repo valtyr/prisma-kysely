@@ -1,29 +1,39 @@
 {
   "name": "prisma-kysely",
+  "version": "1.8.0",
   "description": "Generate Kysely database types from a Prisma schema",
   "repository": {
     "url": "https://github.com/valtyr/prisma-kysely"
   },
-  "version": "1.8.0",
-  "main": "dist/generator.js",
-  "files": [
-    "dist"
-  ],
   "license": "MIT",
+  "main": "dist/generator.js",
   "bin": {
     "prisma-kysely": "dist/bin.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "node dist/bin.js",
-    "dev": "tspc --watch",
     "build": "tspc",
-    "typecheck": "tspc --noemit",
-    "prepack": "yarn build",
+    "dev": "tspc --watch",
+    "edit": "code .",
     "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
     "lint": "eslint ./src",
-    "test": "yarn build && vitest --passWithNoTests --coverage",
+    "prepack": "yarn build",
     "release": "yarn build && yarn changeset publish",
-    "edit": "code ."
+    "start": "node dist/bin.js",
+    "test": "yarn build && vitest --passWithNoTests --coverage",
+    "typecheck": "tspc --noemit"
+  },
+  "prettier": {
+    "importOrder": [
+      "^\\./env$",
+      "<THIRD_PARTY_MODULES>",
+      "^~/.*$",
+      "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
   },
   "dependencies": {
     "@mrleebo/prisma-ast": "^0.7.0",
@@ -52,16 +62,6 @@
     "typescript-transform-paths": "^3.5.5",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^3.1.3"
-  },
-  "prettier": {
-    "importOrder": [
-      "^\\./env$",
-      "<THIRD_PARTY_MODULES>",
-      "^~/.*$",
-      "^[./]"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true
   },
   "packageManager": "yarn@1.22.22"
 }
