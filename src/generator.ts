@@ -59,7 +59,7 @@ generatorHandler({
       [...options.dmmf.datamodel.models, ...implicitManyToManyModels],
       (a, b) => a.name.localeCompare(b.name)
     ).map((m) =>
-      generateModel(m, config, config.groupBySchema, multiSchemaMap)
+      generateModel(m, config, config.groupBySchema,config.defaultSchema, multiSchemaMap)
     );
 
     // Extend model table names with schema names if using multi-schemas

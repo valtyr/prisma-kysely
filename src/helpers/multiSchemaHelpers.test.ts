@@ -60,7 +60,7 @@ test("returns a list of models with schemas appended to the table name", () => {
   expect(result).toEqual([
     { typeName: "Elephant", tableName: "mammals.elephants" },
     { typeName: "Eagle", tableName: "birds.eagles" },
-    { typeName: "Fish", tableName: "public.fish" },
+    { typeName: "Fish", tableName: "fish" },
   ]);
 });
 

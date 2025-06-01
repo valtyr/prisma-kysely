@@ -487,8 +487,8 @@ enum Color {
 
     expect(typeFile).toContain(`export type DB = {
     "birds.eagles": Birds.Eagle;
-    "fish.shark": Shark;
     "mammals.elephants": Mammals.Elephant;
+    shark: Shark;
 };`);
   }
 );

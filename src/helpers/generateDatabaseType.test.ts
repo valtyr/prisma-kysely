@@ -18,6 +18,7 @@ test("it works for plain vanilla type names", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
+    dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
@@ -44,6 +45,7 @@ test("it respects camelCase option names", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
+    dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
@@ -70,11 +72,41 @@ test("it works for table names with spaces and weird symbols", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
+    dbTypeName: "DB",
     }
   );
   const result = stringifyTsNode(node);
 
   expect(result).toEqual(`export type DB = {
+    Bookmark: Bookmark;
+    User: User;
+    "user session_*table ;D": Session;
+};`);
+});
+
+test("ensure dbTypeName works", () => {
+  const random = `T${Math.random().toString(36).substring(2, 15)}`;
+
+  const node = generateDatabaseType(
+    [
+      { tableName: "Bookmark", typeName: "Bookmark" },
+      { tableName: "user session_*table ;D", typeName: "Session" },
+      { tableName: "User", typeName: "User" },
+    ],
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+    dbTypeName:random,
+    }
+  );
+  const result = stringifyTsNode(node);
+
+  expect(result).toEqual(`export type ${random} = {
     Bookmark: Bookmark;
     User: User;
     "user session_*table ;D": Session;

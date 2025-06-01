@@ -35,6 +35,9 @@ export const configValidator = z
     bytesTypeOverride: z.string().optional(),
     unsupportedTypeOverride: z.string().optional(),
 
+    // The DB type name to use in the generated types.
+    dbTypeName: z.string().default("DB"),
+
     // Support the Kysely camel case plugin
     camelCase: booleanStringLiteral.default(false),
 

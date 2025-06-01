@@ -26,6 +26,7 @@ export const generateModel = (
   model: DMMF.Model,
   config: Config,
   groupBySchema: boolean,
+  defaultSchema: string,
   multiSchemaMap?: Map<string, string>
 ): ModelType => {
   const properties = model.fields.flatMap((field) => {
@@ -53,7 +54,7 @@ export const generateModel = (
         name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
           ts.factory.createIdentifier(
-            schemaPrefix
+            schemaPrefix && defaultSchema !== schemaPrefix
               ? `${capitalize(schemaPrefix)}.${field.type}`
               : field.type
           ),

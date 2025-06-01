@@ -97,8 +97,10 @@ test("it generates a model!", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
+      dbTypeName: "DB",
     },
-    false
+    false,
+    "public"
   );
 
   expect(model.tableName).toEqual("User");
@@ -159,8 +161,10 @@ test("it respects camelCase option", () => {
       readOnlyIds: false,
       groupBySchema: false,
       defaultSchema: "public",
+      dbTypeName: "DB",
     },
-    false
+    false,
+    "public"
   );
 
   expect(model.tableName).toEqual("User");

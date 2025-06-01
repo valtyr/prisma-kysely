@@ -28,7 +28,7 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
   return models.flatMap((model) => {
     const schemaName = multiSchemaMap?.get(model.typeName);
 
-    if (!schemaName) {
+    if (!schemaName || schemaName === defaultSchema) {
       return model;
     }
 
@@ -41,7 +41,7 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
       {
         ...model,
         typeName:
-          groupBySchema && schemaName !== defaultSchema
+          groupBySchema
             ? `${capitalize(schemaName)}.${model.typeName}`
             : model.typeName,
         tableName: model.tableName
