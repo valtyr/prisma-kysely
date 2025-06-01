@@ -20,10 +20,10 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -41,10 +41,10 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -63,10 +63,10 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -83,7 +83,7 @@ jobs:
 
       - name: 💬 Post a check explaining the issue
         if: ${{ failure() && steps.diffCheck.conclusion == 'failure' }}
-        uses: LouisBrunner/checks-action@v1.1.1
+        uses: LouisBrunner/checks-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: 🧹 Check all files are formatted correctly
