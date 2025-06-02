@@ -28,13 +28,18 @@ export const convertToMultiSchemaModels = <const T extends ModelLike>(
   return models.flatMap((model) => {
     const schemaName = multiSchemaMap?.get(model.typeName);
 
-    if (!schemaName || schemaName === defaultSchema) {
+    if (!schemaName) {
       return model;
     }
 
     // Filter out models that don't match the schema filter
     if (filterBySchema && !filterBySchema.has(schemaName)) {
       return [];
+    }
+
+    // If the schema is the default schema, we don't need to modify the model
+    if (schemaName === defaultSchema) {
+      return model;
     }
 
     return [

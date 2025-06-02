@@ -48,9 +48,12 @@ generatorHandler({
       options.dmmf.datamodel.models
     );
 
+    const hasMultiSchema = options.datasources.some(
+      (d) => d.schemas.length > 0
+    );
+
     const multiSchemaMap =
-      config.groupBySchema ||
-      options.generator.previewFeatures?.includes("multiSchema")
+      config.groupBySchema || hasMultiSchema
         ? parseMultiSchemaMap(options.datamodel)
         : undefined;
 
@@ -69,10 +72,7 @@ generatorHandler({
     );
 
     // Extend model table names with schema names if using multi-schemas
-    if (
-      options.generator.previewFeatures?.includes("multiSchema") ||
-      options.datasources.some((d) => d.schemas.length > 0)
-    ) {
+    if (hasMultiSchema) {
       const filterBySchema = config.filterBySchema
         ? new Set(config.filterBySchema)
         : null;
