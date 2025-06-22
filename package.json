@@ -6,6 +6,20 @@
     "url": "git+https://github.com/valtyr/prisma-kysely.git"
   },
   "license": "MIT",
+  "author": {
+    "name": "Valtyr Orn Kjartansson",
+    "url": "http://valtyr.is"
+  },
+  "contributors": [
+    {
+      "name": "Alistair Smith",
+      "url": "https://alistair.sh"
+    },
+    {
+      "name": "Arthur Fiorette",
+      "url": "https://arthur.place"
+    }
+  ],
   "main": "dist/generator.js",
   "bin": {
     "prisma-kysely": "dist/bin.js"
