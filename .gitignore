@@ -10,3 +10,5 @@ pnpm-debug.log
 src/generated/prisma
 prisma
 prisma-old
+
+/src/generated/prisma

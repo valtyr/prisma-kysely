@@ -2,4 +2,4 @@
 "prisma-kysely": major
 ---
 
-Support for prisma 6.8.2
+Support for prisma 6.10.1
