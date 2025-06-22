@@ -23,9 +23,10 @@ export function generateImplicitManyToManyModels(
 ): DMMF.Model[] {
   const manyToManyFields = filterManyToManyRelationFields(models);
 
-  if (manyToManyFields.length === 0) {
+  if (!manyToManyFields.length) {
     return [];
   }
+
   return generateModels(manyToManyFields, models, []);
 }
 
@@ -35,6 +36,7 @@ function generateModels(
   manyToManyTables: DMMF.Model[] = []
 ): DMMF.Model[] {
   const manyFirst = manyToManyFields.shift();
+
   if (!manyFirst) {
     return manyToManyTables;
   }
@@ -73,14 +75,14 @@ function generateJoinFields(
   if (fields.length !== 2) throw new Error("Huh?");
 
   const sortedFields = sorted(fields, (a, b) => a.type.localeCompare(b.type));
-  const A = sortedFields[0];
-  const B = sortedFields[1];
+  const joinedA = getJoinIdField(sortedFields[0], models);
+  const joinedB = getJoinIdField(sortedFields[1], models);
 
   return [
     {
       name: "A",
-      type: getJoinIdType(A, models),
-      kind: "scalar",
+      type: joinedA.type,
+      kind: joinedA.kind,
       isRequired: true,
       isList: false,
       isUnique: false,
@@ -90,8 +92,8 @@ function generateJoinFields(
     },
     {
       name: "B",
-      type: getJoinIdType(B, models),
-      kind: "scalar",
+      type: joinedB.type,
+      kind: joinedB.kind,
       isRequired: true,
       isList: false,
       isUnique: false,
@@ -102,17 +104,17 @@ function generateJoinFields(
   ];
 }
 
-function getJoinIdType(
+function getJoinIdField(
   joinField: DMMF.Field,
   models: readonly DMMF.Model[]
-): string {
+): DMMF.Field {
   const joinedModel = models.find((m) => m.name === joinField.type);
   if (!joinedModel) throw new Error("Could not find referenced model");
 
   const idField = joinedModel.fields.find((f) => f.isId);
   if (!idField) throw new Error("No ID field on referenced model");
 
-  return idField.type;
+  return idField;
 }
 
 function filterManyToManyRelationFields(models: readonly DMMF.Model[]) {
