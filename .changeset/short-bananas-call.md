@@ -1,5 +1,5 @@
 ---
-"@arthurfiorette/prisma-kysely": minor
+"prisma-kysely": minor
 ---
 
 Add dbTypeName
