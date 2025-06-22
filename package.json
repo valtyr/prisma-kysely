@@ -1,5 +1,5 @@
 {
-  "name": "@arthurfiorette/prisma-kysely",
+  "name": "prisma-kysely",
   "version": "2.0.0",
   "description": "Generate Kysely database types from a Prisma schema",
   "repository": {
