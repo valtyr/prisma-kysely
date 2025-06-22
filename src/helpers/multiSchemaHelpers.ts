@@ -9,6 +9,14 @@ type ModelLike = {
   schema?: string;
 };
 
+export type ConvertToMultiSchemaModelsOptions<T> = {
+  models: T[];
+  groupBySchema: boolean;
+  defaultSchema: string;
+  filterBySchema: Set<string> | null;
+  multiSchemaMap?: Map<string, string>;
+};
+
 /**
  * Appends schema names to the table names of models.
  *
@@ -18,13 +26,13 @@ type ModelLike = {
  * @param filterBySchema set of schema names to filter by. Use `null` to disable filtering.
  * @returns list of models with schema names appended to the table names ("schema.table")
  */
-export const convertToMultiSchemaModels = <const T extends ModelLike>(
-  models: T[],
-  groupBySchema: boolean,
-  defaultSchema: string,
-  filterBySchema: Set<string> | null,
-  multiSchemaMap?: Map<string, string>
-): T[] => {
+export const convertToMultiSchemaModels = <const T extends ModelLike>({
+  defaultSchema,
+  filterBySchema,
+  groupBySchema,
+  models,
+  multiSchemaMap,
+}: ConvertToMultiSchemaModelsOptions<T>): T[] => {
   return models.flatMap((model) => {
     const schemaName = multiSchemaMap?.get(model.typeName);
 

@@ -22,12 +22,16 @@ export type ModelType = {
   schema?: string;
 };
 
+export type GenerateModelOptions = {
+  groupBySchema: boolean;
+  defaultSchema: string;
+  multiSchemaMap?: Map<string, string>;
+};
+
 export const generateModel = (
   model: DMMF.Model,
   config: Config,
-  groupBySchema: boolean,
-  defaultSchema: string,
-  multiSchemaMap?: Map<string, string>
+  { defaultSchema, groupBySchema, multiSchemaMap }: GenerateModelOptions
 ): ModelType => {
   const properties = model.fields.flatMap((field) => {
     const isGenerated =

@@ -49,13 +49,13 @@ test("returns a list of models with schemas appended to the table name", () => {
     { typeName: "Fish", tableName: "fish" },
   ];
 
-  const result = convertToMultiSchemaModels(
-    initialModels,
-    false,
-    "public",
-    null,
-    parseMultiSchemaMap(testDataModel)
-  );
+  const result = convertToMultiSchemaModels({
+    models: initialModels,
+    groupBySchema: false,
+    defaultSchema: "public",
+    filterBySchema: null,
+    multiSchemaMap: parseMultiSchemaMap(testDataModel),
+  });
 
   expect(result).toEqual([
     { typeName: "Elephant", tableName: "mammals.elephants" },
@@ -70,13 +70,13 @@ test("returns a list of models with schemas appended to the table name filtered 
     { typeName: "Eagle", tableName: "eagles" },
   ];
 
-  const result = convertToMultiSchemaModels(
-    initialModels,
-    false,
-    "public",
-    new Set(["mammals"]),
-    parseMultiSchemaMap(testDataModel)
-  );
+  const result = convertToMultiSchemaModels({
+    models: initialModels,
+    groupBySchema: false,
+    defaultSchema: "public",
+    filterBySchema: new Set(["mammals"]),
+    multiSchemaMap: parseMultiSchemaMap(testDataModel),
+  });
 
   expect(result).toEqual([
     { typeName: "Elephant", tableName: "mammals.elephants" },

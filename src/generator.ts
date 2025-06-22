@@ -62,13 +62,11 @@ generatorHandler({
       [...options.dmmf.datamodel.models, ...implicitManyToManyModels],
       (a, b) => a.name.localeCompare(b.name)
     ).map((m) =>
-      generateModel(
-        m,
-        config,
-        config.groupBySchema,
-        config.defaultSchema,
-        multiSchemaMap
-      )
+      generateModel(m, config, {
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
+        multiSchemaMap,
+      })
     );
 
     // Extend model table names with schema names if using multi-schemas
@@ -77,21 +75,21 @@ generatorHandler({
         ? new Set(config.filterBySchema)
         : null;
 
-      models = convertToMultiSchemaModels(
+      models = convertToMultiSchemaModels({
         models,
-        config.groupBySchema,
-        config.defaultSchema,
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
         filterBySchema,
-        multiSchemaMap
-      );
+        multiSchemaMap,
+      });
 
-      enums = convertToMultiSchemaModels(
-        enums,
-        config.groupBySchema,
-        config.defaultSchema,
+      enums = convertToMultiSchemaModels({
+        models: enums,
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
         filterBySchema,
-        multiSchemaMap
-      );
+        multiSchemaMap,
+      });
     }
 
     // Generate the database type that ties it all together
