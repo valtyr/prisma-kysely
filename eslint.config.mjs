@@ -15,7 +15,12 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-  globalIgnores(["prisma/**/*.ts", "**/*.test.ts"]),
+  globalIgnores([
+    "prisma/**/*.ts",
+    "**/*.test.ts",
+    "./eslint.config.mjs",
+    "./vitest.config.mts",
+  ]),
   {
     extends: compat.extends("plugin:@typescript-eslint/recommended"),
 
