@@ -19,6 +19,7 @@ export function generateFiles(opts: {
   databaseType: TypeAliasDeclaration;
   groupBySchema: boolean;
   defaultSchema: string;
+  importExtension: string;
 }) {
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
@@ -54,7 +55,7 @@ export function generateFiles(opts: {
       [...opts.models.map((m) => m.definition), opts.databaseType],
       {
         withEnumImport: {
-          importPath: `./${path.parse(opts.enumsOutfile).name}`,
+          importPath: `./${path.parse(opts.enumsOutfile).name}${opts.importExtension}`,
           names: opts.enumNames,
         },
         withLeader: true,

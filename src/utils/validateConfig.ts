@@ -21,6 +21,7 @@ export const configValidator = z
 
     // Output overrides
     fileName: z.string().optional().default("types.ts"),
+    importExtension: z.string().default(""),
     enumFileName: z.string().optional(),
 
     // Typescript type overrides
