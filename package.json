@@ -39,16 +39,16 @@
     "typecheck": "tspc --noemit"
   },
   "dependencies": {
-    "@mrleebo/prisma-ast": "^0.12.1",
-    "@prisma/generator-helper": "6.10.1",
-    "@prisma/internals": "6.10.1",
+    "@mrleebo/prisma-ast": "^0.13.0",
+    "@prisma/generator-helper": "6.12.0",
+    "@prisma/internals": "6.12.0",
     "typescript": "^5.8.3",
-    "zod": "^3.25.67"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.5",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
-    "@types/node": "24.0.3",
+    "@types/node": "24.0.15",
     "@types/pg": "^8.15.4",
     "@types/prettier": "3.0.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
@@ -60,14 +60,14 @@
     "mysql2": "^3.14.1",
     "pg": "^8.16.2",
     "prettier": "^3.5.3",
-    "prisma": "6.10.1",
+    "prisma": "6.12.0",
     "ts-patch": "^3.3.0",
     "typescript-transform-paths": "^3.5.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "prisma": "~6.10"
+    "prisma": "~6.12"
   },
   "packageManager": "yarn@1.22.22"
 }
