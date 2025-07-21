@@ -34,7 +34,7 @@ test("End to end test", { timeout: 20000 }, async () => {
     generator kysely {
         provider  = "node ./dist/bin.js"
     }
-    
+
     model TestUser {
         id          String @id
         name        String
@@ -43,7 +43,7 @@ test("End to end test", { timeout: 20000 }, async () => {
         updatedAt   DateTime
         sprockets   Sprocket[]
     }
-    
+
     model Sprocket {
         id          Int @id
         users       TestUser[]
@@ -83,7 +83,7 @@ test(
     generator kysely {
         provider  = "node ./dist/bin.js"
     }
-    
+
     model TestUser {
         id          String @id
         name        String
@@ -136,7 +136,7 @@ test("End to end test - separate entrypoints", { timeout: 20000 }, async () => {
         B
         C
     }
-    
+
     model TestUser {
         id          String @id
         name        String
@@ -188,7 +188,7 @@ test(
         provider  = "node ./dist/bin.js"
         enumFileName = "enums.ts"
     }
-    
+
     model TestUser {
         id          String @id
         name        String
@@ -228,25 +228,25 @@ test("End to end test - multi-schema support", { timeout: 20000 }, async () => {
         provider  = "node ./dist/bin.js"
         previewFeatures = ["multiSchema"]
     }
-    
+
     datasource db {
         provider = "postgresql"
         schemas  = ["mammals", "birds"]
         url      = env("TEST_DATABASE_URL")
     }
-    
+
     model Elephant {
         id   Int    @id
         name String
-    
+
         @@map("elephants")
         @@schema("mammals")
     }
-    
+
     model Eagle {
         id   Int    @id
         name String
-    
+
         @@map("eagles")
         @@schema("birds")
     }`
@@ -280,25 +280,25 @@ test(
         previewFeatures = ["multiSchema"]
         filterBySchema = ["mammals"]
     }
-    
+
     datasource db {
         provider = "postgresql"
         schemas  = ["mammals", "birds"]
         url      = env("TEST_DATABASE_URL")
     }
-    
+
     model Elephant {
         id   Int    @id
         name String
-    
+
         @@map("elephants")
         @@schema("mammals")
     }
-    
+
     model Eagle {
         id   Int    @id
         name String
-    
+
         @@map("eagles")
         @@schema("birds")
     }`
@@ -570,6 +570,92 @@ enum Color {
 
     expect(typeFile).toContain(`export type DB = {
     "mammals.elephants": Mammals.Elephant;
+};`);
+  }
+);
+
+test(
+  "End to end test - multi-schema with views support",
+  { timeout: 20000 },
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider postgresql");
+
+    // Set up a schema with views in different schemas
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `generator kysely {
+        provider        = "node ./dist/bin.js"
+        previewFeatures = ["multiSchema", "views"]
+    }
+
+    datasource db {
+        provider = "postgresql"
+        schemas  = ["public", "analytics"]
+        url      = env("TEST_DATABASE_URL")
+    }
+
+    model User {
+        id      Int    @id
+        name    String
+        email   String
+        posts   Post[]
+
+        @@schema("public")
+    }
+
+    model Post {
+        id       Int    @id
+        title    String
+        content  String
+        authorId Int
+        author   User   @relation(fields: [authorId], references: [id])
+
+        @@schema("public")
+    }
+
+    view UserStats {
+        id        Int    @unique
+        name      String
+        postCount Int
+
+        @@schema("analytics")
+    }
+
+    view PostSummary {
+        id      Int    @unique
+        title   String
+        author  String
+
+        @@schema("public")
+    }`
+    );
+
+    await exec("yarn prisma generate");
+
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    // Verify that views are properly prefixed with their schema names
+    expect(typeFile).toContain(`export type DB = {
+    "analytics.UserStats": UserStats;
+    Post: Post;
+    PostSummary: PostSummary;
+    User: User;
+};`);
+
+    // Verify view types are generated correctly
+    expect(typeFile).toContain(`export type UserStats = {
+    id: number;
+    name: string;
+    postCount: number;
+};`);
+
+    expect(typeFile).toContain(`export type PostSummary = {
+    id: number;
+    title: string;
+    author: string;
 };`);
   }
 );

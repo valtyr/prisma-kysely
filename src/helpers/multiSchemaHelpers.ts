@@ -91,12 +91,19 @@ export function parseMultiSchemaMap(dataModelStr: string) {
   const multiSchemaMap = new Map<string, string>();
 
   for (const block of parsedSchema.list) {
-    if (block.type !== "model" && block.type !== "enum") {
+    if (
+      // Model
+      block.type !== "model" &&
+      block.type !== "view" &&
+      block.type !== "type" &&
+      // Enum
+      block.type !== "enum"
+    ) {
       continue;
     }
 
     const properties =
-      block.type === "model" ? block.properties : block.enumerators;
+      block.type === "enum" ? block.enumerators : block.properties;
 
     const schemaProperty = properties.find(
       (prop): prop is BlockAttribute =>
