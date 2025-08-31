@@ -8,6 +8,10 @@ on:
 permissions:
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     name: 🧪 Tests
@@ -16,12 +20,12 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
@@ -37,12 +41,12 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
@@ -59,12 +63,12 @@ jobs:
       contents: read
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
@@ -79,7 +83,7 @@ jobs:
 
       - name: 💬 Post a check explaining the issue
         if: ${{ failure() && steps.diffCheck.conclusion == 'failure' }}
-        uses: LouisBrunner/checks-action@v1.1.1
+        uses: LouisBrunner/checks-action@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: 🧹 Check all files are formatted correctly

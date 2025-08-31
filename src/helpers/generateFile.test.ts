@@ -13,7 +13,7 @@ test("generates a file!", () => {
     withEnumImport: { importPath: "./enums", names: ["Foo", "Bar"] },
     withLeader: false,
   });
-  console.log(resultwithEnumImport);
+
   expect(resultwithEnumImport).toContain(
     'import type { Foo, Bar } from "./enums";'
   );

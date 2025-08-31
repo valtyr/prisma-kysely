@@ -21,6 +21,7 @@ export const configValidator = z
 
     // Output overrides
     fileName: z.string().optional().default("types.ts"),
+    importExtension: z.string().default(""),
     enumFileName: z.string().optional(),
 
     // Typescript type overrides
@@ -35,17 +36,36 @@ export const configValidator = z
     bytesTypeOverride: z.string().optional(),
     unsupportedTypeOverride: z.string().optional(),
 
+    // The DB type name to use in the generated types.
+    dbTypeName: z.string().default("DB"),
+
     // Support the Kysely camel case plugin
     camelCase: booleanStringLiteral.default(false),
 
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
+
+    // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
+    groupBySchema: booleanStringLiteral.default(false),
+
+    // Which schema should not be wrapped in a namespace
+    defaultSchema: z.string().default("public"),
+
+    // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
+    filterBySchema: z.array(z.string()).optional(),
   })
   .strict()
   .transform((config) => {
     if (!config.enumFileName) {
       config.enumFileName = config.fileName;
     }
+
+    if (config.groupBySchema && config.enumFileName !== config.fileName) {
+      // would require https://www.typescriptlang.org/docs/handbook/namespaces.html#splitting-across-files
+      // which is considered a bad practice
+      throw new Error("groupBySchema is not compatible with enumFileName");
+    }
+
     return config as Omit<typeof config, "enumFileName"> &
       Required<Pick<typeof config, "enumFileName">>;
   });
@@ -64,6 +84,7 @@ export const validateConfig = (config: unknown) => {
     Object.values(parsed.error.flatten().formErrors).forEach((value) => {
       logger.error(`${value}`);
     });
+
     process.exit(1);
   }
   return parsed.data;

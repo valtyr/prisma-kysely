@@ -1,0 +1,7 @@
+{
+  "importOrder": ["^\\./env$", "<THIRD_PARTY_MODULES>", "^~/.*$", "^[./]"],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "trailingComma": "es5",
+  "plugins": ["@trivago/prettier-plugin-sort-imports"]
+}

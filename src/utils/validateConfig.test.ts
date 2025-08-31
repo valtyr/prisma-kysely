@@ -7,8 +7,8 @@ afterEach(() => {
 });
 
 test("should exit with error code when invalid config encountered", () => {
-  const mockExitFunction = vi.fn<never, never>();
-  const consoleErrorFunction = vi.fn();
+  const mockExitFunction = vi.fn<typeof process.exit>();
+  const consoleErrorFunction = vi.fn<typeof console.error>();
 
   process.exit = mockExitFunction;
   console.error = consoleErrorFunction;

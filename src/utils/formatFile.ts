@@ -14,7 +14,7 @@ export const formatFile = async (content: string) => {
     });
 
     return formatted;
-  } catch (e) {}
+  } catch {}
 
   return content;
 };

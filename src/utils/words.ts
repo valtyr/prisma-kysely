@@ -133,3 +133,7 @@ function memoize(func: StringMapper): StringMapper {
     return mapped;
   };
 }
+
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

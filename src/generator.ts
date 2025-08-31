@@ -1,6 +1,6 @@
 import type { GeneratorOptions } from "@prisma/generator-helper";
 import { generatorHandler } from "@prisma/generator-helper";
-import path from "path";
+import path from "node:path";
 
 import { GENERATOR_NAME } from "~/constants";
 import { generateDatabaseType } from "~/helpers/generateDatabaseType";
@@ -11,10 +11,13 @@ import { sorted } from "~/utils/sorted";
 import { validateConfig } from "~/utils/validateConfig";
 import { writeFileSafely } from "~/utils/writeFileSafely";
 
-import { generateEnumType } from "./helpers/generateEnumType";
-import { convertToMultiSchemaModels } from "./helpers/multiSchemaHelpers";
+import { type EnumType, generateEnumType } from "./helpers/generateEnumType";
+import {
+  convertToMultiSchemaModels,
+  parseMultiSchemaMap,
+} from "./helpers/multiSchemaHelpers";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { version } = require("../package.json");
 
 generatorHandler({
@@ -33,9 +36,9 @@ generatorHandler({
     });
 
     // Generate enum types
-    const enums = options.dmmf.datamodel.enums.flatMap(({ name, values }) => {
-      return generateEnumType(name, values);
-    });
+    let enums = options.dmmf.datamodel.enums
+      .map(({ name, values }) => generateEnumType(name, values))
+      .filter((e): e is EnumType => !!e);
 
     // Generate DMMF models for implicit many to many tables
     //
@@ -45,31 +48,64 @@ generatorHandler({
       options.dmmf.datamodel.models
     );
 
+    const hasMultiSchema = options.datasources.some(
+      (d) => d.schemas.length > 0
+    );
+
+    const multiSchemaMap =
+      config.groupBySchema || hasMultiSchema
+        ? parseMultiSchemaMap(options.datamodel)
+        : undefined;
+
     // Generate model types
     let models = sorted(
       [...options.dmmf.datamodel.models, ...implicitManyToManyModels],
       (a, b) => a.name.localeCompare(b.name)
-    ).map((m) => generateModel(m, config));
+    ).map((m) =>
+      generateModel(m, config, {
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
+        multiSchemaMap,
+      })
+    );
 
     // Extend model table names with schema names if using multi-schemas
-    if (options.generator.previewFeatures?.includes("multiSchema")) {
-      models = convertToMultiSchemaModels(models, options.datamodel);
+    if (hasMultiSchema) {
+      const filterBySchema = config.filterBySchema
+        ? new Set(config.filterBySchema)
+        : null;
+
+      models = convertToMultiSchemaModels({
+        models,
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
+        filterBySchema,
+        multiSchemaMap,
+      });
+
+      enums = convertToMultiSchemaModels({
+        models: enums,
+        groupBySchema: config.groupBySchema,
+        defaultSchema: config.defaultSchema,
+        filterBySchema,
+        multiSchemaMap,
+      });
     }
 
     // Generate the database type that ties it all together
-    const databaseType = generateDatabaseType(
-      models.map((m) => ({ tableName: m.tableName, typeName: m.typeName })),
-      config
-    );
+    const databaseType = generateDatabaseType(models, config);
 
     // Parse it all into a string. Either 1 or 2 files depending on user config
     const files = generateFiles({
       databaseType,
-      modelDefinitions: models.map((m) => m.definition),
       enumNames: options.dmmf.datamodel.enums.map((e) => e.name),
+      models,
       enums,
       enumsOutfile: config.enumFileName,
       typesOutfile: config.fileName,
+      groupBySchema: config.groupBySchema,
+      defaultSchema: config.defaultSchema,
+      importExtension: config.importExtension,
     });
 
     // And write it to a file!

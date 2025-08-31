@@ -1,67 +1,73 @@
 {
   "name": "prisma-kysely",
+  "version": "1.8.0",
   "description": "Generate Kysely database types from a Prisma schema",
   "repository": {
-    "url": "https://github.com/valtyr/prisma-kysely"
+    "url": "git+https://github.com/valtyr/prisma-kysely.git"
   },
-  "version": "1.8.0",
-  "main": "dist/generator.js",
-  "files": [
-    "dist"
-  ],
   "license": "MIT",
+  "author": {
+    "name": "Valtyr Orn Kjartansson",
+    "url": "http://valtyr.is"
+  },
+  "contributors": [
+    {
+      "name": "Alistair Smith",
+      "url": "https://alistair.sh"
+    },
+    {
+      "name": "Arthur Fiorette",
+      "url": "https://arthur.place"
+    }
+  ],
+  "main": "dist/generator.js",
   "bin": {
     "prisma-kysely": "dist/bin.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "start": "node dist/bin.js",
-    "dev": "tspc --watch",
     "build": "tspc",
-    "typecheck": "tspc --noemit",
-    "prepack": "yarn build",
-    "fix": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "dev": "tspc --watch",
+    "fix": "prettier --write .",
     "lint": "eslint ./src",
-    "test": "yarn build && vitest --passWithNoTests --coverage",
+    "prepack": "yarn build",
     "release": "yarn build && yarn changeset publish",
-    "edit": "code ."
+    "start": "node dist/bin.js",
+    "test": "yarn build && vitest --passWithNoTests --coverage",
+    "typecheck": "tspc --noemit"
   },
   "dependencies": {
-    "@mrleebo/prisma-ast": "^0.7.0",
-    "@prisma/generator-helper": "5.3.1",
-    "@prisma/internals": "5.3.1",
-    "typescript": "^5.2.2",
-    "zod": "^3.22.2"
+    "@mrleebo/prisma-ast": "^0.13.0",
+    "@prisma/generator-helper": "6.15.0",
+    "@prisma/internals": "6.15.0",
+    "typescript": "^5.9.2",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.26.2",
-    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
-    "@types/better-sqlite3": "^7.6.5",
-    "@types/node": "20.6.2",
-    "@types/pg": "^8.10.2",
-    "@types/prettier": "2.7.3",
-    "@typescript-eslint/eslint-plugin": "^6.7.0",
-    "@typescript-eslint/parser": "^6.7.0",
-    "@vitest/coverage-v8": "^0.34.4",
-    "better-sqlite3": "^8.6.0",
-    "eslint": "^8.49.0",
-    "kysely": "^0.26.3",
-    "mysql2": "^3.6.1",
-    "pg": "^8.11.3",
-    "prettier": "^2.8.8",
-    "prisma": "5.3.1",
-    "ts-patch": "^3.0.2",
-    "typescript-transform-paths": "^3.4.6",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^0.34.4"
+    "@changesets/cli": "^2.29.6",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "@types/node": "24.3.0",
+    "@types/pg": "^8.15.5",
+    "@types/prettier": "3.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.41.0",
+    "@typescript-eslint/parser": "^8.41.0",
+    "@typescript-eslint/typescript-estree": "^8.41.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.34.0",
+    "kysely": "^0.28.2",
+    "mysql2": "^3.14.1",
+    "pg": "^8.16.2",
+    "prettier": "^3.6.2",
+    "prisma": "6.15.0",
+    "ts-patch": "^3.3.0",
+    "typescript-transform-paths": "^3.5.5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   },
-  "prettier": {
-    "importOrder": [
-      "^\\./env$",
-      "<THIRD_PARTY_MODULES>",
-      "^~/.*$",
-      "^[./]"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true
-  }
+  "peerDependencies": {
+    "prisma": "~6.15"
+  },
+  "packageManager": "yarn@1.22.22"
 }

@@ -83,10 +83,11 @@ test("it generates a model!", () => {
           isUnique: false,
         },
       ],
+      schema: null,
       primaryKey: null,
+      dbName: null,
       uniqueFields: [],
       uniqueIndexes: [],
-      dbName: null,
     },
     {
       databaseProvider: "sqlite",
@@ -94,6 +95,14 @@ test("it generates a model!", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+    },
+    {
+      groupBySchema: false,
+      defaultSchema: "public",
     }
   );
 
@@ -141,10 +150,11 @@ test("it respects camelCase option", () => {
           isUnique: false,
         },
       ],
+      schema: null,
       primaryKey: null,
+      dbName: null,
       uniqueFields: [],
       uniqueIndexes: [],
-      dbName: null,
     },
     {
       databaseProvider: "sqlite",
@@ -152,6 +162,14 @@ test("it respects camelCase option", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+    },
+    {
+      groupBySchema: false,
+      defaultSchema: "public",
     }
   );
 

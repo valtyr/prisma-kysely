@@ -6,6 +6,7 @@ import { generateFieldType } from "~/helpers/generateFieldType";
 import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
 import { normalizeCase } from "~/utils/normalizeCase";
 import type { Config } from "~/utils/validateConfig";
+import { capitalize } from "~/utils/words";
 
 /**
  * Some of Prisma's default values are implemented in
@@ -14,7 +15,24 @@ import type { Config } from "~/utils/validateConfig";
  */
 const defaultTypesImplementedInJS = ["cuid", "uuid"];
 
-export const generateModel = (model: DMMF.Model, config: Config) => {
+export type ModelType = {
+  typeName: string;
+  tableName: string;
+  definition: ts.TypeAliasDeclaration;
+  schema?: string;
+};
+
+export type GenerateModelOptions = {
+  groupBySchema: boolean;
+  defaultSchema: string;
+  multiSchemaMap?: Map<string, string>;
+};
+
+export const generateModel = (
+  model: DMMF.Model,
+  config: Config,
+  { defaultSchema, groupBySchema, multiSchemaMap }: GenerateModelOptions
+): ModelType => {
   const properties = model.fields.flatMap((field) => {
     const isGenerated =
       field.hasDefaultValue &&
@@ -32,12 +50,18 @@ export const generateModel = (model: DMMF.Model, config: Config) => {
 
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
+    const schemaPrefix = groupBySchema && multiSchemaMap?.get(field.type);
+
     if (field.kind === "enum") {
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
         type: ts.factory.createTypeReferenceNode(
-          ts.factory.createIdentifier(field.type),
+          ts.factory.createIdentifier(
+            schemaPrefix && defaultSchema !== schemaPrefix
+              ? `${capitalize(schemaPrefix)}.${field.type}`
+              : field.type
+          ),
           undefined
         ),
         nullable: !field.isRequired,

@@ -5,6 +5,10 @@ on:
 permissions:
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   snapshot:
     name: 💾 Release a snapshot
@@ -12,14 +16,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 🏗 Setup repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: refs/pull/${{ github.event.issue.number }}/head
 
       - name: 🏗 Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: 16.x
+          node-version-file: .nvmrc
           cache: yarn
 
       - name: 📦 Install dependencies
