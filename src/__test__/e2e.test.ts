@@ -575,6 +575,80 @@ enum Color {
 );
 
 test(
+  "End to end test - SQLite with JSON support",
+  { timeout: 20000 },
+  async () => {
+    await exec("yarn prisma init --datasource-provider sqlite");
+
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `datasource db {
+        provider = "sqlite"
+        url      = "file:./dev.db"
+    }
+
+    generator kysely {
+        provider  = "node ./dist/bin.js"
+    }
+
+    model TestUser {
+        id          String   @id
+        name        String
+        metadata    Json     // JSON field supported in SQLite since Prisma 6.2
+        preferences Json?    // Optional JSON field
+
+        /// @kyselyType({ theme: 'light' | 'dark', language: string })
+        settings    Json
+
+        createdAt   DateTime @default(now())
+    }
+
+    model Product {
+        id          Int      @id @default(autoincrement())
+        name        String
+        details     Json     // Product details as JSON
+
+        /// @kyselyType(string[])
+        tags        Json?    // Optional tags as JSON array
+    }`
+    );
+
+    await exec("yarn prisma generate");
+
+    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(generatedSource).toContain(`export type TestUser = {
+    id: string;
+    name: string;
+    metadata: unknown;
+    preferences: unknown | null;
+    /**
+     * @kyselyType({ theme: 'light' | 'dark', language: string })
+     */
+    settings: { theme: 'light' | 'dark', language: string };
+    createdAt: Generated<string>;
+};`);
+
+    expect(generatedSource).toContain(`export type Product = {
+    id: Generated<number>;
+    name: string;
+    details: unknown;
+    /**
+     * @kyselyType(string[])
+     */
+    tags: string[] | null;
+};`);
+
+    expect(generatedSource).toContain(`export type DB = {
+    Product: Product;
+    TestUser: TestUser;
+};`);
+  }
+);
+
+test(
   "End to end test - multi-schema with views support",
   { timeout: 20000 },
   async () => {
