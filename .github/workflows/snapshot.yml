@@ -2,8 +2,12 @@ name: 📸 Snapshot!
 on:
   issue_comment:
     types: [created]
+
 permissions:
+  contents: write
+  issues: write
   pull-requests: write
+  id-token: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -28,14 +32,6 @@ jobs:
 
       - name: 📦 Install dependencies
         run: yarn install
-
-      - name: 🪤 Create .npmrc
-        run: |
-          cat << EOF > "$HOME/.npmrc"
-            //registry.npmjs.org/:_authToken=$NPM_TOKEN
-          EOF
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: 🆓 Release snapshot
         run: |
