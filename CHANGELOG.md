@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 2.1.0
+
+### Minor Changes
+
+- 37bcf6d: Support the `Json` type with SQLite
+
 ## 2.0.0
 
 ### Major Changes
