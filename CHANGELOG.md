@@ -1,5 +1,22 @@
 # prisma-kysely
 
+## 2.0.0
+
+### Major Changes
+
+- 8fab339: Support for prisma 6.10.1
+
+### Minor Changes
+
+- 8fab339: Add `groupBySchema` to group types and enums under a namespace
+- 8fab339: Move from Node 16 to Node 24
+- 8fab339: Add dbTypeName
+
+### Patch Changes
+
+- 8fab339: Use node:sqlite inside tests
+- 8fab339: Handle enum primary keys on many-to-many relationships
+
 ## 1.8.0
 
 ### Minor Changes
