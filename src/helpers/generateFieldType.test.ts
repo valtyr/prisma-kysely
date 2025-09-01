@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
 import { generateFieldType } from "~/helpers/generateFieldType";
+import { Config } from "~/utils/validateConfig";
 
 test("it respects overrides when generating field types", () => {
   const overrides = {
@@ -106,18 +107,22 @@ test("it respects differences between database engines", () => {
   expect(sqliteBooleanType).toEqual("number");
 });
 
-test("it throws an error when unsupported type is encountered", () => {
-  expect(() =>
-    generateFieldType("Json", {
-      databaseProvider: "sqlite",
-      fileName: "types.ts",
-      enumFileName: "types.ts",
-      camelCase: false,
-      readOnlyIds: false,
-      groupBySchema: false,
-      defaultSchema: "public",
-      dbTypeName: "DB",
-      importExtension: "",
-    })
-  ).toThrowError(new Error("Unsupported type Json for database sqlite"));
+test("it supports JSON type in SQLite", () => {
+  const config: Config = {
+    databaseProvider: "sqlite",
+    fileName: "types.ts",
+    enumFileName: "types.ts",
+    camelCase: false,
+    readOnlyIds: false,
+    groupBySchema: false,
+    defaultSchema: "public",
+    dbTypeName: "DB",
+    importExtension: "",
+  };
+
+  expect(generateFieldType("Json", config)).toEqual("unknown");
+
+  expect(
+    generateFieldType("Json", { ...config, jsonTypeOverride: "custom" })
+  ).toEqual("custom");
 });

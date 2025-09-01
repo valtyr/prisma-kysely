@@ -22,6 +22,7 @@ export const sqliteTypeMap: TypeMap = {
   Decimal: "number",
   Float: "number",
   Int: "number",
+  Json: "unknown",
   String: "string",
   Unsupported: "unknown",
 };
