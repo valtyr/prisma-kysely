@@ -106,18 +106,18 @@ test("it respects differences between database engines", () => {
   expect(sqliteBooleanType).toEqual("number");
 });
 
-test("it throws an error when unsupported type is encountered", () => {
-  expect(() =>
-    generateFieldType("Json", {
-      databaseProvider: "sqlite",
-      fileName: "types.ts",
-      enumFileName: "types.ts",
-      camelCase: false,
-      readOnlyIds: false,
-      groupBySchema: false,
-      defaultSchema: "public",
-      dbTypeName: "DB",
-      importExtension: "",
-    })
-  ).toThrowError(new Error("Unsupported type Json for database sqlite"));
+test("it supports JSON type in SQLite", () => {
+  const sqliteJsonType = generateFieldType("Json", {
+    databaseProvider: "sqlite",
+    fileName: "types.ts",
+    enumFileName: "types.ts",
+    camelCase: false,
+    readOnlyIds: false,
+    groupBySchema: false,
+    defaultSchema: "public",
+    dbTypeName: "DB",
+    importExtension: "",
+  });
+
+  expect(sqliteJsonType).toEqual("unknown");
 });
