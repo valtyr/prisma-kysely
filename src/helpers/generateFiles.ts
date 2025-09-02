@@ -14,15 +14,6 @@ type MultiDefsModelType = Omit<ModelType, "definition"> & {
   definitions: ts.TypeAliasDeclaration[];
 };
 
-const toMultiDefsModelType =
-  (exportWrappedTypes: boolean) =>
-  ({ definition, ...rest }: ModelType): MultiDefsModelType => ({
-    ...rest,
-    definitions: exportWrappedTypes
-      ? convertToWrappedTypes(definition)
-      : [definition],
-  });
-
 export function generateFiles(opts: {
   typesOutfile: string;
   enums: EnumType[];
@@ -35,7 +26,14 @@ export function generateFiles(opts: {
   importExtension: string;
   exportWrappedTypes: boolean;
 }) {
-  const models = opts.models.map(toMultiDefsModelType(opts.exportWrappedTypes));
+  const models = opts.models.map(
+    ({ definition, ...rest }: ModelType): MultiDefsModelType => ({
+      ...rest,
+      definitions: opts.exportWrappedTypes
+        ? convertToWrappedTypes(definition)
+        : [definition],
+    })
+  );
 
   // Don't generate a separate file for enums if there are no enums
   if (opts.enumsOutfile === opts.typesOutfile || opts.enums.length === 0) {
