@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 2.2.0
+
+### Minor Changes
+
+- f3d93bc: Introduce the `exportWrappedTypes` option for exporting types wrapped in Kysely's Selectable, Insertable and Updatable helpers
+
 ## 2.1.0
 
 ### Minor Changes
