@@ -106,6 +106,7 @@ generatorHandler({
       groupBySchema: config.groupBySchema,
       defaultSchema: config.defaultSchema,
       importExtension: config.importExtension,
+      exportWrappedTypes: config.exportWrappedTypes,
     });
 
     // And write it to a file!

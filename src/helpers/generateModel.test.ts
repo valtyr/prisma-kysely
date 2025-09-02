@@ -99,6 +99,7 @@ test("it generates a model!", () => {
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
+      exportWrappedTypes: false,
     },
     {
       groupBySchema: false,
@@ -166,6 +167,7 @@ test("it respects camelCase option", () => {
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
+      exportWrappedTypes: false,
     },
     {
       groupBySchema: false,

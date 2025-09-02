@@ -5,6 +5,8 @@ import { normalizeCase } from "~/utils/normalizeCase";
 import { sorted } from "~/utils/sorted";
 import type { Config } from "~/utils/validateConfig";
 
+import { toTableTypeName } from "./wrappedTypeHelpers";
+
 export const generateDatabaseType = (
   models: { tableName: string; typeName: string }[],
   config: Config
@@ -24,12 +26,16 @@ export const generateDatabaseType = (
       ? ts.factory.createIdentifier(caseNormalizedTableName)
       : ts.factory.createStringLiteral(caseNormalizedTableName);
 
+    const typeName = config.exportWrappedTypes
+      ? toTableTypeName(field.typeName)
+      : field.typeName;
+
     return ts.factory.createPropertySignature(
       undefined,
       nameIdentifier,
       undefined,
       ts.factory.createTypeReferenceNode(
-        ts.factory.createIdentifier(field.typeName),
+        ts.factory.createIdentifier(typeName),
         undefined
       )
     );

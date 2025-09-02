@@ -53,6 +53,9 @@ export const configValidator = z
 
     // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
     filterBySchema: z.array(z.string()).optional(),
+
+    // Export Kysely wrapped types such as `Selectable<Model>`
+    exportWrappedTypes: booleanStringLiteral.default(false),
   })
   .strict()
   .transform((config) => {

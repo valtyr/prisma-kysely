@@ -63,6 +63,9 @@ test("End to end test", { timeout: 20000 }, async () => {
 };`);
 
   expect(generatedSource).toContain("_SprocketToTestUser: SprocketToTestUser");
+
+  // Expect no Kysely wrapped types to be exported since we don't enable exportWrappedTypes
+  expect(generatedSource).not.toContain("Insertable");
 });
 
 test(
@@ -730,6 +733,130 @@ test(
     id: number;
     title: string;
     author: string;
+};`);
+  }
+);
+
+test("End to end test - exportWrappedTypes", { timeout: 20000 }, async () => {
+  await exec("yarn prisma init --datasource-provider sqlite");
+
+  await fs.writeFile(
+    "./prisma/schema.prisma",
+    `datasource db {
+          provider = "sqlite"
+          url      = "file:./dev.db"
+      }
+  
+      generator kysely {
+          provider           = "node ./dist/bin.js"
+          exportWrappedTypes = true
+      }
+      
+      model User {
+          id   String @id
+          name String
+      }`
+  );
+
+  await exec("yarn prisma generate");
+
+  const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
+    encoding: "utf-8",
+  });
+
+  expect(generatedSource).toContain("export type UserTable = {");
+  expect(generatedSource).toContain(
+    "export type User = Selectable<UserTable>;"
+  );
+  expect(generatedSource).toContain(
+    "export type NewUser = Insertable<UserTable>;"
+  );
+  expect(generatedSource).toContain(
+    "export type UserUpdate = Updateable<UserTable>;"
+  );
+  expect(generatedSource).toContain(
+    "export type DB = {\n    User: UserTable;\n};"
+  );
+});
+
+test(
+  "End to end test - groupBySchema and exportWrappedTypes support",
+  { timeout: 20000 },
+  async () => {
+    // Initialize prisma:
+    await exec("yarn prisma init --datasource-provider postgresql");
+
+    // Set up a schema
+    await fs.writeFile(
+      "./prisma/schema.prisma",
+      `
+generator kysely {
+    provider             = "node ./dist/bin.js"
+    previewFeatures      = ["multiSchema"]
+    groupBySchema        = true
+    exportWrappedTypes   = true
+}
+
+datasource db {
+    provider = "postgresql"
+    schemas  = ["mammals", "birds", "world"]
+    url      = env("TEST_DATABASE_URL")
+}
+
+model Elephant {
+    id      Int     @id
+    name    String
+    ability Ability @default(WALK)
+    color  Color
+
+    @@map("elephants")
+    @@schema("mammals")
+}
+
+model Eagle {
+    id      Int     @id
+    name    String
+    ability Ability @default(FLY)
+
+    @@map("eagles")
+    @@schema("birds")
+}
+
+enum Ability {
+    FLY
+    WALK
+
+    @@schema("world")
+}
+
+enum Color {
+  GRAY
+  PINK
+
+  @@schema("mammals")
+}
+    `
+    );
+
+    await exec("yarn prisma generate");
+
+    // Shouldn't have an empty import statement
+    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+      encoding: "utf-8",
+    });
+
+    expect(typeFile).toContain(`export namespace Birds {
+    export type EagleTable = {`);
+
+    expect(typeFile).toContain(`export namespace Mammals {
+    export const Color = {`);
+
+    // correctly references the color enum
+    expect(typeFile).toContain("color: Mammals.Color;");
+
+    expect(typeFile).toContain(`export type DB = {
+    "birds.eagles": Birds.EagleTable;
+    "mammals.elephants": Mammals.ElephantTable;
 };`);
   }
 );

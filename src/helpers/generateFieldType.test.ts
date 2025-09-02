@@ -28,6 +28,7 @@ test("it respects overrides when generating field types", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   };
 
   const sourceTypes = [
@@ -60,6 +61,7 @@ test("it respects overrides when generating field types", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   });
 
   expect(node).toEqual("cheese");
@@ -76,6 +78,7 @@ test("it respects differences between database engines", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   });
 
   const mysqlBooleanType = generateFieldType("Boolean", {
@@ -88,6 +91,7 @@ test("it respects differences between database engines", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   });
 
   const sqliteBooleanType = generateFieldType("Boolean", {
@@ -100,6 +104,7 @@ test("it respects differences between database engines", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   });
 
   expect(postgresBooleanType).toEqual("boolean");
@@ -118,6 +123,7 @@ test("it supports JSON type in SQLite", () => {
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
+    exportWrappedTypes: false,
   };
 
   expect(generateFieldType("Json", config)).toEqual("unknown");

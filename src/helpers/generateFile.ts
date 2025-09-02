@@ -5,11 +5,12 @@ const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
 type Options = {
   withEnumImport: false | { importPath: string; names: string[] };
   withLeader: boolean;
+  exportWrappedTypes: boolean;
 };
 
 export const generateFile = (
   statements: readonly ts.Statement[],
-  { withEnumImport, withLeader }: Options
+  { withEnumImport, withLeader, exportWrappedTypes }: Options
 ) => {
   const file = ts.factory.createSourceFile(
     statements,
@@ -21,6 +22,8 @@ export const generateFile = (
 
   const leader = `import type { ColumnType${
     result.includes("GeneratedAlways") ? ", GeneratedAlways" : ""
+  }${
+    exportWrappedTypes ? ", Insertable, Selectable, Updateable" : ""
   } } from "kysely";
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
