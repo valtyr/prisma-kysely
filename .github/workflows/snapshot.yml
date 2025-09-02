@@ -9,7 +9,7 @@ on:
 
 jobs:
   release:
-    name: Release
+    name: Publish snapshot release
     runs-on: ubuntu-latest
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/snapshot')
     steps:
