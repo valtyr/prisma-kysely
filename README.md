@@ -12,8 +12,6 @@ schema"](assets/hero.png)
 
 <br/>
 
-> 🚧 **Library and README in progress...**
-
 Do you like Prisma's migration flow, schema language and DX but not the
 limitations of the Prisma Client? Do you want to harness the raw power of SQL
 without losing the safety of the TypeScript type system?
