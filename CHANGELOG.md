@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 2.2.1
+
+### Patch Changes
+
+- 649f4b7: Bump Prisma to 6.16
+
 ## 2.2.0
 
 ### Minor Changes
