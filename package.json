@@ -40,8 +40,8 @@
   },
   "dependencies": {
     "@mrleebo/prisma-ast": "^0.13.0",
-    "@prisma/generator-helper": "6.15.0",
-    "@prisma/internals": "6.15.0",
+    "@prisma/generator-helper": "6.16.2",
+    "@prisma/internals": "6.16.2",
     "typescript": "^5.9.2",
     "zod": "^4.1.5"
   },
@@ -60,14 +60,14 @@
     "mysql2": "^3.14.1",
     "pg": "^8.16.2",
     "prettier": "^3.6.2",
-    "prisma": "6.15.0",
+    "prisma": "6.16.2",
     "ts-patch": "^3.3.0",
     "typescript-transform-paths": "^3.5.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "prisma": "~6.15"
+    "prisma": "~6.16"
   },
   "packageManager": "yarn@1.22.22"
 }
