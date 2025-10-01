@@ -60,7 +60,7 @@
     "mysql2": "^3.14.1",
     "pg": "^8.16.2",
     "prettier": "^3.6.2",
-    "prisma": "6.16.2",
+    "prisma": "6.16.3",
     "ts-patch": "^3.3.0",
     "typescript-transform-paths": "^3.5.5",
     "vite-tsconfig-paths": "^5.1.4",
