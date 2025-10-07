@@ -39,8 +39,9 @@ without losing the safety of the TypeScript type system?
        fileName = "types.ts"
        // Optionally generate runtime enums to a separate file
        enumFileName = "enums.ts"
-       // Optionally import any additional libraries
+       // Optionally include a custom import section (single or multi-line)
        additionalImports = "import Decimal from 'decimal.js';"
+       // For multi-line, use Prisma's triple-quoted string syntax (see below)
    }
    ```
 
