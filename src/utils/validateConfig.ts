@@ -58,6 +58,9 @@ export const configValidator = z
 
     // Export Kysely wrapped types such as `Selectable<Model>`
     exportWrappedTypes: booleanStringLiteral.default(false),
+
+    // Import any additional libraries. Set to the full import section you want (e.g., "import Decimal from 'decimal.js';", "import { Big } from 'big.js';", multiple imports separated by newlines, etc.)
+    additionalImports: z.string().optional(),
   })
   .strict()
   .transform((config) => {
