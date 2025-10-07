@@ -39,11 +39,47 @@ without losing the safety of the TypeScript type system?
        fileName = "types.ts"
        // Optionally generate runtime enums to a separate file
        enumFileName = "enums.ts"
+       // Optionally import any additional libraries
+       additionalImports = "import Decimal from 'decimal.js';"
    }
    ```
 
 3. Run `prisma migrate dev` or `prisma generate` and use your freshly generated
    types when instantiating Kysely!
+
+### Advanced Import Configuration
+
+The `additionalImports` option supports full import sections, allowing you to import multiple libraries with different syntaxes:
+
+```prisma
+generator kysely {
+    provider = "prisma-kysely"
+    output = "../src/db"
+    fileName = "types.ts"
+    
+    // Import multiple libraries with different syntaxes
+    additionalImports = """
+import Decimal from 'decimal.js';
+import { Big } from 'big.js';
+import * as moment from 'moment';
+import { v4 as uuid } from 'uuid';
+import type { SomeType } from './custom-types';
+"""
+}
+```
+
+This will generate a file that starts with:
+
+```typescript
+import Decimal from 'decimal.js';
+import { Big } from 'big.js';
+import * as moment from 'moment';
+import { v4 as uuid } from 'uuid';
+import type { SomeType } from './custom-types';
+
+import type { ColumnType } from "kysely";
+// ... rest of generated types
+```
 
 ### Motivation
 
@@ -81,6 +117,7 @@ hope it's just as useful for you! 😎
 | `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file.                                                                                                                                                                                                                                                                                 |            |
 | `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        | `false`    |
 | `exportWrappedTypes`     | Kysely wrapped types such as `Selectable<Model>` are also exported as described in the [Kysely documentation](https://kysely.dev/docs/getting-started#types). The exported types follow the naming conventions of the document.                                                                                                                                                     | `false`    |
+| `additionalImports`      | Import any additional libraries. Set to the full import section you want (e.g., `"import Decimal from 'decimal.js';"`, `"import { Big } from 'big.js';"`, multiple imports separated by newlines, etc.). When set, adds the import section to the generated file.                                                                                                                                                |            |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  | `false`    |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |            |
 | `dbTypeName`             | Allows you to override the exported type with all tables                                                                                                                                                                                                                                                                                                                            | `DB`       |
