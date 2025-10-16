@@ -56,6 +56,9 @@ export const configValidator = z
 
     // Export Kysely wrapped types such as `Selectable<Model>`
     exportWrappedTypes: booleanStringLiteral.default(false),
+
+    // Prefix generated files with '// @ts-nocheck' for niche cases like unused imports
+    tsNoCheck: booleanStringLiteral.default(false),
   })
   .strict()
   .transform((config) => {

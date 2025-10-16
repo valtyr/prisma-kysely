@@ -7,6 +7,7 @@ test("generates a file!", () => {
     withEnumImport: false,
     withLeader: true,
     exportWrappedTypes: false,
+    tsNoCheck: false,
   });
   expect(resultwithLeader).toContain('from "kysely";');
   // assert that unnecessary types are not imported
@@ -18,6 +19,7 @@ test("generates a file!", () => {
     withEnumImport: { importPath: "./enums", names: ["Foo", "Bar"] },
     withLeader: false,
     exportWrappedTypes: false,
+    tsNoCheck: false,
   });
 
   expect(resultwithEnumImport).toContain(
@@ -31,8 +33,27 @@ test("generates a file which imports Kysely wrapper types.", () => {
     withEnumImport: false,
     withLeader: true,
     exportWrappedTypes: true,
+    tsNoCheck: false,
   });
   expect(resultwithLeader).toContain(
     ', Insertable, Selectable, Updateable } from "kysely";'
   );
+});
+
+test("generates a file which begins with noCheck", () => {
+  const resultwithLeaderWithCheck = generateFile([], {
+    withEnumImport: false,
+    withLeader: true,
+    exportWrappedTypes: true,
+    tsNoCheck: false,
+  });
+  const resultwithLeaderWithoutCheck = generateFile([], {
+    withEnumImport: false,
+    withLeader: true,
+    exportWrappedTypes: true,
+    tsNoCheck: true,
+  });
+  const noCheckRegex = /^\/\/ @ts-nocheck\n/g;
+  expect(resultwithLeaderWithCheck).not.toMatch(noCheckRegex);
+  expect(resultwithLeaderWithoutCheck).toMatch(noCheckRegex);
 });

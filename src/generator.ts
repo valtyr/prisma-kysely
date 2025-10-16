@@ -107,6 +107,7 @@ generatorHandler({
       defaultSchema: config.defaultSchema,
       importExtension: config.importExtension,
       exportWrappedTypes: config.exportWrappedTypes,
+      tsNoCheck: config.tsNoCheck,
     });
 
     // And write it to a file!
