@@ -15,6 +15,7 @@ test("converts names to camel case when config value is set", () => {
     dbTypeName: "DB",
     importExtension: "",
     exportWrappedTypes: false,
+    tsNoCheck: false,
   });
 
   expect(newName).toEqual("userId");
@@ -33,6 +34,7 @@ test("doesn't convert names to camel case when config value isn't set", () => {
     dbTypeName: "DB",
     importExtension: "",
     exportWrappedTypes: false,
+    tsNoCheck: false,
   });
 
   expect(newName).toEqual("user_id");
