@@ -39,8 +39,8 @@ without losing the safety of the TypeScript type system?
        fileName = "types.ts"
        // Optionally generate runtime enums to a separate file
        enumFileName = "enums.ts"
-       // Optionally include a custom import section (single or multi-line)
-       additionalImports = "import Decimal from 'decimal.js';"
+       // Optionally add content at the start of generated files (imports, pragmas, comments, etc.)
+       filePrefix = "import type { Decimal } from 'decimal.js';"
        // For multi-line, use Prisma's triple-quoted string syntax (see below)
    }
    ```
@@ -48,9 +48,9 @@ without losing the safety of the TypeScript type system?
 3. Run `prisma migrate dev` or `prisma generate` and use your freshly generated
    types when instantiating Kysely!
 
-### Advanced Import Configuration
+### File Prefix Configuration
 
-The `additionalImports` option supports full import sections, allowing you to import multiple libraries with different syntaxes:
+The `filePrefix` option allows you to add custom content at the start of generated files. This is particularly useful for importing custom types and libraries:
 
 ```prisma
 generator kysely {
@@ -58,9 +58,9 @@ generator kysely {
     output = "../src/db"
     fileName = "types.ts"
 
-    // Import multiple libraries with different syntaxes
-    additionalImports = """
-import Decimal from 'decimal.js';
+    // Add custom imports for libraries you need in generated types
+    filePrefix = """
+import type { Decimal } from 'decimal.js';
 import { Big } from 'big.js';
 import * as moment from 'moment';
 import { v4 as uuid } from 'uuid';
@@ -72,14 +72,13 @@ import type { SomeType } from './custom-types';
 This will generate a file that starts with:
 
 ```typescript
-import { Big } from "big.js";
-import Decimal from "decimal.js";
+import type { Decimal } from 'decimal.js';
+import { Big } from 'big.js';
+import * as moment from 'moment';
+import { v4 as uuid } from 'uuid';
+import type { SomeType } from './custom-types';
+
 import type { ColumnType } from "kysely";
-import * as moment from "moment";
-import { v4 as uuid } from "uuid";
-
-import type { SomeType } from "./custom-types";
-
 // ... rest of generated types
 ```
 
@@ -119,7 +118,7 @@ hope it's just as useful for you! 😎
 | `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file.                                                                                                                                                                                                                                                                                 |            |
 | `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        | `false`    |
 | `exportWrappedTypes`     | Kysely wrapped types such as `Selectable<Model>` are also exported as described in the [Kysely documentation](https://kysely.dev/docs/getting-started#types). The exported types follow the naming conventions of the document.                                                                                                                                                     | `false`    |
-| `additionalImports`      | A full import section to prepend to the generated file. Supports any TS import syntax (default, named, namespace, renamed, and `import type`). Single-line strings or multi-line via Prisma triple-quoted strings (`""" ... """`). The content is inserted verbatim; no sorting or deduplication is performed.                                                                      |            |
+| `filePrefix`             | Content to prepend to the start of generated file(s). Useful for custom imports, pragma directives (e.g., `// @ts-nocheck`), comments, or any other content. Supports single-line strings or multi-line via Prisma triple-quoted strings (`""" ... """`). The content is inserted verbatim at the top of the file(s).                                                               |            |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  | `false`    |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |            |
 | `dbTypeName`             | Allows you to override the exported type with all tables                                                                                                                                                                                                                                                                                                                            | `DB`       |

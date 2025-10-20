@@ -123,7 +123,7 @@ generatorHandler({
       defaultSchema: config.defaultSchema,
       importExtension: config.importExtension,
       exportWrappedTypes: config.exportWrappedTypes,
-      additionalImports: config.additionalImports,
+      filePrefix: config.filePrefix,
     });
 
     // And write it to a file!
