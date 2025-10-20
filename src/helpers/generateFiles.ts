@@ -25,7 +25,7 @@ export function generateFiles(opts: {
   defaultSchema: string;
   importExtension: string;
   exportWrappedTypes: boolean;
-  additionalImports?: string;
+  filePrefix?: string;
 }) {
   const models = opts.models.map(
     ({ definition, ...rest }: ModelType): MultiDefsModelType => ({
@@ -55,7 +55,7 @@ export function generateFiles(opts: {
         withEnumImport: false,
         withLeader: true,
         exportWrappedTypes: opts.exportWrappedTypes,
-        additionalImports: opts.additionalImports,
+        filePrefix: opts.filePrefix,
       }),
     };
 
@@ -73,7 +73,7 @@ export function generateFiles(opts: {
         },
         withLeader: true,
         exportWrappedTypes: opts.exportWrappedTypes,
-        additionalImports: opts.additionalImports,
+        filePrefix: opts.filePrefix,
       }
     ),
   };
@@ -88,7 +88,7 @@ export function generateFiles(opts: {
         withEnumImport: false,
         withLeader: false,
         exportWrappedTypes: opts.exportWrappedTypes,
-        additionalImports: opts.additionalImports,
+        filePrefix: opts.filePrefix,
       }
     ),
   };
