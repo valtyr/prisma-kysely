@@ -18,6 +18,7 @@ export default defineConfig([
   globalIgnores([
     "prisma/**/*.ts",
     "**/*.test.ts",
+    "./prisma.config.ts",
     "./eslint.config.mjs",
     "./vitest.config.mts",
   ]),

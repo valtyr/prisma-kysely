@@ -3,10 +3,20 @@ import fs from "node:fs/promises";
 import { promisify } from "node:util";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
-const exec = promisify(execCb);
+const execP = promisify(execCb);
+
+function exec(command: string) {
+  return execP(command, {
+    env: {
+      ...process.env,
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/postgres",
+    },
+  });
+}
 
 beforeEach(async () => {
   await fs.rename("./prisma", "./prisma-old").catch(() => {});
+  await fs.rm("./prisma.config.ts", { force: true });
 });
 
 afterEach(async () => {
@@ -177,8 +187,11 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider sqlite");
+    await exec(
+      'yarn prisma init --datasource-provider sqlite --url="file:./dev.db"'
+    );
 
+    await fs.rm("./prisma.config.ts");
     // Set up a schema
     await fs.writeFile(
       "./prisma/schema.prisma",
