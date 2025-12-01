@@ -14,7 +14,7 @@ jobs:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/snapshot')
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
