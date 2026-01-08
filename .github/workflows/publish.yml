@@ -28,14 +28,17 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install Dependencies
-        run: yarn
+        run: bun install
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn release
+          publish: bun run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: true

@@ -54,8 +54,8 @@ export const preparePrisma = async (dialect: Dialect) => {
     encoding: "utf-8",
   });
   console.log("🪄 Pushing schema to db");
-  await exec("yarn prisma db push --force-reset");
+  await exec("bun prisma db push --force-reset");
 
   console.log("🪄 Generating new types");
-  await exec("yarn prisma generate");
+  await exec("bun prisma generate");
 };

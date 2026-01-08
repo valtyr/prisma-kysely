@@ -9,4 +9,4 @@ pnpm-debug.log
 prisma
 prisma-old
 src/generated/prisma
-yarn-error.log
+bun-error.log

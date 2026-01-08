@@ -3,7 +3,7 @@ node_modules
 tsconfig.json
 README.md
 jest.config.js
-yarn.lock
-yarn-error.log
+bun.lock
+bun-error.log
 .pnpm-debug.log
 dist
