@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 
 import { generateFieldType } from "./generateFieldType.ts";
-import { Config } from "../utils/validateConfig.ts";
+import type { Config } from "../utils/validateConfig.ts";
 
 test("it respects overrides when generating field types", () => {
   const overrides = {
