@@ -29,7 +29,9 @@ async function exec(cmd: string[], cwd: string, env?: Record<string, string>) {
 }
 
 beforeAll(async () => {
-  templateDir = await mkdtemp(path.join(os.tmpdir(), "prisma-kysely-template-"));
+  templateDir = await mkdtemp(
+    path.join(os.tmpdir(), "prisma-kysely-template-")
+  );
   await Bun.write(
     path.join(templateDir, "package.json"),
     JSON.stringify({ dependencies: { prisma: PRISMA_PEER_DEP } })
@@ -49,7 +51,10 @@ async function setupTest() {
   }
 
   async function prismaInit(datasourceProvider: string, url: string) {
-    await symlink(path.join(templateDir, "node_modules"), tempPath("node_modules"));
+    await symlink(
+      path.join(templateDir, "node_modules"),
+      tempPath("node_modules")
+    );
     await Bun.write(
       tempPath("package.json"),
       JSON.stringify({ dependencies: { prisma: PRISMA_PEER_DEP } })
@@ -115,7 +120,9 @@ test("End to end test", async () => {
 
   await t.prisma("generate");
 
-  const generatedSource = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const generatedSource = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(generatedSource).toContain(`export type SprocketToTestUser = {
     A: number;
@@ -152,7 +159,9 @@ test("End to end test - with custom type override", async () => {
 
   await t.prisma("generate");
 
-  const generatedSource = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const generatedSource = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(generatedSource).toContain(
     `export type TestUser = {
@@ -201,11 +210,15 @@ test("End to end test - separate entrypoints", async () => {
   // await t.prisma("db", "push"); // can't push to mysql, enums not supported in sqlite
   await t.prisma("generate"); //   so just generate
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
   expect(typeFile).not.toContain("export const");
   expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
 
-  const enumFile = await Bun.file(t.tempPath("prisma/generated/enums.ts")).text();
+  const enumFile = await Bun.file(
+    t.tempPath("prisma/generated/enums.ts")
+  ).text();
   expect(enumFile).toEqual(`export const TestEnum = {
     A: "A",
     B: "B",
@@ -243,11 +256,15 @@ test("End to end test - separate entrypoints but no enums", async () => {
   await t.prisma("generate");
 
   // Shouldn't have an empty import statement
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
   expect(typeFile).not.toContain('from "./enums"');
 
   // Shouldn't have generated an empty file
-  expect(await Bun.file(t.tempPath("prisma/generated/enums.ts")).exists()).toBe(false);
+  expect(await Bun.file(t.tempPath("prisma/generated/enums.ts")).exists()).toBe(
+    false
+  );
 });
 
 test("End to end test - multi-schema support", async () => {
@@ -285,7 +302,9 @@ test("End to end test - multi-schema support", async () => {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).toContain(`export type DB = {
     "birds.eagles": Eagle;
@@ -329,7 +348,9 @@ test("End to end test - multi-schema and filterBySchema support", async () => {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).toContain(`export type DB = {
     "mammals.elephants": Elephant;
@@ -391,7 +412,9 @@ enum Color {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).toContain(`export namespace Birds {
     export type Eagle = {`);
@@ -473,7 +496,9 @@ enum Color {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).toContain(`export namespace Birds {
     export type Eagle = {`);
@@ -550,7 +575,9 @@ enum Color {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).not.toContain(`export namespace Birds {
     export type Eagle = {`);
@@ -604,7 +631,9 @@ test("End to end test - SQLite with JSON support", async () => {
 
   await t.prisma("generate");
 
-  const generatedSource = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const generatedSource = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(generatedSource).toContain(`export type TestUser = {
     id: string;
@@ -688,7 +717,9 @@ test("End to end test - multi-schema with views support", async () => {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   // Verify that views are properly prefixed with their schema names
   expect(typeFile).toContain(`export type DB = {
@@ -735,7 +766,9 @@ test("End to end test - exportWrappedTypes", async () => {
 
   await t.prisma("generate");
 
-  const generatedSource = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const generatedSource = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(generatedSource).toContain("export type UserTable = {");
   expect(generatedSource).toContain(
@@ -808,7 +841,9 @@ enum Color {
 
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
   expect(typeFile).toContain(`export namespace Birds {
     export type EagleTable = {`);
