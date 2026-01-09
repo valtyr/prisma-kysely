@@ -1,7 +1,7 @@
 import ts, { createPrinter } from "typescript";
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateEnumType } from "./generateEnumType";
+import { generateEnumType } from "./generateEnumType.ts";
 
 test("it generates the enum type", () => {
   const { objectDeclaration, typeDeclaration } = generateEnumType("Name", [

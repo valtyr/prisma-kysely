@@ -1,6 +1,6 @@
 import type { DMMF } from "@prisma/generator-helper";
 
-import { sorted } from "~/utils/sorted";
+import { sorted } from "../utils/sorted.ts";
 
 /*
 

@@ -1,11 +1,11 @@
 import ts from "typescript";
 
-import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
-import { normalizeCase } from "~/utils/normalizeCase";
-import { sorted } from "~/utils/sorted";
-import type { Config } from "~/utils/validateConfig";
+import isValidTSIdentifier from "../utils/isValidTSIdentifier.ts";
+import { normalizeCase } from "../utils/normalizeCase.ts";
+import { sorted } from "../utils/sorted.ts";
+import type { Config } from "../utils/validateConfig.ts";
 
-import { toTableTypeName } from "./wrappedTypeHelpers";
+import { toTableTypeName } from "./wrappedTypeHelpers.ts";
 
 export const generateDatabaseType = (
   models: { tableName: string; typeName: string }[],

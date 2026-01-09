@@ -7,7 +7,7 @@ import type {
 } from "node:sqlite";
 import { DatabaseSync } from "node:sqlite";
 
-import { preparePrisma } from "~/dialectTests/common";
+import { preparePrisma } from "./common.ts";
 
 class KyselyNodeSQLiteDatabase implements SqliteDatabase {
   private readonly database: DatabaseSync;

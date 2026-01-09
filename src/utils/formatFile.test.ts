@@ -1,10 +1,6 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { expect, test } from "bun:test";
 
-import { formatFile } from "~/utils/formatFile";
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
+import { formatFile } from "./formatFile.ts";
 
 test("formats a file!", () => {
   expect(() => {
