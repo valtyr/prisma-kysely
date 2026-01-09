@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 2.3.0
+
+### Minor Changes
+
+- c038a9e: support prisma >=6.2 <7.0
+
 ## 2.2.1
 
 ### Patch Changes
