@@ -29,7 +29,6 @@
       "url": "https://arthur.place"
     }
   ],
-  "main": "dist/generator.js",
   "exports": {
     ".": "./dist/generator.js",
     "./generator": "./dist/generator.js",
@@ -39,7 +38,10 @@
     "prisma-kysely": "dist/bin.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE",
+    "package.json"
   ],
   "scripts": {
     "build": "bunup src/bin.ts src/generator.ts --packages external --format esm --splitting",
