@@ -1,12 +1,12 @@
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
 
-import { generateField } from "~/helpers/generateField";
-import { generateFieldType } from "~/helpers/generateFieldType";
-import { generateTypeOverrideFromDocumentation } from "~/helpers/generateTypeOverrideFromDocumentation";
-import { normalizeCase } from "~/utils/normalizeCase";
-import type { Config } from "~/utils/validateConfig";
-import { capitalize } from "~/utils/words";
+import { generateField } from "./generateField.ts";
+import { generateFieldType } from "./generateFieldType.ts";
+import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFromDocumentation.ts";
+import { normalizeCase } from "../utils/normalizeCase.ts";
+import type { Config } from "../utils/validateConfig.ts";
+import { capitalize } from "../utils/words.ts";
 
 /**
  * Some of Prisma's default values are implemented in

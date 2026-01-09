@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateFile } from "~/helpers/generateFile";
+import { generateFile } from "./generateFile.ts";
 
 test("generates a file!", () => {
   const resultwithLeader = generateFile([], {

@@ -1,7 +1,7 @@
 import ts from "typescript";
 
-import { applyJSDocWorkaround } from "~/utils/applyJSDocWorkaround";
-import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
+import { applyJSDocWorkaround } from "../utils/applyJSDocWorkaround.ts";
+import isValidTSIdentifier from "../utils/isValidTSIdentifier.ts";
 
 type GenerateFieldArgs = {
   name: string;

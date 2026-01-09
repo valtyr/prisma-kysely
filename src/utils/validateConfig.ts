@@ -1,5 +1,7 @@
-import { logger } from "@prisma/internals";
+import prismaInternals from "@prisma/internals";
 import z from "zod";
+
+const { logger } = prismaInternals;
 
 const booleanStringLiteral = z
   .union([z.boolean(), z.literal("true"), z.literal("false")])

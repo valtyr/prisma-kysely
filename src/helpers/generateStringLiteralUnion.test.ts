@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateStringLiteralUnion } from "~/helpers/generateStringLiteralUnion";
-import { stringifyTsNode } from "~/utils/testUtils";
+import { generateStringLiteralUnion } from "./generateStringLiteralUnion.ts";
+import { stringifyTsNode } from "../utils/testUtils.ts";
 
 test("it returns null for 0 items", () => {
   const node = generateStringLiteralUnion([]);

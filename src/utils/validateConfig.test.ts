@@ -1,17 +1,18 @@
-import { afterEach, expect, test, vi } from "vitest";
+import { afterEach, expect, mock, test } from "bun:test";
 
-import { validateConfig } from "./validateConfig";
+import { validateConfig } from "./validateConfig.ts";
+
+const mockExitFunction = mock((() => {}) as typeof process.exit);
+const mockConsoleErrorFunction = mock((() => {}) as typeof console.error);
 
 afterEach(() => {
-  vi.clearAllMocks();
+  mockExitFunction.mockClear();
+  mockConsoleErrorFunction.mockClear();
 });
 
 test("should exit with error code when invalid config encountered", () => {
-  const mockExitFunction = vi.fn<typeof process.exit>();
-  const consoleErrorFunction = vi.fn<typeof console.error>();
-
   process.exit = mockExitFunction;
-  console.error = consoleErrorFunction;
+  console.error = mockConsoleErrorFunction;
 
   validateConfig({
     databaseProvider: "postgers",
@@ -19,5 +20,5 @@ test("should exit with error code when invalid config encountered", () => {
   });
 
   expect(mockExitFunction).toHaveBeenCalled();
-  expect(consoleErrorFunction).toHaveBeenCalled();
+  expect(mockConsoleErrorFunction).toHaveBeenCalled();
 });

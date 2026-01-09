@@ -1,10 +1,10 @@
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
 
-import isValidTSIdentifier from "~/utils/isValidTSIdentifier";
+import isValidTSIdentifier from "../utils/isValidTSIdentifier.ts";
 
-import { generateStringLiteralUnion } from "./generateStringLiteralUnion";
-import { generateTypedReferenceNode } from "./generateTypedReferenceNode";
+import { generateStringLiteralUnion } from "./generateStringLiteralUnion.ts";
+import { generateTypedReferenceNode } from "./generateTypedReferenceNode.ts";
 
 export type EnumType = {
   objectDeclaration: ts.VariableStatement;

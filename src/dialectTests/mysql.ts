@@ -1,7 +1,7 @@
 import { Kysely, MysqlDialect } from "kysely";
 import { createPool } from "mysql2";
 
-import { preparePrisma } from "~/dialectTests/common";
+import { preparePrisma } from "./common.ts";
 
 const main = async () => {
   await preparePrisma("mysql");

@@ -1,9 +1,9 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
 import {
   convertToMultiSchemaModels,
   parseMultiSchemaMap,
-} from "./multiSchemaHelpers";
+} from "./multiSchemaHelpers.ts";
 
 const testDataModel = `generator kysely {
   provider        = "node ./dist/bin.js"

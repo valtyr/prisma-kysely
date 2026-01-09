@@ -1,8 +1,8 @@
 import ts from "typescript";
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateField } from "~/helpers/generateField";
-import { stringifyTsNode } from "~/utils/testUtils";
+import { generateField } from "./generateField.ts";
+import { stringifyTsNode } from "../utils/testUtils.ts";
 
 const stringTypeNode = ts.factory.createTypeReferenceNode(
   ts.factory.createIdentifier("string"),

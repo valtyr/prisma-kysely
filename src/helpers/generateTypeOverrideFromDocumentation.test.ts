@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFromDocumentation";
+import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFromDocumentation.ts";
 
 test("finds a type override", () => {
   const docString =

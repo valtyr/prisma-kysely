@@ -1,6 +1,6 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { normalizeCase } from "~/utils/normalizeCase";
+import { normalizeCase } from "./normalizeCase.ts";
 
 test("converts names to camel case when config value is set", () => {
   const originalName = "user_id";

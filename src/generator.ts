@@ -1,24 +1,24 @@
 import type { GeneratorOptions } from "@prisma/generator-helper";
-import { generatorHandler } from "@prisma/generator-helper";
+import generatorHelper from "@prisma/generator-helper";
 import path from "node:path";
 
-import { GENERATOR_NAME } from "~/constants";
-import { generateDatabaseType } from "~/helpers/generateDatabaseType";
-import { generateFiles } from "~/helpers/generateFiles";
-import { generateImplicitManyToManyModels } from "~/helpers/generateImplicitManyToManyModels";
-import { generateModel } from "~/helpers/generateModel";
-import { sorted } from "~/utils/sorted";
-import { validateConfig } from "~/utils/validateConfig";
-import { writeFileSafely } from "~/utils/writeFileSafely";
-
-import { type EnumType, generateEnumType } from "./helpers/generateEnumType";
+import packageJson from "../package.json" with { type: "json" };
+import { GENERATOR_NAME } from "./constants.ts";
+import { generateDatabaseType } from "./helpers/generateDatabaseType.ts";
+import { type EnumType, generateEnumType } from "./helpers/generateEnumType.ts";
+import { generateFiles } from "./helpers/generateFiles.ts";
+import { generateImplicitManyToManyModels } from "./helpers/generateImplicitManyToManyModels.ts";
+import { generateModel } from "./helpers/generateModel.ts";
 import {
   convertToMultiSchemaModels,
   parseMultiSchemaMap,
-} from "./helpers/multiSchemaHelpers";
+} from "./helpers/multiSchemaHelpers.ts";
+import { sorted } from "./utils/sorted.ts";
+import { validateConfig } from "./utils/validateConfig.ts";
+import { writeFileSafely } from "./utils/writeFileSafely.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { version } = require("../package.json");
+const { version } = packageJson;
+const { generatorHandler } = generatorHelper;
 
 generatorHandler({
   onManifest() {

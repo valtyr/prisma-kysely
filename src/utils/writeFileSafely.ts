@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { formatFile } from "~/utils/formatFile";
+import { formatFile } from "./formatFile.ts";
 
 export const writeFileSafely = async (
   writeLocation: string,

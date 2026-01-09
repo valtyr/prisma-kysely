@@ -1,9 +1,9 @@
 import ts from "typescript";
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { stringifyTsNode } from "~/utils/testUtils";
+import { stringifyTsNode } from "../utils/testUtils.ts";
 
-import { convertToWrappedTypes } from "./wrappedTypeHelpers";
+import { convertToWrappedTypes } from "./wrappedTypeHelpers.ts";
 
 test("it returns Kysely wrapped types", () => {
   const modelDefinition = ts.factory.createTypeAliasDeclaration(

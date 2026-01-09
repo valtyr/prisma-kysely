@@ -2,12 +2,11 @@ import path from "node:path";
 import type { TypeAliasDeclaration } from "typescript";
 import ts from "typescript";
 
-import { generateFile } from "~/helpers/generateFile";
-import { capitalize } from "~/utils/words";
-
-import type { EnumType } from "./generateEnumType";
-import type { ModelType } from "./generateModel";
-import { convertToWrappedTypes } from "./wrappedTypeHelpers";
+import { generateFile } from "./generateFile.ts";
+import type { EnumType } from "./generateEnumType.ts";
+import type { ModelType } from "./generateModel.ts";
+import { convertToWrappedTypes } from "./wrappedTypeHelpers.ts";
+import { capitalize } from "../utils/words.ts";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 type MultiDefsModelType = Omit<ModelType, "definition"> & {
