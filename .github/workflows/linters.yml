@@ -26,13 +26,15 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: 🧪 Run tests
-        run: yarn run test
+        run: bun run test
 
   typecheck:
     name: 🤓 Type checker
@@ -47,13 +49,15 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: 🤓 Run type checker
-        run: yarn run typecheck
+        run: bun run typecheck
 
   lint:
     name: 👮‍♂️ Linters and formatters
@@ -69,17 +73,19 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: yarn
+
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: 📦 Install dependencies
-        run: yarn install
+        run: bun install
 
       - name: 👮‍♂️ Run linters
-        run: yarn run lint
+        run: bun run lint
 
       - name: 💅 Run fixers, and check diff
         id: diffCheck
-        run: yarn run fix && git diff --exit-code -- ':!yarn.lock'
+        run: bun run fix && git diff --exit-code -- ':!bun.lock'
 
       - name: 💬 Post a check explaining the issue
         if: ${{ failure() && steps.diffCheck.conclusion == 'failure' }}

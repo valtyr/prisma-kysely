@@ -21,10 +21,13 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      - name: 🏗 Setup Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install Dependencies
-        run: yarn
+        run: bun install
 
       - name: Build
-        run: yarn build
+        run: bun run build
 
       - run: npx pkg-pr-new publish

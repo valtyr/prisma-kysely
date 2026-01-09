@@ -1,38 +1,53 @@
 import { exec as execCb } from "node:child_process";
 import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
 import { promisify } from "node:util";
 import { afterEach, beforeEach, expect, test } from "vitest";
 
-const exec = promisify(execCb);
+const execAsync = promisify(execCb);
+
+const PROJECT_ROOT = path.resolve(__dirname, "../..");
+const GENERATOR_PATH = path.join(PROJECT_ROOT, "dist/bin.js");
+const PRISMA_PATH = path.join(PROJECT_ROOT, "node_modules/.bin/prisma");
+
+let tempDir: string;
 
 beforeEach(async () => {
-  await fs.rename("./prisma", "./prisma-old").catch(() => {});
+  tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "prisma-kysely-test-"));
 });
 
 afterEach(async () => {
-  await fs
-    .rm("./prisma", {
-      force: true,
-      recursive: true,
-    })
-    .catch(() => {});
-  await fs.rename("./prisma-old", "./prisma").catch(() => {});
+  if (tempDir) {
+    await fs.rm(tempDir, { force: true, recursive: true }).catch(() => {});
+  }
 });
+
+const exec = (command: string) => execAsync(command, { cwd: tempDir });
+
+const prisma = (args: string) => exec(`${PRISMA_PATH} ${args}`);
+
+const prismaInit = async (datasourceProvider: string) => {
+  await prisma(`init --datasource-provider ${datasourceProvider}`);
+  await fs.rm(tempPath("prisma.config.ts")).catch(() => {});
+};
+
+const tempPath = (...parts: string[]) => path.join(tempDir, ...parts);
 
 test("End to end test", { timeout: 20000 }, async () => {
   // Initialize prisma:
-  await exec("yarn prisma init --datasource-provider sqlite");
+  await prismaInit("sqlite");
 
   // Set up a schema
   await fs.writeFile(
-    "./prisma/schema.prisma",
+    tempPath("prisma/schema.prisma"),
     `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
 
     generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
     }
 
     model TestUser {
@@ -51,11 +66,12 @@ test("End to end test", { timeout: 20000 }, async () => {
   );
 
   // Run Prisma commands without fail
-  await exec("yarn prisma generate");
+  await prisma("generate");
 
-  const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
-    encoding: "utf-8",
-  });
+  const generatedSource = await fs.readFile(
+    tempPath("prisma/generated/types.ts"),
+    { encoding: "utf-8" }
+  );
 
   expect(generatedSource).toContain(`export type SprocketToTestUser = {
     A: number;
@@ -73,18 +89,18 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider sqlite");
+    await prismaInit("sqlite");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
 
     generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
     }
 
     model TestUser {
@@ -97,11 +113,12 @@ test(
     );
 
     // Run Prisma commands without fail
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
-    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
-      encoding: "utf-8",
-    });
+    const generatedSource = await fs.readFile(
+      tempPath("prisma/generated/types.ts"),
+      { encoding: "utf-8" }
+    );
 
     // Expect many to many models to have been generated
     expect(generatedSource).toContain(
@@ -119,18 +136,18 @@ test(
 
 test("End to end test - separate entrypoints", { timeout: 20000 }, async () => {
   // Initialize prisma:
-  await exec("yarn prisma init --datasource-provider mysql");
+  await prismaInit("mysql");
 
   // Set up a schema
   await fs.writeFile(
-    "./prisma/schema.prisma",
+    tempPath("prisma/schema.prisma"),
     `datasource db {
         provider = "mysql"
         url      = "mysql://root:password@localhost:3306/test"
     }
 
     generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
         enumFileName = "enums.ts"
     }
 
@@ -151,16 +168,16 @@ test("End to end test - separate entrypoints", { timeout: 20000 }, async () => {
   );
 
   // Run Prisma commands without fail
-  // await exec("yarn prisma db push"); -- can't push to mysql, enums not supported in sqlite
-  await exec("yarn prisma generate"); //   so just generate
+  // await prisma("db push"); // can't push to mysql, enums not supported in sqlite
+  await prisma("generate"); //   so just generate
 
-  const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+  const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
     encoding: "utf-8",
   });
   expect(typeFile).not.toContain("export const");
   expect(typeFile).toContain(`import type { TestEnum } from "./enums";`);
 
-  const enumFile = await fs.readFile("./prisma/generated/enums.ts", {
+  const enumFile = await fs.readFile(tempPath("prisma/generated/enums.ts"), {
     encoding: "utf-8",
   });
   expect(enumFile).toEqual(`export const TestEnum = {
@@ -177,18 +194,18 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider sqlite");
+    await prismaInit("sqlite");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
 
     generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
         enumFileName = "enums.ts"
     }
 
@@ -202,18 +219,18 @@ test(
     );
 
     // Run Prisma commands without fail
-    await exec("yarn prisma db push");
-    await exec("yarn prisma generate");
+    await prisma("db push");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
     expect(typeFile).not.toContain('from "./enums"');
 
     // Shouldn't have generated an empty file
     await expect(
-      fs.readFile("./prisma/generated/enums.ts", {
+      fs.readFile(tempPath("prisma/generated/enums.ts"), {
         encoding: "utf-8",
       })
     ).rejects.toThrow();
@@ -222,13 +239,13 @@ test(
 
 test("End to end test - multi-schema support", { timeout: 20000 }, async () => {
   // Initialize prisma:
-  await exec("yarn prisma init --datasource-provider postgresql");
+  await prismaInit("postgresql");
 
   // Set up a schema
   await fs.writeFile(
-    "./prisma/schema.prisma",
+    tempPath("prisma/schema.prisma"),
     `generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
         previewFeatures = ["multiSchema"]
     }
 
@@ -255,10 +272,10 @@ test("End to end test - multi-schema support", { timeout: 20000 }, async () => {
     }`
   );
 
-  await exec("yarn prisma generate");
+  await prisma("generate");
 
   // Shouldn't have an empty import statement
-  const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+  const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
     encoding: "utf-8",
   });
 
@@ -273,13 +290,13 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
         previewFeatures = ["multiSchema"]
         filterBySchema = ["mammals"]
     }
@@ -307,10 +324,10 @@ test(
     }`
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
@@ -325,14 +342,14 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `
 generator kysely {
-    provider        = "node ./dist/bin.js"
+    provider        = "node ${GENERATOR_PATH}"
     previewFeatures = ["multiSchema"]
     groupBySchema   = true
 }
@@ -378,10 +395,10 @@ enum Color {
     `
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
@@ -406,14 +423,14 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `
 generator kysely {
-    provider        = "node ./dist/bin.js"
+    provider        = "node ${GENERATOR_PATH}"
     previewFeatures = ["multiSchema"]
     groupBySchema   = true
     defaultSchema   = "fish"
@@ -469,10 +486,10 @@ enum Color {
     `
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
@@ -501,14 +518,14 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `
 generator kysely {
-    provider        = "node ./dist/bin.js"
+    provider        = "node ${GENERATOR_PATH}"
     previewFeatures = ["multiSchema"]
     groupBySchema   = true
     filterBySchema = ["mammals", "world"]
@@ -555,10 +572,10 @@ enum Color {
     `
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
@@ -581,17 +598,17 @@ test(
   "End to end test - SQLite with JSON support",
   { timeout: 20000 },
   async () => {
-    await exec("yarn prisma init --datasource-provider sqlite");
+    await prismaInit("sqlite");
 
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `datasource db {
         provider = "sqlite"
         url      = "file:./dev.db"
     }
 
     generator kysely {
-        provider  = "node ./dist/bin.js"
+        provider  = "node ${GENERATOR_PATH}"
     }
 
     model TestUser {
@@ -616,11 +633,12 @@ test(
     }`
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
-    const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
-      encoding: "utf-8",
-    });
+    const generatedSource = await fs.readFile(
+      tempPath("prisma/generated/types.ts"),
+      { encoding: "utf-8" }
+    );
 
     expect(generatedSource).toContain(`export type TestUser = {
     id: string;
@@ -656,13 +674,13 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema with views in different schemas
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `generator kysely {
-        provider        = "node ./dist/bin.js"
+        provider        = "node ${GENERATOR_PATH}"
         previewFeatures = ["multiSchema", "views"]
     }
 
@@ -708,9 +726,9 @@ test(
     }`
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
@@ -738,31 +756,32 @@ test(
 );
 
 test("End to end test - exportWrappedTypes", { timeout: 20000 }, async () => {
-  await exec("yarn prisma init --datasource-provider sqlite");
+  await prismaInit("sqlite");
 
   await fs.writeFile(
-    "./prisma/schema.prisma",
+    tempPath("prisma/schema.prisma"),
     `datasource db {
           provider = "sqlite"
           url      = "file:./dev.db"
       }
-  
+
       generator kysely {
-          provider           = "node ./dist/bin.js"
+          provider           = "node ${GENERATOR_PATH}"
           exportWrappedTypes = true
       }
-      
+
       model User {
           id   String @id
           name String
       }`
   );
 
-  await exec("yarn prisma generate");
+  await prisma("generate");
 
-  const generatedSource = await fs.readFile("./prisma/generated/types.ts", {
-    encoding: "utf-8",
-  });
+  const generatedSource = await fs.readFile(
+    tempPath("prisma/generated/types.ts"),
+    { encoding: "utf-8" }
+  );
 
   expect(generatedSource).toContain("export type UserTable = {");
   expect(generatedSource).toContain(
@@ -784,14 +803,14 @@ test(
   { timeout: 20000 },
   async () => {
     // Initialize prisma:
-    await exec("yarn prisma init --datasource-provider postgresql");
+    await prismaInit("postgresql");
 
     // Set up a schema
     await fs.writeFile(
-      "./prisma/schema.prisma",
+      tempPath("prisma/schema.prisma"),
       `
 generator kysely {
-    provider             = "node ./dist/bin.js"
+    provider             = "node ${GENERATOR_PATH}"
     previewFeatures      = ["multiSchema"]
     groupBySchema        = true
     exportWrappedTypes   = true
@@ -838,10 +857,10 @@ enum Color {
     `
     );
 
-    await exec("yarn prisma generate");
+    await prisma("generate");
 
     // Shouldn't have an empty import statement
-    const typeFile = await fs.readFile("./prisma/generated/types.ts", {
+    const typeFile = await fs.readFile(tempPath("prisma/generated/types.ts"), {
       encoding: "utf-8",
     });
 
