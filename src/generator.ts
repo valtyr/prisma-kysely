@@ -29,6 +29,22 @@ generatorHandler({
     };
   },
   onGenerate: async (options: GeneratorOptions) => {
+    if (!options.version) {
+      throw new Error(
+        `Could not determine Prisma version. ` +
+          `Make sure you are using a recent version of Prisma.`
+      );
+    }
+
+    const semverMatch = options.version.match(/^(\d+)\./);
+    if (semverMatch && parseInt(semverMatch[1], 10) < 7) {
+      throw new Error(
+        `prisma-kysely v${version} requires Prisma 7 or later. ` +
+          `You are using Prisma ${options.version}. ` +
+          `Please upgrade Prisma or use prisma-kysely v2.x for Prisma 6.`
+      );
+    }
+
     // Parse the config
     const config = validateConfig({
       ...options.generator.config,
