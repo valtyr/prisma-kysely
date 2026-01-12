@@ -95,4 +95,4 @@ jobs:
           name: 🧹 Check all files are formatted correctly
           conclusion: failure
           output: |
-            {"summary": "Hrm, seems like you don't have prettier set up properly. Make sure your editor is configured to format code automatically, and that it respects the project's prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to view the Prettier extension for VS Code.\n\n> _**💡 Tip:**_ \n> \n> In the meantime you can run `npm run fix` and commit the changes."}
+            {"summary": "Hrm, seems like you don't have prettier set up properly. Make sure your editor is configured to format code automatically, and that it respects the project's prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to view the Prettier extension for VS Code.\n\n> _**💡 Tip:**_ \n> \n> In the meantime you can run `bun run fix` and commit the changes."}

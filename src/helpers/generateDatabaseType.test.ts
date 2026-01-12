@@ -1,7 +1,7 @@
-import { expect, test } from "vitest";
+import { expect, test } from "bun:test";
 
-import { generateDatabaseType } from "~/helpers/generateDatabaseType";
-import { stringifyTsNode } from "~/utils/testUtils";
+import { generateDatabaseType } from "./generateDatabaseType.ts";
+import { stringifyTsNode } from "../utils/testUtils.ts";
 
 test("it works for plain vanilla type names", () => {
   const node = generateDatabaseType(

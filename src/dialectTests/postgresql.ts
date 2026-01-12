@@ -1,7 +1,7 @@
 import { Kysely, PostgresDialect } from "kysely";
 import { Pool } from "pg";
 
-import { POSTGRES_URL, preparePrisma } from "~/dialectTests/common";
+import { POSTGRES_URL, preparePrisma } from "./common.ts";
 
 const main = async () => {
   await preparePrisma("postgresql");
