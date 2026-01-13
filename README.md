@@ -72,11 +72,11 @@ import type { SomeType } from './custom-types';
 This will generate a file that starts with:
 
 ```typescript
-import type { Decimal } from 'decimal.js';
-import { Big } from 'big.js';
-import * as moment from 'moment';
-import { v4 as uuid } from 'uuid';
-import type { SomeType } from './custom-types';
+import type { Decimal } from "decimal.js";
+import { Big } from "big.js";
+import * as moment from "moment";
+import { v4 as uuid } from "uuid";
+import type { SomeType } from "./custom-types";
 
 import type { ColumnType } from "kysely";
 // ... rest of generated types
