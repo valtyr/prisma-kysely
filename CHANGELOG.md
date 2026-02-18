@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 3.1.0
+
+### Minor Changes
+
+- 71a8e10: Add `banner` configuration option to allow users to prepend custom content (imports, pragmas, comments) to generated files.
+
 ## 3.0.0
 
 ### Major Changes
