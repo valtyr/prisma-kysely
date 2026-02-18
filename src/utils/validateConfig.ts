@@ -60,7 +60,7 @@ export const configValidator = z
     exportWrappedTypes: booleanStringLiteral.default(false),
 
     // Content to prepend to the start of the generated file(s). Useful for custom imports, pragmas, or comments.
-    filePrefix: z.string().optional(),
+    banner: z.string().optional(),
   })
   .strict()
   .transform((config) => {

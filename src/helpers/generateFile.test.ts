@@ -37,22 +37,22 @@ test("generates a file which imports Kysely wrapper types.", () => {
   );
 });
 
-test("generates a file with custom prefix when filePrefix is specified.", () => {
+test("generates a file with custom prefix when banner is specified.", () => {
   const result = generateFile([], {
     withEnumImport: false,
     withLeader: true,
     exportWrappedTypes: false,
-    filePrefix: "import Decimal from 'decimal.js';",
+    banner: "import Decimal from 'decimal.js';",
   });
   expect(result).toContain("import Decimal from 'decimal.js';");
 });
 
-test("generates a file with multiple imports in filePrefix.", () => {
+test("generates a file with multiple imports in banner.", () => {
   const result = generateFile([], {
     withEnumImport: false,
     withLeader: true,
     exportWrappedTypes: false,
-    filePrefix: `import Decimal from 'decimal.js';
+    banner: `import Decimal from 'decimal.js';
 import { Big } from 'big.js';
 import * as moment from 'moment';`,
   });
@@ -61,12 +61,12 @@ import * as moment from 'moment';`,
   expect(result).toContain("import * as moment from 'moment';");
 });
 
-test("generates a file with filePrefix containing renamed imports.", () => {
+test("generates a file with banner containing renamed imports.", () => {
   const result = generateFile([], {
     withEnumImport: false,
     withLeader: true,
     exportWrappedTypes: false,
-    filePrefix: "import { v4 as uuid } from 'uuid';",
+    banner: "import { v4 as uuid } from 'uuid';",
   });
   expect(result).toContain("import { v4 as uuid } from 'uuid';");
 });
