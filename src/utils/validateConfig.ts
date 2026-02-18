@@ -58,6 +58,9 @@ export const configValidator = z
 
     // Export Kysely wrapped types such as `Selectable<Model>`
     exportWrappedTypes: booleanStringLiteral.default(false),
+
+    // Content to prepend to the start of the generated file(s). Useful for custom imports, pragmas, or comments.
+    banner: z.string().optional(),
   })
   .strict()
   .transform((config) => {

@@ -6,11 +6,12 @@ type Options = {
   withEnumImport: false | { importPath: string; names: string[] };
   withLeader: boolean;
   exportWrappedTypes: boolean;
+  banner?: string;
 };
 
 export const generateFile = (
   statements: readonly ts.Statement[],
-  { withEnumImport, withLeader, exportWrappedTypes }: Options
+  { withEnumImport, withLeader, exportWrappedTypes, banner }: Options
 ) => {
   const file = ts.factory.createSourceFile(
     statements,
@@ -20,7 +21,7 @@ export const generateFile = (
 
   const result = printer.printFile(file);
 
-  const leader = `import type { ColumnType${
+  const leader = `${banner ? `${banner}\n` : ""}import type { ColumnType${
     result.includes("GeneratedAlways") ? ", GeneratedAlways" : ""
   }${
     exportWrappedTypes ? ", Insertable, Selectable, Updateable" : ""
