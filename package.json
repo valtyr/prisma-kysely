@@ -71,7 +71,7 @@
     "@typescript-eslint/parser": "^8.52.0",
     "@typescript-eslint/typescript-estree": "^8.52.0",
     "bunup": "^0.16.17",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.3",
     "kysely": "^0.28.9",
     "mysql2": "^3.16.0",
     "pg": "^8.16.3",
