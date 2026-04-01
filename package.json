@@ -55,7 +55,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mrleebo/prisma-ast": "^0.14.0",
+    "@mrleebo/prisma-ast": "^0.15.0",
     "@prisma/generator-helper": "^7.0.0",
     "@prisma/internals": "^7.0.0",
     "typescript": "^5.9.3",
