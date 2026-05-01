@@ -58,7 +58,7 @@
     "@mrleebo/prisma-ast": "^0.14.0",
     "@prisma/generator-helper": "^7.0.0",
     "@prisma/internals": "^7.0.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "zod": "^4.3.5"
   },
   "devDependencies": {
