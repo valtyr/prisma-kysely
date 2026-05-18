@@ -53,20 +53,34 @@ export const generateModel = (
     const schemaPrefix = groupBySchema && multiSchemaMap?.get(field.type);
 
     if (field.kind === "enum") {
+      // Of the SQL providers prisma-kysely supports, only PostgreSQL and
+      // CockroachDB allow arrays of enums (Prisma rejects them at schema
+      // validation for mysql/sqlite/sqlserver), so an enum list can only
+      // ever reach here on one of those two. Both speak the Postgres wire
+      // protocol via the `pg` driver, which doesn't register a parser for
+      // user-defined enum array types, so Kysely receives the raw Postgres
+      // array literal string (e.g. `{FOO,BAR}`, or `{}` for an empty array)
+      // rather than a parsed array. Typing it as `EnumType[]` would
+      // therefore be wrong, so we fall back to `string`.
+      // See https://github.com/valtyr/prisma-kysely/issues/107
+      const isEnumArray = field.isList;
+
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type: ts.factory.createTypeReferenceNode(
-          ts.factory.createIdentifier(
-            schemaPrefix && defaultSchema !== schemaPrefix
-              ? `${capitalize(schemaPrefix)}.${field.type}`
-              : field.type
-          ),
-          undefined
-        ),
+        type: isEnumArray
+          ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+          : ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier(
+                schemaPrefix && defaultSchema !== schemaPrefix
+                  ? `${capitalize(schemaPrefix)}.${field.type}`
+                  : field.type
+              ),
+              undefined
+            ),
         nullable: !field.isRequired,
         generated: isGenerated,
-        list: field.isList,
+        list: false,
         documentation: field.documentation,
         config,
       });

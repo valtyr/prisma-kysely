@@ -228,6 +228,55 @@ export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
 });
 
+test("End to end test - enum arrays are typed as strings (#107)", async () => {
+  await using t = await setupTest();
+  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+
+  await Bun.write(
+    t.tempPath("prisma/schema.prisma"),
+    `datasource db {
+      provider = "postgresql"
+  }
+
+  generator kysely {
+      provider  = "node ${GENERATOR_PATH}"
+      enumFileName = "enums.ts"
+  }
+
+  enum Permission {
+      FOO
+      BAR
+      BAZ
+  }
+
+  model TestUser {
+      id          String       @id
+      role        Permission
+      permissions Permission[]
+  }`
+  );
+
+  // Enum arrays aren't supported by SQLite/MySQL, and Postgres returns them
+  // as an unparsed array-literal string, so just `generate` (no db push).
+  await t.prisma("generate");
+
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
+
+  // The enum array column is a raw string, the scalar enum keeps its type.
+  expect(typeFile).toContain(`export type TestUser = {
+    id: string;
+    role: Permission;
+    permissions: string;
+};`);
+
+  // The broken template-literal approach from the closed PR #108 must not
+  // come back: it rejected valid Postgres output like "{FOO,BAR,BAZ}".
+  expect(typeFile).not.toContain("EnumArray");
+  expect(typeFile).not.toContain("permissions: Permission[]");
+});
+
 test("End to end test - separate entrypoints but no enums", async () => {
   await using t = await setupTest();
   await t.prismaInit("sqlite", "file:./dev.db");

@@ -185,3 +185,81 @@ test("it respects camelCase option", () => {
     userName: string | null;
 };`);
 });
+
+test("it types enum arrays as strings (#107)", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "id",
+          isId: true,
+          isGenerated: false,
+          kind: "scalar",
+          type: "String",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+        {
+          name: "role",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Role",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+        {
+          name: "permissions",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Permission",
+          hasDefaultValue: false,
+          isList: true,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+      ],
+      schema: null,
+      primaryKey: null,
+      dbName: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+      exportWrappedTypes: false,
+    },
+    {
+      groupBySchema: false,
+      defaultSchema: "public",
+    }
+  );
+
+  const source = stringifyTsNode(model.definition);
+
+  // A plain enum field keeps its enum type; an enum array becomes `string`
+  // because Postgres returns it as a raw array literal string ("{FOO,BAR}")
+  // that the pg driver doesn't parse for user-defined enum array types.
+  expect(source).toEqual(`export type User = {
+    id: string;
+    role: Role;
+    permissions: string;
+};`);
+});
