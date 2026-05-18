@@ -3,7 +3,8 @@ import { mkdtemp, rm, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-setDefaultTimeout(20_000);
+// GitHub runners are pretty slow in CI
+setDefaultTimeout(120_000);
 
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const GENERATOR_PATH = path.join(PROJECT_ROOT, "dist/bin.js");
