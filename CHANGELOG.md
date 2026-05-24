@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 3.1.1
+
+### Patch Changes
+
+- f41a74e: Emit enum arrays as `string` under PostgreSQL and CockroachDB, matching how Kysely represents enum array columns. Fixes #107.
+
 ## 3.1.0
 
 ### Minor Changes
