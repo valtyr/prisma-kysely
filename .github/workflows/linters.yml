@@ -63,7 +63,6 @@ jobs:
     name: 👮‍♂️ Linters and formatters
     runs-on: ubuntu-latest
     permissions:
-      checks: write # Allow creating checks
       contents: read
     steps:
       - name: 🏗 Setup repo
@@ -87,12 +86,13 @@ jobs:
         id: diffCheck
         run: bun run fix && git diff --exit-code -- ':!bun.lock'
 
-      - name: 💬 Post a check explaining the issue
+      - name: 💬 Explain the formatting failure
         if: ${{ failure() && steps.diffCheck.conclusion == 'failure' }}
-        uses: LouisBrunner/checks-action@6b626ffbad7cc56fd58627f774b9067e6118af23 # v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: 🧹 Check all files are formatted correctly
-          conclusion: failure
-          output: |
-            {"summary": "Hrm, seems like you don't have prettier set up properly. Make sure your editor is configured to format code automatically, and that it respects the project's prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to view the Prettier extension for VS Code.\n\n> _**💡 Tip:**_ \n> \n> In the meantime you can run `bun run fix` and commit the changes."}
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'SUMMARY'
+          ## 🧹 Some files aren't formatted correctly
+
+          Make sure your editor is configured to format code automatically and respects the project's Prettier config. [Click here](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) to install the Prettier extension for VS Code.
+
+          > **💡 Tip:** In the meantime you can run `bun run fix` and commit the changes.
+          SUMMARY
