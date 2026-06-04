@@ -263,3 +263,86 @@ test("it types enum arrays as strings (#107)", () => {
     permissions: string;
 };`);
 });
+
+test("@kyselyType can override enums", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "id",
+          isId: true,
+          isGenerated: false,
+          kind: "scalar",
+          type: "String",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+        {
+          name: "role",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Role",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+          documentation: "@kyselyType(SomethingElse)",
+        },
+        {
+          name: "permissions",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Permission",
+          hasDefaultValue: false,
+          isList: true,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+          documentation: "@kyselyType(SomethingElse[])",
+        },
+      ],
+      schema: null,
+      primaryKey: null,
+      dbName: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+      exportWrappedTypes: false,
+    },
+    {
+      groupBySchema: false,
+      defaultSchema: "public",
+    }
+  );
+
+  const source = stringifyTsNode(model.definition);
+
+  expect(source).toEqual(`export type User = {
+    id: string;
+    /**
+     * @kyselyType(SomethingElse)
+     */
+    role: SomethingElse;
+    /**
+     * @kyselyType(SomethingElse[])
+     */
+    permissions: SomethingElse[];
+};`);
+});

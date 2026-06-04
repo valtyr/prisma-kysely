@@ -68,16 +68,19 @@ export const generateModel = (
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type: isEnumArray
-          ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-          : ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier(
-                schemaPrefix && defaultSchema !== schemaPrefix
-                  ? `${capitalize(schemaPrefix)}.${field.type}`
-                  : field.type
-              ),
-              undefined
-            ),
+        type:
+          typeOverride !== null
+            ? ts.factory.createTypeReferenceNode(typeOverride)
+            : isEnumArray
+              ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+              : ts.factory.createTypeReferenceNode(
+                  ts.factory.createIdentifier(
+                    schemaPrefix && defaultSchema !== schemaPrefix
+                      ? `${capitalize(schemaPrefix)}.${field.type}`
+                      : field.type
+                  ),
+                  undefined
+                ),
         nullable: !field.isRequired,
         generated: isGenerated,
         list: false,
