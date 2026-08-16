@@ -1,6 +1,10 @@
 import { afterEach, expect, mock, test } from "bun:test";
 
-import { configValidator, validateConfig } from "./validateConfig.ts";
+import {
+  configValidator,
+  GroupBySchema,
+  validateConfig,
+} from "./validateConfig.ts";
 
 const mockExitFunction = mock((() => {}) as typeof process.exit);
 const mockConsoleErrorFunction = mock((() => {}) as typeof console.error);
@@ -26,7 +30,7 @@ test("should exit with error code when invalid config encountered", () => {
 test("does not group schemas by default", () => {
   const result = configValidator.parse({ databaseProvider: "postgresql" });
 
-  expect(result.schemaGrouping).toEqual("none");
+  expect(result.groupBySchema).toEqual(GroupBySchema.None);
 });
 
 test("groupBySchema = true groups schemas into namespaces", () => {
@@ -35,7 +39,7 @@ test("groupBySchema = true groups schemas into namespaces", () => {
     groupBySchema: true,
   });
 
-  expect(result.schemaGrouping).toEqual("namespace");
+  expect(result.groupBySchema).toEqual(GroupBySchema.Namespace);
 });
 
 test('groupBySchema = "module" groups schemas into files', () => {
@@ -44,7 +48,7 @@ test('groupBySchema = "module" groups schemas into files', () => {
     groupBySchema: "module",
   });
 
-  expect(result.schemaGrouping).toEqual("exports");
+  expect(result.groupBySchema).toEqual(GroupBySchema.Module);
 });
 
 test("rejects unknown groupBySchema values", () => {

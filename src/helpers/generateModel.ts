@@ -1,12 +1,12 @@
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
 
+import { normalizeCase } from "../utils/normalizeCase.ts";
+import { type Config, GroupBySchema } from "../utils/validateConfig.ts";
+import { capitalize } from "../utils/words.ts";
 import { generateField } from "./generateField.ts";
 import { generateFieldType } from "./generateFieldType.ts";
 import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFromDocumentation.ts";
-import { normalizeCase } from "../utils/normalizeCase.ts";
-import type { Config } from "../utils/validateConfig.ts";
-import { capitalize } from "../utils/words.ts";
 
 /**
  * Some of Prisma's default values are implemented in
@@ -24,7 +24,7 @@ export type ModelType = {
 };
 
 export type GenerateModelOptions = {
-  schemaGrouping: "none" | "namespace" | "exports";
+  groupBySchema: GroupBySchema;
   defaultSchema: string;
   multiSchemaMap?: Map<string, string>;
 };
@@ -35,7 +35,7 @@ export type GenerateModelOptions = {
 export const generateModel = (
   model: DMMF.Model,
   config: Config,
-  { defaultSchema, schemaGrouping, multiSchemaMap }: GenerateModelOptions
+  { defaultSchema, groupBySchema, multiSchemaMap }: GenerateModelOptions
 ): ModelType => {
   const referencedSchemaTypes = new Map<
     string,
@@ -62,7 +62,7 @@ export const generateModel = (
 
     const fieldSchema = multiSchemaMap?.get(field.type);
     const schemaPrefix =
-      schemaGrouping !== "none" && fieldSchema !== undefined
+      groupBySchema !== GroupBySchema.None && fieldSchema !== undefined
         ? fieldSchema || defaultSchema
         : false;
 
@@ -87,7 +87,8 @@ export const generateModel = (
         ts.factory.createIdentifier(
           schemaPrefix &&
             defaultSchema !== schemaPrefix &&
-            (schemaGrouping === "namespace" || schemaPrefix !== modelSchema)
+            (groupBySchema === GroupBySchema.Namespace ||
+              schemaPrefix !== modelSchema)
             ? `${capitalize(schemaPrefix)}.${field.type}`
             : field.type
         ),

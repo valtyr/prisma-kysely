@@ -1,9 +1,10 @@
 import { expect, test } from "bun:test";
 import ts from "typescript";
 
-import { generateFiles } from "./generateFiles.ts";
 import type { EnumType } from "./generateEnumType.ts";
+import { generateFiles } from "./generateFiles.ts";
 import type { ModelType } from "./generateModel.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
 
 /**
  * Creates a minimal exported type alias for testing file-level composition.
@@ -62,7 +63,7 @@ function createModel(model: Partial<ModelType> & Pick<ModelType, "typeName">) {
   } satisfies ModelType;
 }
 
-test("generates schema export files for schemaGrouping exports", () => {
+test("generates schema export files for groupBySchema module", () => {
   const databaseType = createType("DB", [
     ts.factory.createPropertySignature(
       undefined,
@@ -116,7 +117,7 @@ test("generates schema export files for schemaGrouping exports", () => {
     enumNames: ["Mood", "Color", "Ability"],
     enumsOutfile: "enums.ts",
     databaseType,
-    schemaGrouping: "exports",
+    groupBySchema: GroupBySchema.Module,
     defaultSchema: "public",
     importExtension: ".ts",
     exportWrappedTypes: false,
@@ -169,7 +170,7 @@ test("resolves exports mode index paths from configured type filenames", () => {
       enumNames: ["Color"],
       enumsOutfile: typesOutfile,
       databaseType: createType("DB"),
-      schemaGrouping: "exports",
+      groupBySchema: GroupBySchema.Module,
       defaultSchema: "public",
       importExtension: "",
       exportWrappedTypes: false,
@@ -187,7 +188,7 @@ test("avoids colliding with the entrypoint for schemas named index", () => {
     enumNames: ["Color"],
     enumsOutfile: "types.ts",
     databaseType: createType("DB"),
-    schemaGrouping: "exports",
+    groupBySchema: GroupBySchema.Module,
     defaultSchema: "public",
     importExtension: ".ts",
     exportWrappedTypes: false,
@@ -210,7 +211,7 @@ test("preserves banner content in exports mode schema files", () => {
     enumNames: ["Color"],
     enumsOutfile: "types.ts",
     databaseType: createType("DB"),
-    schemaGrouping: "exports",
+    groupBySchema: GroupBySchema.Module,
     defaultSchema: "public",
     importExtension: "",
     exportWrappedTypes: false,
@@ -230,7 +231,7 @@ test("does not import Timestamp helper for local Timestamp declarations", () => 
     enumNames: ["Timestamp"],
     enumsOutfile: "types.ts",
     databaseType: createType("DB"),
-    schemaGrouping: "exports",
+    groupBySchema: GroupBySchema.Module,
     defaultSchema: "public",
     importExtension: "",
     exportWrappedTypes: false,
@@ -242,7 +243,7 @@ test("does not import Timestamp helper for local Timestamp declarations", () => 
   );
 });
 
-test("keeps separate enum files when schemaGrouping is none", () => {
+test("keeps separate enum files when groupBySchema is none", () => {
   const files = generateFiles({
     typesOutfile: "types.ts",
     enums: [createEnum("Color", "mammals")],
@@ -250,7 +251,7 @@ test("keeps separate enum files when schemaGrouping is none", () => {
     enumNames: ["Color"],
     enumsOutfile: "enums.ts",
     databaseType: createType("DB"),
-    schemaGrouping: "none",
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     importExtension: "",
     exportWrappedTypes: false,
@@ -259,7 +260,7 @@ test("keeps separate enum files when schemaGrouping is none", () => {
   expect(files.map((file) => file.filepath)).toEqual(["types.ts", "enums.ts"]);
 });
 
-test("ignores enumFileName when namespace schemaGrouping owns grouped enums", () => {
+test("ignores enumFileName when namespace groupBySchema owns grouped enums", () => {
   const files = generateFiles({
     typesOutfile: "types.ts",
     enums: [createEnum("Color", "mammals")],
@@ -267,7 +268,7 @@ test("ignores enumFileName when namespace schemaGrouping owns grouped enums", ()
     enumNames: ["Color"],
     enumsOutfile: "enums.ts",
     databaseType: createType("DB"),
-    schemaGrouping: "namespace",
+    groupBySchema: GroupBySchema.Namespace,
     defaultSchema: "public",
     importExtension: "",
     exportWrappedTypes: false,

@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 
 import { normalizeCase } from "./normalizeCase.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
 
 test("converts names to camel case when config value is set", () => {
   const originalName = "user_id";
@@ -10,7 +11,7 @@ test("converts names to camel case when config value is set", () => {
     fileName: "",
     enumFileName: "",
     readOnlyIds: false,
-    schemaGrouping: "none",
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -28,7 +29,7 @@ test("doesn't convert names to camel case when config value isn't set", () => {
     fileName: "",
     enumFileName: "",
     readOnlyIds: false,
-    schemaGrouping: "none",
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",

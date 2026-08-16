@@ -14,7 +14,7 @@ import {
   parseMultiSchemaMap,
 } from "./helpers/multiSchemaHelpers.ts";
 import { sorted } from "./utils/sorted.ts";
-import { validateConfig } from "./utils/validateConfig.ts";
+import { GroupBySchema, validateConfig } from "./utils/validateConfig.ts";
 import { writeFileSafely } from "./utils/writeFileSafely.ts";
 
 const { version } = packageJson;
@@ -69,7 +69,7 @@ generatorHandler({
     );
 
     const multiSchemaMap =
-      config.schemaGrouping !== "none" || hasMultiSchema
+      config.groupBySchema !== GroupBySchema.None || hasMultiSchema
         ? parseMultiSchemaMap(options.datamodel)
         : undefined;
 
@@ -79,7 +79,7 @@ generatorHandler({
       (a, b) => a.name.localeCompare(b.name)
     ).map((m) =>
       generateModel(m, config, {
-        schemaGrouping: config.schemaGrouping,
+        groupBySchema: config.groupBySchema,
         defaultSchema: config.defaultSchema,
         multiSchemaMap,
       })
@@ -93,7 +93,7 @@ generatorHandler({
 
       models = convertToMultiSchemaModels({
         models,
-        groupBySchema: config.schemaGrouping !== "none",
+        groupBySchema: config.groupBySchema !== GroupBySchema.None,
         defaultSchema: config.defaultSchema,
         filterBySchema,
         multiSchemaMap,
@@ -101,7 +101,7 @@ generatorHandler({
 
       enums = convertToMultiSchemaModels({
         models: enums,
-        groupBySchema: config.schemaGrouping !== "none",
+        groupBySchema: config.groupBySchema !== GroupBySchema.None,
         defaultSchema: config.defaultSchema,
         filterBySchema,
         multiSchemaMap,
@@ -119,7 +119,7 @@ generatorHandler({
       enums,
       enumsOutfile: config.enumFileName,
       typesOutfile: config.fileName,
-      schemaGrouping: config.schemaGrouping,
+      groupBySchema: config.groupBySchema,
       defaultSchema: config.defaultSchema,
       importExtension: config.importExtension,
       exportWrappedTypes: config.exportWrappedTypes,

@@ -2,11 +2,12 @@ import path from "node:path";
 import type { TypeAliasDeclaration } from "typescript";
 import ts from "typescript";
 
-import { generateFile } from "./generateFile.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
+import { capitalize } from "../utils/words.ts";
 import type { EnumType } from "./generateEnumType.ts";
+import { generateFile } from "./generateFile.ts";
 import type { ModelType } from "./generateModel.ts";
 import { convertToWrappedTypes } from "./wrappedTypeHelpers.ts";
-import { capitalize } from "../utils/words.ts";
 
 type File = { filepath: string; content: ReturnType<typeof generateFile> };
 type MultiDefsModelType = Omit<ModelType, "definition"> & {
@@ -23,7 +24,7 @@ export function generateFiles(opts: {
   enumNames: string[];
   enumsOutfile: string;
   databaseType: TypeAliasDeclaration;
-  schemaGrouping: "none" | "namespace" | "exports";
+  groupBySchema: GroupBySchema;
   defaultSchema: string;
   importExtension: string;
   exportWrappedTypes: boolean;
@@ -38,7 +39,7 @@ export function generateFiles(opts: {
     })
   );
 
-  if (opts.schemaGrouping === "exports") {
+  if (opts.groupBySchema === GroupBySchema.Module) {
     return generateSchemaExportFiles({
       ...opts,
       models,
@@ -47,13 +48,13 @@ export function generateFiles(opts: {
 
   // Grouped output owns enum placement so enumFileName cannot split schemas across incompatible files.
   if (
-    opts.schemaGrouping !== "none" ||
+    opts.groupBySchema !== GroupBySchema.None ||
     opts.enumsOutfile === opts.typesOutfile ||
     opts.enums.length === 0
   ) {
     let statements: Iterable<ts.Statement>;
 
-    if (opts.schemaGrouping === "none") {
+    if (opts.groupBySchema === GroupBySchema.None) {
       statements = [
         ...opts.enums.flatMap((e) => [e.objectDeclaration, e.typeDeclaration]),
         ...models.flatMap((m) => m.definitions),
@@ -178,7 +179,7 @@ function generateSchemaExportFiles(
         const namespace = capitalize(schema);
         const importPath = `./${getSchemaFileName(schema)}${opts.importExtension}`;
 
-        // The import gives DB a local namespace type; the export keeps the public API requested by schemaGrouping=exports.
+        // The import gives DB a local namespace type; the export keeps the public API requested by groupBySchema = "module".
         return [
           `import type * as ${namespace} from "${importPath}";`,
           `export * as ${namespace} from "${importPath}";`,

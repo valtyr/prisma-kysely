@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test";
 
-import { generateDatabaseType } from "./generateDatabaseType.ts";
 import { stringifyTsNode } from "../utils/testUtils.ts";
+import { generateDatabaseType } from "./generateDatabaseType.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
 
 test("it works for plain vanilla type names", () => {
   const node = generateDatabaseType(
@@ -16,7 +17,7 @@ test("it works for plain vanilla type names", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -45,7 +46,7 @@ test("it respects camelCase option names", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -74,7 +75,7 @@ test("it respects exportWrappedTypes option", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -103,7 +104,7 @@ test("it works for table names with spaces and weird symbols", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -134,7 +135,7 @@ test("ensure dbTypeName works", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: random,
       importExtension: "",

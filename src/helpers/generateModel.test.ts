@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 
 import { stringifyTsNode } from "../utils/testUtils.ts";
 import { generateModel } from "./generateModel.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
 
 test("it generates a model!", () => {
   const model = generateModel(
@@ -95,14 +96,14 @@ test("it generates a model!", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -163,14 +164,14 @@ test("it respects camelCase option", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -240,14 +241,14 @@ test("it types enum arrays as strings (#107)", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -308,14 +309,14 @@ test("it respects @kyselyType overrides on enum fields", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "none",
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -364,14 +365,14 @@ test("it records missing-schema enum references as default schema references", (
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "exports",
+      groupBySchema: GroupBySchema.Module,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "exports",
+      groupBySchema: GroupBySchema.Module,
       defaultSchema: "public",
       multiSchemaMap: new Map([
         ["User", "animals"],
@@ -416,14 +417,14 @@ test("it records enum array schema references when annotated with @kyselyType", 
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      schemaGrouping: "exports",
+      groupBySchema: GroupBySchema.Module,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      schemaGrouping: "exports",
+      groupBySchema: GroupBySchema.Module,
       defaultSchema: "public",
       multiSchemaMap: new Map([
         ["User", "users"],

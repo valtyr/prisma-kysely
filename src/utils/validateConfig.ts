@@ -3,6 +3,12 @@ import z from "zod";
 
 const { logger } = prismaInternals;
 
+export enum GroupBySchema {
+  None,
+  Namespace,
+  Module,
+}
+
 const booleanStringLiteral = z
   .union([z.boolean(), z.literal("true"), z.literal("false")])
   .transform((arg) => {
@@ -52,7 +58,12 @@ export const configValidator = z
     // `"module"` emits one file per schema next to an index.
     groupBySchema: z
       .union([booleanStringLiteral, z.literal("module")])
-      .default(false),
+      .default(false)
+      .transform((value) => {
+        if (value === "module") return GroupBySchema.Module;
+        else if (value === true) return GroupBySchema.Namespace;
+        else return GroupBySchema.None;
+      }),
 
     // Which schema should not be grouped
     defaultSchema: z.string().default("public"),
@@ -67,31 +78,22 @@ export const configValidator = z
     banner: z.string().optional(),
   })
   .strict()
-  .transform(({ groupBySchema, ...config }) => {
+  .transform((config) => {
     if (!config.enumFileName) {
       config.enumFileName = config.fileName;
     }
 
-    if (groupBySchema && config.enumFileName !== config.fileName) {
+    if (
+      config.groupBySchema !== GroupBySchema.None &&
+      config.enumFileName !== config.fileName
+    ) {
       // Grouped output places each enum with its schema (inside the namespace,
       // or in the schema's file), so a separate enum file isn't supported.
       throw new Error("groupBySchema is not compatible with enumFileName");
     }
 
-    const schemaGrouping =
-      groupBySchema === "module"
-        ? ("exports" as const)
-        : groupBySchema
-          ? ("namespace" as const)
-          : ("none" as const);
-
-    return { ...config, schemaGrouping } as Omit<
-      typeof config,
-      "enumFileName"
-    > &
-      Required<Pick<typeof config, "enumFileName">> & {
-        schemaGrouping: typeof schemaGrouping;
-      };
+    // enumFileName is always set at this point (defaulted from fileName above).
+    return config as typeof config & { enumFileName: string };
   });
 
 export type Config = z.infer<typeof configValidator>;
