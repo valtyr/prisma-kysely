@@ -229,7 +229,7 @@ export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
 });
 
-test("End to end test - enum array typing options (#107)", async () => {
+test("End to end test - enum arrays are typed as strings (#107)", async () => {
   await using t = await setupTest();
   await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
 
@@ -254,52 +254,29 @@ test("End to end test - enum array typing options (#107)", async () => {
       id          String       @id
       role        Permission
       permissions Permission[]
+      /// @kyselyType(Permission[])
+      parsed      Permission[]
   }`
   );
 
-  // Enum arrays aren't supported by SQLite/MySQL, so just `generate` (no db push).
+  // Enum arrays aren't supported by SQLite/MySQL, and Postgres returns them
+  // as an unparsed array-literal string, so just `generate` (no db push).
   await t.prisma("generate");
 
-  let typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+  const typeFile = await Bun.file(
+    t.tempPath("prisma/generated/types.ts")
+  ).text();
 
-  expect(typeFile).toContain(`export type TestUser = {
-    id: string;
-    role: Permission;
-    permissions: Permission[];
-};`);
-
-  await Bun.write(
-    t.tempPath("prisma/schema.prisma"),
-    `datasource db {
-      provider = "postgresql"
-  }
-
-  generator kysely {
-      provider      = "node ${GENERATOR_PATH}"
-      enumArrayType = "string"
-  }
-
-  enum Permission {
-      FOO
-      BAR
-      BAZ
-  }
-
-  model TestUser {
-      id          String       @id
-      role        Permission
-      permissions Permission[]
-  }`
-  );
-
-  await t.prisma("generate");
-
-  typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
-
+  // The enum array column is a raw string, the scalar enum keeps its type,
+  // and a @kyselyType annotation opts a field back into a real array type.
   expect(typeFile).toContain(`export type TestUser = {
     id: string;
     role: Permission;
     permissions: string;
+    /**
+     * @kyselyType(Permission[])
+     */
+    parsed: Permission[];
 };`);
 
   // The broken template-literal approach from the closed PR #108 must not
@@ -469,7 +446,6 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
-  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")
@@ -545,7 +521,6 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
-  abilities Ability[] @default([])
 
   @@map("eagles")
   @@schema("birds")
@@ -631,10 +606,9 @@ model Elephant {
 }
 
 model Eagle {
-  id        Int       @id
-  name      String
-  ability   Ability   @default(FLY)
-  abilities Ability[]
+  id      Int     @id
+  name    String
+  ability Ability @default(FLY)
 
   @@map("eagles")
   @@schema("birds")

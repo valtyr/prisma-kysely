@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 
-import { generateModel } from "./generateModel.ts";
 import { stringifyTsNode } from "../utils/testUtils.ts";
+import { generateModel } from "./generateModel.ts";
 
 test("it generates a model!", () => {
   const model = generateModel(
@@ -96,7 +96,6 @@ test("it generates a model!", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
-      enumArrayType: "array",
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -165,7 +164,6 @@ test("it respects camelCase option", () => {
       camelCase: true,
       readOnlyIds: false,
       groupBySchema: false,
-      enumArrayType: "array",
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -188,7 +186,7 @@ test("it respects camelCase option", () => {
 };`);
 });
 
-test("it types enum arrays as enum arrays by default", () => {
+test("it types enum arrays as strings (#107)", () => {
   const model = generateModel(
     {
       name: "User",
@@ -243,7 +241,6 @@ test("it types enum arrays as enum arrays by default", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
-      enumArrayType: "array",
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -257,20 +254,24 @@ test("it types enum arrays as enum arrays by default", () => {
 
   const source = stringifyTsNode(model.definition);
 
+  // A plain enum field keeps its enum type; an enum array becomes `string`
+  // because Postgres returns it as a raw array literal string ("{FOO,BAR}")
+  // that the pg driver doesn't parse for user-defined enum array types.
   expect(source).toEqual(`export type User = {
     id: string;
     role: Role;
-    permissions: Permission[];
+    permissions: string;
 };`);
 });
 
-test("it can type enum arrays as strings for raw pg enum arrays (#107)", () => {
+test("it respects @kyselyType overrides on enum fields", () => {
   const model = generateModel(
     {
       name: "User",
       fields: [
         {
           name: "permissions",
+          documentation: "@kyselyType(Permission[])",
           isId: false,
           isGenerated: false,
           kind: "enum",
@@ -279,6 +280,19 @@ test("it can type enum arrays as strings for raw pg enum arrays (#107)", () => {
           isList: true,
           isReadOnly: false,
           isRequired: true,
+          isUnique: false,
+        },
+        {
+          name: "mood",
+          documentation: "@kyselyType('happy' | 'sad')",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Mood",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: false,
           isUnique: false,
         },
       ],
@@ -295,7 +309,6 @@ test("it can type enum arrays as strings for raw pg enum arrays (#107)", () => {
       camelCase: false,
       readOnlyIds: false,
       groupBySchema: false,
-      enumArrayType: "string",
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
@@ -310,6 +323,13 @@ test("it can type enum arrays as strings for raw pg enum arrays (#107)", () => {
   const source = stringifyTsNode(model.definition);
 
   expect(source).toEqual(`export type User = {
-    permissions: string;
+    /**
+     * @kyselyType(Permission[])
+     */
+    permissions: Permission[];
+    /**
+     * @kyselyType('happy' | 'sad')
+     */
+    mood: 'happy' | 'sad' | null;
 };`);
 });

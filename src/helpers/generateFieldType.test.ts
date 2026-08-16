@@ -17,7 +17,7 @@ test("it respects overrides when generating field types", () => {
     unsupportedTypeOverride: "valid",
   };
 
-  const config: Config = {
+  const config = {
     ...overrides,
     databaseProvider: "postgresql" as const,
     fileName: "types.ts",
@@ -25,7 +25,6 @@ test("it respects overrides when generating field types", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -59,7 +58,6 @@ test("it respects overrides when generating field types", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -77,7 +75,6 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -91,7 +88,6 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -105,7 +101,6 @@ test("it respects differences between database engines", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -125,7 +120,6 @@ test("it supports JSON type in SQLite", () => {
     camelCase: false,
     readOnlyIds: false,
     groupBySchema: false,
-    enumArrayType: "array",
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",

@@ -53,29 +53,44 @@ export const generateModel = (
     const schemaPrefix = groupBySchema && multiSchemaMap?.get(field.type);
 
     if (field.kind === "enum") {
-      // pg does not register parsers for user-defined enum array OIDs by default.
-      // Keep `enumArrayType = "string"` available for raw array literals like `{FOO,BAR}`.
-      // See https://github.com/valtyr/prisma-kysely/issues/107 and https://github.com/brianc/node-pg-types/issues/56.
+      // Of the SQL providers prisma-kysely supports, only PostgreSQL and
+      // CockroachDB allow arrays of enums (Prisma rejects them at schema
+      // validation for mysql/sqlite/sqlserver), so an enum list can only
+      // ever reach here on one of those two. Both speak the Postgres wire
+      // protocol via the `pg` driver, which doesn't register a parser for
+      // user-defined enum array types, so Kysely receives the raw Postgres
+      // array literal string (e.g. `{FOO,BAR}`, or `{}` for an empty array)
+      // rather than a parsed array. Typing it as `EnumType[]` would
+      // therefore be wrong, so we fall back to `string`.
+      // See https://github.com/valtyr/prisma-kysely/issues/107
+      //
+      // Apps that do get real arrays back (registered enum-array type
+      // parsers, `to_json` in queries, etc.) can opt out per field with
+      // a `/// @kyselyType(EnumType[])` annotation, which replaces the
+      // type wholesale.
       const isEnumArray = field.isList;
-      const enumType = ts.factory.createTypeReferenceNode(
-        ts.factory.createIdentifier(
-          schemaPrefix && defaultSchema !== schemaPrefix
-            ? `${capitalize(schemaPrefix)}.${field.type}`
-            : field.type
-        ),
-        undefined
-      );
 
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type:
-          isEnumArray && config.enumArrayType === "string"
+        type: typeOverride
+          ? ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier(typeOverride),
+              undefined
+            )
+          : isEnumArray
             ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-            : enumType,
+            : ts.factory.createTypeReferenceNode(
+                ts.factory.createIdentifier(
+                  schemaPrefix && defaultSchema !== schemaPrefix
+                    ? `${capitalize(schemaPrefix)}.${field.type}`
+                    : field.type
+                ),
+                undefined
+              ),
         nullable: !field.isRequired,
         generated: isGenerated,
-        list: isEnumArray && config.enumArrayType === "array",
+        list: false,
         documentation: field.documentation,
         config,
       });
