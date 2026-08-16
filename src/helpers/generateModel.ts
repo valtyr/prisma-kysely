@@ -1,12 +1,12 @@
 import type { DMMF } from "@prisma/generator-helper";
 import ts from "typescript";
 
+import { normalizeCase } from "../utils/normalizeCase.ts";
+import { type Config, GroupBySchema } from "../utils/validateConfig.ts";
+import { capitalize } from "../utils/words.ts";
 import { generateField } from "./generateField.ts";
 import { generateFieldType } from "./generateFieldType.ts";
 import { generateTypeOverrideFromDocumentation } from "./generateTypeOverrideFromDocumentation.ts";
-import { normalizeCase } from "../utils/normalizeCase.ts";
-import type { Config } from "../utils/validateConfig.ts";
-import { capitalize } from "../utils/words.ts";
 
 /**
  * Some of Prisma's default values are implemented in
@@ -19,20 +19,30 @@ export type ModelType = {
   typeName: string;
   tableName: string;
   definition: ts.TypeAliasDeclaration;
+  referencedSchemaTypes: { schema: string; typeName: string }[];
   schema?: string;
 };
 
 export type GenerateModelOptions = {
-  groupBySchema: boolean;
+  groupBySchema: GroupBySchema;
   defaultSchema: string;
   multiSchemaMap?: Map<string, string>;
 };
 
+/**
+ * Generates a Kysely table type and records schema references needed by split-file output.
+ */
 export const generateModel = (
   model: DMMF.Model,
   config: Config,
   { defaultSchema, groupBySchema, multiSchemaMap }: GenerateModelOptions
 ): ModelType => {
+  const referencedSchemaTypes = new Map<
+    string,
+    { schema: string; typeName: string }
+  >();
+  const modelSchema = multiSchemaMap?.get(model.name) || defaultSchema;
+
   const properties = model.fields.flatMap((field) => {
     const isGenerated =
       field.hasDefaultValue &&
@@ -50,7 +60,11 @@ export const generateModel = (
 
     const dbName = typeof field.dbName === "string" ? field.dbName : null;
 
-    const schemaPrefix = groupBySchema && multiSchemaMap?.get(field.type);
+    const fieldSchema = multiSchemaMap?.get(field.type);
+    const schemaPrefix =
+      groupBySchema !== GroupBySchema.None && fieldSchema !== undefined
+        ? fieldSchema || defaultSchema
+        : false;
 
     if (field.kind === "enum") {
       // Of the SQL providers prisma-kysely supports, only PostgreSQL and
@@ -69,6 +83,27 @@ export const generateModel = (
       // a `/// @kyselyType(EnumType[])` annotation, which replaces the
       // type wholesale.
       const isEnumArray = field.isList;
+      const enumType = ts.factory.createTypeReferenceNode(
+        ts.factory.createIdentifier(
+          schemaPrefix &&
+            defaultSchema !== schemaPrefix &&
+            (groupBySchema === GroupBySchema.Namespace ||
+              schemaPrefix !== modelSchema)
+            ? `${capitalize(schemaPrefix)}.${field.type}`
+            : field.type
+        ),
+        undefined
+      );
+
+      // Track cross-schema enum references for split-file output. A plain
+      // `string` enum array references nothing; an annotated one may name
+      // the enum (e.g. `World.Ability[]`), so keep the import available.
+      if ((!isEnumArray || typeOverride) && schemaPrefix) {
+        referencedSchemaTypes.set(`${schemaPrefix}.${field.type}`, {
+          schema: schemaPrefix,
+          typeName: field.type,
+        });
+      }
 
       return generateField({
         isId: field.isId,
@@ -80,14 +115,7 @@ export const generateModel = (
             )
           : isEnumArray
             ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-            : ts.factory.createTypeReferenceNode(
-                ts.factory.createIdentifier(
-                  schemaPrefix && defaultSchema !== schemaPrefix
-                    ? `${capitalize(schemaPrefix)}.${field.type}`
-                    : field.type
-                ),
-                undefined
-              ),
+            : enumType,
         nullable: !field.isRequired,
         generated: isGenerated,
         list: false,
@@ -116,6 +144,7 @@ export const generateModel = (
   return {
     typeName: model.name,
     tableName: model.dbName || model.name,
+    referencedSchemaTypes: [...referencedSchemaTypes.values()],
     definition: ts.factory.createTypeAliasDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       ts.factory.createIdentifier(model.name),

@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 
+import { type Config, GroupBySchema } from "../utils/validateConfig.ts";
 import { generateFieldType } from "./generateFieldType.ts";
-import type { Config } from "../utils/validateConfig.ts";
 
 test("it respects overrides when generating field types", () => {
   const overrides = {
@@ -17,14 +17,14 @@ test("it respects overrides when generating field types", () => {
     unsupportedTypeOverride: "valid",
   };
 
-  const config = {
+  const config: Config = {
     ...overrides,
     databaseProvider: "postgresql" as const,
     fileName: "types.ts",
     enumFileName: "types.ts",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -57,7 +57,7 @@ test("it respects overrides when generating field types", () => {
     stringTypeOverride: "cheese",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -74,7 +74,7 @@ test("it respects differences between database engines", () => {
     enumFileName: "types.ts",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -87,7 +87,7 @@ test("it respects differences between database engines", () => {
     enumFileName: "types.ts",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -100,7 +100,7 @@ test("it respects differences between database engines", () => {
     enumFileName: "types.ts",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",
@@ -119,7 +119,7 @@ test("it supports JSON type in SQLite", () => {
     enumFileName: "types.ts",
     camelCase: false,
     readOnlyIds: false,
-    groupBySchema: false,
+    groupBySchema: GroupBySchema.None,
     defaultSchema: "public",
     dbTypeName: "DB",
     importExtension: "",

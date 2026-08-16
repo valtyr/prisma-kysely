@@ -115,16 +115,60 @@ hope it's just as useful for you! 😎
 | `output`                 | The directory where generated code will be saved                                                                                                                                                                                                                                                                                                                                    |            |
 | `fileName`               | The filename for the generated file                                                                                                                                                                                                                                                                                                                                                 | `types.ts` |
 | `importExtension`        | The extension to append to imports. E.g: `".js"` or `".ts"`. Use `""` to append nothing.                                                                                                                                                                                                                                                                                            | `""`       |
-| `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file.                                                                                                                                                                                                                                                                                 |            |
+| `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file. Cannot be combined with `groupBySchema`.                                                                                                                                                                                                                                        |            |
 | `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        | `false`    |
 | `exportWrappedTypes`     | Kysely wrapped types such as `Selectable<Model>` are also exported as described in the [Kysely documentation](https://kysely.dev/docs/getting-started#types). The exported types follow the naming conventions of the document.                                                                                                                                                     | `false`    |
 | `banner`                 | Content to prepend to the start of generated file(s). Useful for custom imports, pragma directives (e.g., `// @ts-nocheck`), comments, or any other content. Supports single-line strings or multi-line via Prisma triple-quoted strings (`""" ... """`). The content is inserted verbatim at the top of the file(s).                                                               |            |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  | `false`    |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |            |
 | `dbTypeName`             | Allows you to override the exported type with all tables                                                                                                                                                                                                                                                                                                                            | `DB`       |
-| `groupBySchema`          | When using multiple schemas, group all models and enums for a schema into their own namespace. (Ex: `model Dog { @@schema("animals") }` will be available under `Animals.Dog`)                                                                                                                                                                                                      | `false`    |
+| `groupBySchema`          | When using multiple schemas, group models and enums by schema. `true` emits a TypeScript namespace per schema (e.g. `Animals.Dog`); `"module"` emits one file per schema next to an index that re-exports them, giving the same `Animals.Dog` shape without namespaces.                                                                                                             | `false`    |
 | `filterBySchema`         | When using multiple schemas, only include models and enums for the specified schema.                                                                                                                                                                                                                                                                                                | `false`    |
-| `defaultSchema`          | When using multiple schemas, declare `which schema should not be wrapped by a namespace.                                                                                                                                                                                                                                                                                            | `'public'` |
+| `defaultSchema`          | When using multiple schemas, declares which schema should stay ungrouped. With `groupBySchema = true` it is not wrapped in a namespace; with `"module"` it stays in the index file.                                                                                                                                                                                                 | `'public'` |
+
+### Schema grouping
+
+`groupBySchema` controls how multi-schema models and enums are grouped.
+
+With `groupBySchema = true`, all grouped schemas stay in the configured types
+file:
+
+```ts
+export namespace Animals {
+  export type Dog = {
+    id: string;
+  };
+}
+
+export type DB = {
+  "animals.dogs": Animals.Dog;
+};
+```
+
+With `groupBySchema = "module"` and `fileName = "types.ts"`, output is written
+to `types/index.ts` with schema files beside it, such as `types/animals.ts`:
+
+```ts
+// types/index.ts
+import type * as Animals from "./animals";
+
+export * as Animals from "./animals";
+
+export type DB = {
+  "animals.dogs": Animals.Dog;
+};
+```
+
+```ts
+// types/animals.ts
+export type Dog = {
+  id: string;
+};
+```
+
+`groupBySchema = "module"` is the recommended option for new projects. In the
+next major version, `groupBySchema` will be removed and multi-schema projects
+will always emit one file per schema.
 
 ### PostgreSQL enum arrays
 

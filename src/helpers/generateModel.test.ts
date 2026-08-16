@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 
 import { stringifyTsNode } from "../utils/testUtils.ts";
 import { generateModel } from "./generateModel.ts";
+import { GroupBySchema } from "../utils/validateConfig.ts";
 
 test("it generates a model!", () => {
   const model = generateModel(
@@ -95,14 +96,14 @@ test("it generates a model!", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -163,14 +164,14 @@ test("it respects camelCase option", () => {
       enumFileName: "",
       camelCase: true,
       readOnlyIds: false,
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -240,14 +241,14 @@ test("it types enum arrays as strings (#107)", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -308,14 +309,14 @@ test("it respects @kyselyType overrides on enum fields", () => {
       enumFileName: "",
       camelCase: false,
       readOnlyIds: false,
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
       dbTypeName: "DB",
       importExtension: "",
       exportWrappedTypes: false,
     },
     {
-      groupBySchema: false,
+      groupBySchema: GroupBySchema.None,
       defaultSchema: "public",
     }
   );
@@ -332,4 +333,110 @@ test("it respects @kyselyType overrides on enum fields", () => {
      */
     mood: 'happy' | 'sad' | null;
 };`);
+});
+
+test("it records missing-schema enum references as default schema references", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "mood",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Mood",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+      ],
+      schema: null,
+      primaryKey: null,
+      dbName: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: GroupBySchema.Module,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+      exportWrappedTypes: false,
+    },
+    {
+      groupBySchema: GroupBySchema.Module,
+      defaultSchema: "public",
+      multiSchemaMap: new Map([
+        ["User", "animals"],
+        ["Mood", ""],
+      ]),
+    }
+  );
+
+  expect(model.referencedSchemaTypes).toEqual([
+    { schema: "public", typeName: "Mood" },
+  ]);
+});
+
+test("it records enum array schema references when annotated with @kyselyType", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "permissions",
+          documentation: "@kyselyType(Auth.Permission[])",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Permission",
+          hasDefaultValue: false,
+          isList: true,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+      ],
+      schema: null,
+      primaryKey: null,
+      dbName: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: GroupBySchema.Module,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+      exportWrappedTypes: false,
+    },
+    {
+      groupBySchema: GroupBySchema.Module,
+      defaultSchema: "public",
+      multiSchemaMap: new Map([
+        ["User", "users"],
+        ["Permission", "auth"],
+      ]),
+    }
+  );
+
+  const source = stringifyTsNode(model.definition);
+
+  expect(source).toContain("permissions: Auth.Permission[];");
+  expect(model.referencedSchemaTypes).toEqual([
+    { schema: "auth", typeName: "Permission" },
+  ]);
 });

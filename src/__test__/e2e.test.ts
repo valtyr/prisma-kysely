@@ -446,6 +446,7 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
+  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")
@@ -521,6 +522,7 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
+  abilities Ability[] @default([])
 
   @@map("eagles")
   @@schema("birds")
@@ -606,9 +608,10 @@ model Elephant {
 }
 
 model Eagle {
-  id      Int     @id
-  name    String
-  ability Ability @default(FLY)
+  id        Int       @id
+  name      String
+  ability   Ability   @default(FLY)
+  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")
@@ -872,9 +875,10 @@ model Elephant {
 }
 
 model Eagle {
-  id      Int     @id
-  name    String
-  ability Ability @default(FLY)
+  id        Int       @id
+  name      String
+  ability   Ability   @default(FLY)
+  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")
@@ -915,4 +919,128 @@ enum Color {
     "birds.eagles": Birds.EagleTable;
     "mammals.elephants": Mammals.ElephantTable;
 };`);
+});
+
+test("End to end test - groupBySchema module mode support", async () => {
+  await using t = await setupTest();
+  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+
+  await Bun.write(
+    t.tempPath("prisma/schema.prisma"),
+    `
+generator kysely {
+  provider             = "node ${GENERATOR_PATH}"
+  previewFeatures      = ["multiSchema"]
+  groupBySchema        = "module"
+  exportWrappedTypes   = true
+  importExtension      = ".ts"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["mammals", "birds", "world"]
+}
+
+model Elephant {
+  id      Int     @id
+  name    String
+  ability Ability @default(WALK)
+  color   Color
+
+  @@map("elephants")
+  @@schema("mammals")
+}
+
+model Eagle {
+  id        Int       @id
+  name      String
+  ability   Ability   @default(FLY)
+  /// @kyselyType(World.Ability[])
+  abilities Ability[]
+
+  @@map("eagles")
+  @@schema("birds")
+}
+
+enum Ability {
+  FLY
+  WALK
+
+  @@schema("world")
+}
+
+enum Color {
+  GRAY
+  PINK
+
+  @@schema("mammals")
+}
+    `
+  );
+
+  await t.prisma("generate");
+
+  const indexFile = await Bun.file(
+    t.tempPath("prisma/generated/types/index.ts")
+  ).text();
+  const mammalsFile = await Bun.file(
+    t.tempPath("prisma/generated/types/mammals.ts")
+  ).text();
+  const birdsFile = await Bun.file(
+    t.tempPath("prisma/generated/types/birds.ts")
+  ).text();
+  const worldFile = await Bun.file(
+    t.tempPath("prisma/generated/types/world.ts")
+  ).text();
+
+  expect(indexFile).toContain('import type * as Mammals from "./mammals.ts";');
+  expect(indexFile).toContain('export * as Mammals from "./mammals.ts";');
+  expect(indexFile).toContain('import type * as Birds from "./birds.ts";');
+  expect(indexFile).toContain('export * as Birds from "./birds.ts";');
+  expect(indexFile).toContain('import type * as World from "./world.ts";');
+  expect(indexFile).toContain('export * as World from "./world.ts";');
+  expect(indexFile).toContain(
+    'export type { Insertable, Selectable, Updateable } from "kysely";'
+  );
+  expect(indexFile).toContain(`export type DB = {
+    "birds.eagles": Birds.EagleTable;
+    "mammals.elephants": Mammals.ElephantTable;
+};`);
+
+  expect(mammalsFile).toContain("export const Color = {");
+  expect(mammalsFile).toContain(
+    'import type { Generated, Insertable, Selectable, Updateable } from "./index.ts";'
+  );
+  expect(mammalsFile).toContain("color: Color;");
+  expect(mammalsFile).toContain(
+    "export type Elephant = Selectable<ElephantTable>;"
+  );
+  expect(mammalsFile).toContain(
+    "export type NewElephant = Insertable<ElephantTable>;"
+  );
+  expect(mammalsFile).toContain(
+    "export type ElephantUpdate = Updateable<ElephantTable>;"
+  );
+  expect(mammalsFile).toContain('import type * as World from "./world.ts";');
+  expect(mammalsFile).toContain("ability: Generated<World.Ability>;");
+  expect(mammalsFile).not.toContain("export namespace Mammals");
+  expect(mammalsFile).not.toContain("export type Generated<T>");
+  expect(mammalsFile).not.toContain("export type Timestamp");
+
+  expect(birdsFile).toContain('import type * as World from "./world.ts";');
+  expect(birdsFile).toContain(
+    'import type { Generated, Insertable, Selectable, Updateable } from "./index.ts";'
+  );
+  expect(birdsFile).toContain("export type EagleTable = {");
+  expect(birdsFile).toContain("ability: Generated<World.Ability>;");
+  expect(birdsFile).toContain(`    /**
+     * @kyselyType(World.Ability[])
+     */
+    abilities: World.Ability[];`);
+  expect(birdsFile).not.toContain("export namespace Birds");
+
+  expect(worldFile).toContain("export const Ability = {");
+  expect(worldFile).toContain("export type Ability =");
+  expect(worldFile).not.toContain("./index.ts");
+  expect(worldFile).not.toContain("export namespace World");
 });
