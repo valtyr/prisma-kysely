@@ -1,4 +1,4 @@
-import { beforeAll, expect, setDefaultTimeout, test } from "bun:test";
+import { expect, setDefaultTimeout, test } from "bun:test";
 import { mkdtemp, rm, symlink } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -9,18 +9,19 @@ setDefaultTimeout(120_000);
 const PROJECT_ROOT = path.resolve(__dirname, "../..");
 const GENERATOR_PATH = path.join(PROJECT_ROOT, "dist/bin.js");
 
-const pkg = await Bun.file(path.join(PROJECT_ROOT, "package.json")).json();
-const PRISMA_PEER_DEP = pkg.peerDependencies?.prisma ?? ">=7.0.0";
-
-let templateDir: string;
-
 async function exec(cmd: string[], cwd: string, env?: Record<string, string>) {
   const proc = Bun.spawn(cmd, {
     cwd,
     stdout: "ignore",
     stderr: "pipe",
     stdin: "ignore",
-    env: { ...process.env, ...env },
+    env: {
+      ...process.env,
+      // Skip Prisma's telemetry / update-check network calls
+      CHECKPOINT_DISABLE: "1",
+      PRISMA_HIDE_UPDATE_MESSAGE: "1",
+      ...env,
+    },
   });
 
   if ((await proc.exited) !== 0) {
@@ -28,17 +29,6 @@ async function exec(cmd: string[], cwd: string, env?: Record<string, string>) {
     throw new Error(`Command failed: ${cmd.join(" ")}\n${text}`);
   }
 }
-
-beforeAll(async () => {
-  templateDir = await mkdtemp(
-    path.join(os.tmpdir(), "prisma-kysely-template-")
-  );
-  await Bun.write(
-    path.join(templateDir, "package.json"),
-    JSON.stringify({ dependencies: { prisma: PRISMA_PEER_DEP } })
-  );
-  await exec(["bun", "install"], templateDir);
-});
 
 async function setupTest() {
   const tempDir = await mkdtemp(path.join(os.tmpdir(), "prisma-kysely-test-"));
@@ -51,20 +41,19 @@ async function setupTest() {
     return exec(["bunx", "prisma", ...args], tempDir);
   }
 
-  async function prismaInit(datasourceProvider: string, url: string) {
+  /**
+   * Set up a minimal Prisma project in the temp dir.
+   *
+   * We deliberately don't run `prisma init`: it's slow (~1s + network calls
+   * per test) and every test overwrites `schema.prisma` anyway. Instead we
+   * reuse this repo's `node_modules` (prisma is a devDependency) and write
+   * the config file ourselves.
+   */
+  async function prismaInit(url: string) {
     await symlink(
-      path.join(templateDir, "node_modules"),
+      path.join(PROJECT_ROOT, "node_modules"),
       tempPath("node_modules")
     );
-    await Bun.write(
-      tempPath("package.json"),
-      JSON.stringify({ dependencies: { prisma: PRISMA_PEER_DEP } })
-    );
-    await exec(
-      ["bunx", "prisma", "init", "--datasource-provider", datasourceProvider],
-      tempDir
-    );
-
     await Bun.write(
       tempPath("prisma.config.ts"),
       `import { defineConfig } from "prisma/config";
@@ -92,7 +81,7 @@ export default defineConfig({
 
 test("End to end test", async () => {
   await using t = await setupTest();
-  await t.prismaInit("sqlite", "file:./dev.db");
+  await t.prismaInit("file:./dev.db");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -137,7 +126,7 @@ test("End to end test", async () => {
 
 test("End to end test - with custom type override", async () => {
   await using t = await setupTest();
-  await t.prismaInit("sqlite", "file:./dev.db");
+  await t.prismaInit("file:./dev.db");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -178,7 +167,7 @@ test("End to end test - with custom type override", async () => {
 
 test("End to end test - separate entrypoints", async () => {
   await using t = await setupTest();
-  await t.prismaInit("mysql", "mysql://root:password@localhost:3306/test");
+  await t.prismaInit("mysql://root:password@localhost:3306/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -231,7 +220,7 @@ export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 
 test("End to end test - enum arrays are typed as strings (#107)", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -287,7 +276,7 @@ test("End to end test - enum arrays are typed as strings (#107)", async () => {
 
 test("End to end test - separate entrypoints but no enums", async () => {
   await using t = await setupTest();
-  await t.prismaInit("sqlite", "file:./dev.db");
+  await t.prismaInit("file:./dev.db");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -326,7 +315,7 @@ test("End to end test - separate entrypoints but no enums", async () => {
 
 test("End to end test - multi-schema support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -371,7 +360,7 @@ test("End to end test - multi-schema support", async () => {
 
 test("End to end test - multi-schema and filterBySchema support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -416,7 +405,7 @@ test("End to end test - multi-schema and filterBySchema support", async () => {
 
 test("End to end test - multi-schema and groupBySchema support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -491,7 +480,7 @@ enum Color {
 
 test("End to end test - multi-schema, groupBySchema and defaultSchema support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -580,7 +569,7 @@ enum Color {
 
 test("End to end test - multi-schema, groupBySchema and filterBySchema support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -655,7 +644,7 @@ enum Color {
 
 test("End to end test - SQLite with JSON support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("sqlite", "file:./dev.db");
+  await t.prismaInit("file:./dev.db");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -725,7 +714,7 @@ test("End to end test - SQLite with JSON support", async () => {
 
 test("End to end test - multi-schema with views support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -805,7 +794,7 @@ test("End to end test - multi-schema with views support", async () => {
 
 test("End to end test - exportWrappedTypes", async () => {
   await using t = await setupTest();
-  await t.prismaInit("sqlite", "file:./dev.db");
+  await t.prismaInit("file:./dev.db");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -847,7 +836,7 @@ test("End to end test - exportWrappedTypes", async () => {
 
 test("End to end test - groupBySchema and exportWrappedTypes support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
@@ -923,7 +912,7 @@ enum Color {
 
 test("End to end test - groupBySchema module mode support", async () => {
   await using t = await setupTest();
-  await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
+  await t.prismaInit("postgresql://localhost:5432/test");
 
   await Bun.write(
     t.tempPath("prisma/schema.prisma"),
