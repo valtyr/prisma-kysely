@@ -229,7 +229,7 @@ export type TestEnum = (typeof TestEnum)[keyof typeof TestEnum];
 `);
 });
 
-test("End to end test - enum arrays are typed as strings (#107)", async () => {
+test("End to end test - enum array typing options (#107)", async () => {
   await using t = await setupTest();
   await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
 
@@ -257,15 +257,45 @@ test("End to end test - enum arrays are typed as strings (#107)", async () => {
   }`
   );
 
-  // Enum arrays aren't supported by SQLite/MySQL, and Postgres returns them
-  // as an unparsed array-literal string, so just `generate` (no db push).
+  // Enum arrays aren't supported by SQLite/MySQL, so just `generate` (no db push).
   await t.prisma("generate");
 
-  const typeFile = await Bun.file(
-    t.tempPath("prisma/generated/types.ts")
-  ).text();
+  let typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
 
-  // The enum array column is a raw string, the scalar enum keeps its type.
+  expect(typeFile).toContain(`export type TestUser = {
+    id: string;
+    role: Permission;
+    permissions: Permission[];
+};`);
+
+  await Bun.write(
+    t.tempPath("prisma/schema.prisma"),
+    `datasource db {
+      provider = "postgresql"
+  }
+
+  generator kysely {
+      provider      = "node ${GENERATOR_PATH}"
+      enumArrayType = "string"
+  }
+
+  enum Permission {
+      FOO
+      BAR
+      BAZ
+  }
+
+  model TestUser {
+      id          String       @id
+      role        Permission
+      permissions Permission[]
+  }`
+  );
+
+  await t.prisma("generate");
+
+  typeFile = await Bun.file(t.tempPath("prisma/generated/types.ts")).text();
+
   expect(typeFile).toContain(`export type TestUser = {
     id: string;
     role: Permission;
@@ -439,6 +469,7 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
+  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")
@@ -514,6 +545,7 @@ model Eagle {
   id      Int     @id
   name    String
   ability Ability @default(FLY)
+  abilities Ability[] @default([])
 
   @@map("eagles")
   @@schema("birds")
@@ -599,9 +631,10 @@ model Elephant {
 }
 
 model Eagle {
-  id      Int     @id
-  name    String
-  ability Ability @default(FLY)
+  id        Int       @id
+  name      String
+  ability   Ability   @default(FLY)
+  abilities Ability[]
 
   @@map("eagles")
   @@schema("birds")

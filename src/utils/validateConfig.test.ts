@@ -1,6 +1,6 @@
 import { afterEach, expect, mock, test } from "bun:test";
 
-import { validateConfig } from "./validateConfig.ts";
+import { configValidator, validateConfig } from "./validateConfig.ts";
 
 const mockExitFunction = mock((() => {}) as typeof process.exit);
 const mockConsoleErrorFunction = mock((() => {}) as typeof console.error);
@@ -21,4 +21,19 @@ test("should exit with error code when invalid config encountered", () => {
 
   expect(mockExitFunction).toHaveBeenCalled();
   expect(mockConsoleErrorFunction).toHaveBeenCalled();
+});
+
+test("defaults enumArrayType to array", () => {
+  const result = configValidator.parse({ databaseProvider: "postgresql" });
+
+  expect(result.enumArrayType).toEqual("array");
+});
+
+test("rejects invalid enumArrayType values", () => {
+  const result = configValidator.safeParse({
+    databaseProvider: "postgresql",
+    enumArrayType: "literal",
+  });
+
+  expect(result.success).toEqual(false);
 });

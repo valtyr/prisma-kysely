@@ -120,11 +120,56 @@ hope it's just as useful for you! 😎
 | `exportWrappedTypes`     | Kysely wrapped types such as `Selectable<Model>` are also exported as described in the [Kysely documentation](https://kysely.dev/docs/getting-started#types). The exported types follow the naming conventions of the document.                                                                                                                                                     | `false`    |
 | `banner`                 | Content to prepend to the start of generated file(s). Useful for custom imports, pragma directives (e.g., `// @ts-nocheck`), comments, or any other content. Supports single-line strings or multi-line via Prisma triple-quoted strings (`""" ... """`). The content is inserted verbatim at the top of the file(s).                                                               |            |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  | `false`    |
+| `enumArrayType`          | Controls generated types for Prisma enum arrays. Use `"array"` when your PostgreSQL driver parses enum-array OIDs into arrays, or `"string"` to type raw pg array literals such as `{FOO,BAR}`.                                                                                                                                                                                     | `array`    |
 | `[typename]TypeOverride` | Allows you to override the resulting TypeScript type for any Prisma type. Useful when targeting a different environment than Node (e.g. WinterCG compatible runtimes that use UInt8Arrays instead of Buffers for binary types etc.) Check out the [config validator](https://github.com/valtyr/prisma-kysely/blob/main/src/utils/validateConfig.ts) for a complete list of options. |            |
 | `dbTypeName`             | Allows you to override the exported type with all tables                                                                                                                                                                                                                                                                                                                            | `DB`       |
 | `groupBySchema`          | When using multiple schemas, group all models and enums for a schema into their own namespace. (Ex: `model Dog { @@schema("animals") }` will be available under `Animals.Dog`)                                                                                                                                                                                                      | `false`    |
 | `filterBySchema`         | When using multiple schemas, only include models and enums for the specified schema.                                                                                                                                                                                                                                                                                                | `false`    |
 | `defaultSchema`          | When using multiple schemas, declare `which schema should not be wrapped by a namespace.                                                                                                                                                                                                                                                                                            | `'public'` |
+
+### PostgreSQL enum arrays
+
+PostgreSQL drivers such as `pg` do not automatically parse user-defined enum
+array OIDs. See [node-pg-types#56](https://github.com/brianc/node-pg-types/issues/56#issuecomment-323223477).
+If your app registers enum-array parsers, keep the default `enumArrayType = "array"`.
+Otherwise set `enumArrayType = "string"` to match raw pg array literals.
+
+Install `postgres-array` if you use the parser below. Register parsers once,
+before running queries that read enum-array columns:
+
+```ts
+import { Kysely, PostgresDialect } from "kysely";
+import pg from "pg";
+import { parse as parsePostgresArray } from "postgres-array";
+
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+
+// Registers enum array types.
+// https://github.com/brianc/node-pg-types/issues/56#issuecomment-323223477
+{
+  const { rows } = await pool.query<{ typarray: number | string }>(
+    `
+    select t.typarray
+    from pg_type as t
+    inner join pg_namespace as n on n.oid = t.typnamespace
+    where n.nspname not in ('pg_catalog', 'information_schema', 'pg_toast')
+      and t.typtype = 'e'
+      and t.typarray is not null
+      and t.typarray != 0
+  `
+  );
+
+  for (const row of rows) {
+    pg.types.setTypeParser(Number(row.typarray), (value) =>
+      value ? parsePostgresArray(value) : value
+    );
+  }
+}
+
+const db = new Kysely<DB>({
+  dialect: new PostgresDialect({ pool }),
+});
+```
 
 ### Per-field type overrides
 
