@@ -1,5 +1,5 @@
 // Copied directly from the Kysely repo
-// https://github.com/koskimas/kysely/blob/a8e28d9edd6284d5410f93bc24d3c6252add6ea1/src/plugin/camel-case/camel-case.ts
+// https://github.com/kysely-org/kysely/blob/c4316777c13a6ed6f8645bffe19f0e763682cf04/src/plugin/camel-case/camel-case.ts
 
 export type StringMapper = (str: string) => string;
 
@@ -34,7 +34,12 @@ export function createSnakeCaseMapper({
       // If underScoreBeforeDigits is true then, well, insert an underscore
       // before digits :). Only the first digit gets an underscore if
       // there are multiple.
-      if (underscoreBeforeDigits && isDigit(char) && !isDigit(prevChar)) {
+      if (
+        underscoreBeforeDigits &&
+        isDigit(char) &&
+        !isDigit(prevChar) &&
+        !out.endsWith("_")
+      ) {
         out += "_" + char;
         continue;
       }
