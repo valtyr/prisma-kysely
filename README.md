@@ -126,6 +126,20 @@ hope it's just as useful for you! 😎
 | `filterBySchema`         | When using multiple schemas, only include models and enums for the specified schema.                                                                                                                                                                                                                                                                                                | `false`    |
 | `defaultSchema`          | When using multiple schemas, declare `which schema should not be wrapped by a namespace.                                                                                                                                                                                                                                                                                            | `'public'` |
 
+### PostgreSQL enum arrays
+
+Enum array columns are typed as `string` by default, because the `pg` driver
+returns them as raw array literals (e.g. `{FOO,BAR}`) unless you register a
+type parser for the enum yourself. If your app does receive real arrays for a
+column, opt that field back in with a `@kyselyType` annotation:
+
+```prisma
+model User {
+  /// @kyselyType(Permission[])
+  permissions Permission[]
+}
+```
+
 ### Per-field type overrides
 
 In some cases, you might want to override a type for a specific field. This

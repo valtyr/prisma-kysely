@@ -63,21 +63,31 @@ export const generateModel = (
       // rather than a parsed array. Typing it as `EnumType[]` would
       // therefore be wrong, so we fall back to `string`.
       // See https://github.com/valtyr/prisma-kysely/issues/107
+      //
+      // Apps that do get real arrays back (registered enum-array type
+      // parsers, `to_json` in queries, etc.) can opt out per field with
+      // a `/// @kyselyType(EnumType[])` annotation, which replaces the
+      // type wholesale.
       const isEnumArray = field.isList;
 
       return generateField({
         isId: field.isId,
         name: normalizeCase(dbName || field.name, config),
-        type: isEnumArray
-          ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
-          : ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier(
-                schemaPrefix && defaultSchema !== schemaPrefix
-                  ? `${capitalize(schemaPrefix)}.${field.type}`
-                  : field.type
-              ),
+        type: typeOverride
+          ? ts.factory.createTypeReferenceNode(
+              ts.factory.createIdentifier(typeOverride),
               undefined
-            ),
+            )
+          : isEnumArray
+            ? ts.factory.createKeywordTypeNode(ts.SyntaxKind.StringKeyword)
+            : ts.factory.createTypeReferenceNode(
+                ts.factory.createIdentifier(
+                  schemaPrefix && defaultSchema !== schemaPrefix
+                    ? `${capitalize(schemaPrefix)}.${field.type}`
+                    : field.type
+                ),
+                undefined
+              ),
         nullable: !field.isRequired,
         generated: isGenerated,
         list: false,

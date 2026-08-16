@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 
-import { generateModel } from "./generateModel.ts";
 import { stringifyTsNode } from "../utils/testUtils.ts";
+import { generateModel } from "./generateModel.ts";
 
 test("it generates a model!", () => {
   const model = generateModel(
@@ -261,5 +261,75 @@ test("it types enum arrays as strings (#107)", () => {
     id: string;
     role: Role;
     permissions: string;
+};`);
+});
+
+test("it respects @kyselyType overrides on enum fields", () => {
+  const model = generateModel(
+    {
+      name: "User",
+      fields: [
+        {
+          name: "permissions",
+          documentation: "@kyselyType(Permission[])",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Permission",
+          hasDefaultValue: false,
+          isList: true,
+          isReadOnly: false,
+          isRequired: true,
+          isUnique: false,
+        },
+        {
+          name: "mood",
+          documentation: "@kyselyType('happy' | 'sad')",
+          isId: false,
+          isGenerated: false,
+          kind: "enum",
+          type: "Mood",
+          hasDefaultValue: false,
+          isList: false,
+          isReadOnly: false,
+          isRequired: false,
+          isUnique: false,
+        },
+      ],
+      schema: null,
+      primaryKey: null,
+      dbName: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+    },
+    {
+      databaseProvider: "postgresql",
+      fileName: "",
+      enumFileName: "",
+      camelCase: false,
+      readOnlyIds: false,
+      groupBySchema: false,
+      defaultSchema: "public",
+      dbTypeName: "DB",
+      importExtension: "",
+      exportWrappedTypes: false,
+    },
+    {
+      groupBySchema: false,
+      defaultSchema: "public",
+    }
+  );
+
+  const source = stringifyTsNode(model.definition);
+
+  expect(source).toEqual(`export type User = {
+    /**
+     * @kyselyType(Permission[])
+     */
+    permissions: Permission[];
+    /**
+     * @kyselyType('happy' | 'sad')
+     */
+    mood: 'happy' | 'sad' | null;
 };`);
 });

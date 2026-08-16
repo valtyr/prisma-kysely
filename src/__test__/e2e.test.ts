@@ -254,6 +254,8 @@ test("End to end test - enum arrays are typed as strings (#107)", async () => {
       id          String       @id
       role        Permission
       permissions Permission[]
+      /// @kyselyType(Permission[])
+      parsed      Permission[]
   }`
   );
 
@@ -265,11 +267,16 @@ test("End to end test - enum arrays are typed as strings (#107)", async () => {
     t.tempPath("prisma/generated/types.ts")
   ).text();
 
-  // The enum array column is a raw string, the scalar enum keeps its type.
+  // The enum array column is a raw string, the scalar enum keeps its type,
+  // and a @kyselyType annotation opts a field back into a real array type.
   expect(typeFile).toContain(`export type TestUser = {
     id: string;
     role: Permission;
     permissions: string;
+    /**
+     * @kyselyType(Permission[])
+     */
+    parsed: Permission[];
 };`);
 
   // The broken template-literal approach from the closed PR #108 must not
