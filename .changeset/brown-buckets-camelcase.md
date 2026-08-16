@@ -1,9 +1,14 @@
 ---
-"prisma-kysely": patch
+"prisma-kysely": minor
 ---
 
-Fix `camelCase = true` for all-uppercase mapped table and column names.
+Fix `camelCase = true` for all-uppercase database names (#113).
 
-Previously names such as `UPDATED_AT`, `ID`, or `TEST_CUSTOMERS` could be emitted as `UPDATEDAT`, `ID`, and `TESTCUSTOMERS` because the camel-case mapper preserved uppercase segments instead of normalizing all-uppercase snake-case identifiers first. This affected schemas that map database names with uppercase conventions through Prisma `@map` and `@@map`.
+Mapped names such as `UPDATED_AT`, `ID`, or `TEST_CUSTOMERS` were emitted as
+`UPDATEDAT`, `ID`, and `TESTCUSTOMERS`. They now become `updatedAt`, `id`, and
+`testCustomers`.
 
-The generator now treats all-uppercase snake-case names as database identifiers that should be lowercased before camel-case conversion. With `camelCase = true`, `UPDATED_AT` becomes `updatedAt`, `ID` becomes `id`, and `TEST_CUSTOMERS` becomes `testCustomers`, matching the behavior users expect from Kysely's camel case plugin.
+This matches Kysely's `new CamelCasePlugin({ upperCase: true })`. If your
+database uses ALL_CAPS names, pass `upperCase: true` to the plugin so the
+generated types match the row keys at runtime. Lowercase snake_case names are
+unaffected either way.
