@@ -1,5 +1,53 @@
 # prisma-kysely
 
+## 3.2.0
+
+### Minor Changes
+
+- 7496413: Fix `camelCase = true` for all-uppercase database names (#113).
+
+  Mapped names such as `UPDATED_AT`, `ID`, or `TEST_CUSTOMERS` were emitted as
+  `UPDATEDAT`, `ID`, and `TESTCUSTOMERS`. They now become `updatedAt`, `id`, and
+  `testCustomers`.
+
+  This matches Kysely's `new CamelCasePlugin({ upperCase: true })`. If your
+  database uses ALL_CAPS names, pass `upperCase: true` to the plugin so the
+  generated types match the row keys at runtime. Lowercase snake_case names are
+  unaffected either way.
+
+- 28678dc: `@kyselyType(...)` annotations are now respected on enum fields.
+
+  Previously the annotation was silently ignored for enum fields. Enum array
+  columns are still typed as `string` by default (matching what the `pg` driver
+  returns when no enum-array parser is registered). Apps that receive real
+  arrays - via registered type parsers, `to_json` conversion, or a driver that
+  parses enum arrays - can now opt individual fields back into a real array
+  type:
+
+  ```prisma
+  model User {
+    /// @kyselyType(Permission[])
+    permissions Permission[]
+  }
+  ```
+
+  The annotation replaces the generated type wholesale, so it also works for
+  narrowing scalar enum fields.
+
+- f064b60: Add `groupBySchema = "module"` to emit one file per database schema.
+
+  With `fileName = "types.ts"`, output is written to `types/index.ts` plus one
+  file per non-default schema, such as `types/animals.ts`. The index file exports
+  the `DB` type and re-exports each schema with `export * as Animals from
+"./animals"`, so the `Animals.Dog` shape is unchanged from `groupBySchema =
+true` but without TypeScript namespaces. Schema files import cross-schema enum
+  references and shared helpers such as `Generated` from the index.
+
+  `groupBySchema = true` (namespaces in a single file) is unchanged.
+
+  `groupBySchema` will be removed in the next major version, and multi-schema
+  projects will always emit one file per schema.
+
 ## 3.1.1
 
 ### Patch Changes
