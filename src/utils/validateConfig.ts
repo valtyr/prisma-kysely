@@ -42,7 +42,6 @@ export const configValidator = z
     dateTimeTypeOverride: z.string().optional(),
     jsonTypeOverride: z.string().optional(),
     bytesTypeOverride: z.string().optional(),
-    unsupportedTypeOverride: z.string().optional(),
 
     // The DB type name to use in the generated types.
     dbTypeName: z.string().default("DB"),

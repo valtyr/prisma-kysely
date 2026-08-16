@@ -86,8 +86,6 @@ export const overrideType = (type: string, config: Config) => {
       return config.bytesTypeOverride;
     case "Json":
       return config.jsonTypeOverride;
-    case "Unsupported":
-      return config.unsupportedTypeOverride;
   }
 };
 

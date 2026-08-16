@@ -14,7 +14,6 @@ test("it respects overrides when generating field types", () => {
     floatTypeOverride: "sink",
     intTypeOverride: "lol",
     jsonTypeOverride: "freddy",
-    unsupportedTypeOverride: "valid",
   };
 
   const config: Config = {
@@ -41,7 +40,6 @@ test("it respects overrides when generating field types", () => {
     "Float",
     "Int",
     "Json",
-    "Unsupported",
   ];
 
   expect(
