@@ -116,7 +116,7 @@ hope it's just as useful for you! 😎
 | `fileName`               | The filename for the generated file                                                                                                                                                                                                                                                                                                                                                 | `types.ts` |
 | `importExtension`        | The extension to append to imports. E.g: `".js"` or `".ts"`. Use `""` to append nothing.                                                                                                                                                                                                                                                                                            | `""`       |
 | `enumFileName`           | The filename for the generated enums. Omitting this will generate enums and files in the same file. Cannot be combined with `groupBySchema`.                                                                                                                                                                                                                                        |            |
-| `camelCase`              | Enable support for Kysely's camelCase plugin                                                                                                                                                                                                                                                                                                                                        | `false`    |
+| `camelCase`              | Match Kysely's `CamelCasePlugin`. See [camelCase](#camelcase).                                                                                                                                                                                                                                                                                                                      | `false`    |
 | `exportWrappedTypes`     | Kysely wrapped types such as `Selectable<Model>` are also exported as described in the [Kysely documentation](https://kysely.dev/docs/getting-started#types). The exported types follow the naming conventions of the document.                                                                                                                                                     | `false`    |
 | `banner`                 | Content to prepend to the start of generated file(s). Useful for custom imports, pragma directives (e.g., `// @ts-nocheck`), comments, or any other content. Supports single-line strings or multi-line via Prisma triple-quoted strings (`""" ... """`). The content is inserted verbatim at the top of the file(s).                                                               |            |
 | `readOnlyIds`            | Use Kysely's `GeneratedAlways` for `@id` fields with default values, preventing insert and update.                                                                                                                                                                                                                                                                                  | `false`    |
@@ -169,6 +169,20 @@ export type Dog = {
 `groupBySchema = "module"` is the recommended option for new projects. In the
 next major version, `groupBySchema` will be removed and multi-schema projects
 will always emit one file per schema.
+
+### camelCase
+
+If you use Kysely's `CamelCasePlugin`, set `camelCase = true` so the generated
+types match what the plugin does at runtime:
+
+| `schema.prisma`      | your Kysely setup                          |
+| :------------------- | :----------------------------------------- |
+| _(unset)_ or `false` | no plugin                                  |
+| `camelCase = true`   | `new CamelCasePlugin({ upperCase: true })` |
+
+`upperCase: true` makes the plugin handle ALL_CAPS database names, e.g.
+`UPDATED_AT` → `updatedAt`. It has no effect on lowercase snake_case names, so
+it is safe to always pass.
 
 ### PostgreSQL enum arrays
 
