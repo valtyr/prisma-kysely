@@ -47,13 +47,14 @@ export const configValidator = z
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
 
-    // Legacy alias for schemaGrouping = "namespace".
-    groupBySchema: booleanStringLiteral.default(false),
+    // Group models and enums by their schema when using multiSchema.
+    // `true` emits a TypeScript namespace per schema in a single file,
+    // `"module"` emits one file per schema next to an index.
+    groupBySchema: z
+      .union([booleanStringLiteral, z.literal("module")])
+      .default(false),
 
-    // How schema groups should be emitted.
-    schemaGrouping: z.enum(["none", "namespace", "exports"]).optional(),
-
-    // Which schema should not be wrapped in a namespace
+    // Which schema should not be grouped
     defaultSchema: z.string().default("public"),
 
     // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
@@ -66,15 +67,31 @@ export const configValidator = z
     banner: z.string().optional(),
   })
   .strict()
-  .transform((config) => {
+  .transform(({ groupBySchema, ...config }) => {
     if (!config.enumFileName) {
       config.enumFileName = config.fileName;
     }
 
-    config.schemaGrouping ??= config.groupBySchema ? "namespace" : "none";
+    if (groupBySchema && config.enumFileName !== config.fileName) {
+      // Grouped output places each enum with its schema (inside the namespace,
+      // or in the schema's file), so a separate enum file isn't supported.
+      throw new Error("groupBySchema is not compatible with enumFileName");
+    }
 
-    return config as Omit<typeof config, "enumFileName" | "schemaGrouping"> &
-      Required<Pick<typeof config, "enumFileName" | "schemaGrouping">>;
+    const schemaGrouping =
+      groupBySchema === "module"
+        ? ("exports" as const)
+        : groupBySchema
+          ? ("namespace" as const)
+          : ("none" as const);
+
+    return { ...config, schemaGrouping } as Omit<
+      typeof config,
+      "enumFileName"
+    > &
+      Required<Pick<typeof config, "enumFileName">> & {
+        schemaGrouping: typeof schemaGrouping;
+      };
   });
 
 export type Config = z.infer<typeof configValidator>;

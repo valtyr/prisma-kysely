@@ -845,7 +845,7 @@ test("End to end test - exportWrappedTypes", async () => {
   );
 });
 
-test("End to end test - schemaGrouping namespace and exportWrappedTypes support", async () => {
+test("End to end test - groupBySchema and exportWrappedTypes support", async () => {
   await using t = await setupTest();
   await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
 
@@ -855,7 +855,7 @@ test("End to end test - schemaGrouping namespace and exportWrappedTypes support"
 generator kysely {
   provider             = "node ${GENERATOR_PATH}"
   previewFeatures      = ["multiSchema"]
-  schemaGrouping       = "namespace"
+  groupBySchema        = true
   exportWrappedTypes   = true
 }
 
@@ -921,7 +921,7 @@ enum Color {
 };`);
 });
 
-test("End to end test - schemaGrouping exports mode support", async () => {
+test("End to end test - groupBySchema module mode support", async () => {
   await using t = await setupTest();
   await t.prismaInit("postgresql", "postgresql://localhost:5432/test");
 
@@ -931,7 +931,7 @@ test("End to end test - schemaGrouping exports mode support", async () => {
 generator kysely {
   provider             = "node ${GENERATOR_PATH}"
   previewFeatures      = ["multiSchema"]
-  schemaGrouping       = "exports"
+  groupBySchema        = "module"
   exportWrappedTypes   = true
   importExtension      = ".ts"
 }

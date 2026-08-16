@@ -19,7 +19,6 @@ export type ModelType = {
   typeName: string;
   tableName: string;
   definition: ts.TypeAliasDeclaration;
-  referencedSchemas: string[];
   referencedSchemaTypes: { schema: string; typeName: string }[];
   schema?: string;
 };
@@ -38,7 +37,6 @@ export const generateModel = (
   config: Config,
   { defaultSchema, schemaGrouping, multiSchemaMap }: GenerateModelOptions
 ): ModelType => {
-  const referencedSchemas = new Set<string>();
   const referencedSchemaTypes = new Map<
     string,
     { schema: string; typeName: string }
@@ -100,10 +98,6 @@ export const generateModel = (
       // `string` enum array references nothing; an annotated one may name
       // the enum (e.g. `World.Ability[]`), so keep the import available.
       if ((!isEnumArray || typeOverride) && schemaPrefix) {
-        if (defaultSchema !== schemaPrefix) {
-          referencedSchemas.add(schemaPrefix);
-        }
-
         referencedSchemaTypes.set(`${schemaPrefix}.${field.type}`, {
           schema: schemaPrefix,
           typeName: field.type,
@@ -149,7 +143,6 @@ export const generateModel = (
   return {
     typeName: model.name,
     tableName: model.dbName || model.name,
-    referencedSchemas: [...referencedSchemas],
     referencedSchemaTypes: [...referencedSchemaTypes.values()],
     definition: ts.factory.createTypeAliasDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],

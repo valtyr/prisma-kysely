@@ -57,7 +57,6 @@ function createModel(model: Partial<ModelType> & Pick<ModelType, "typeName">) {
   return {
     tableName: model.typeName,
     definition: createType(model.typeName),
-    referencedSchemas: [],
     referencedSchemaTypes: [],
     ...model,
   } satisfies ModelType;
