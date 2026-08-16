@@ -47,8 +47,11 @@ export const configValidator = z
     // Use GeneratedAlways for IDs instead of Generated
     readOnlyIds: booleanStringLiteral.default(false),
 
-    // Group models in a namespace by their schema. Cannot be defined if enumFileName is defined.
+    // Legacy alias for schemaGrouping = "namespace".
     groupBySchema: booleanStringLiteral.default(false),
+
+    // How schema groups should be emitted.
+    schemaGrouping: z.enum(["none", "namespace", "exports"]).optional(),
 
     // Which schema should not be wrapped in a namespace
     defaultSchema: z.string().default("public"),
@@ -68,14 +71,10 @@ export const configValidator = z
       config.enumFileName = config.fileName;
     }
 
-    if (config.groupBySchema && config.enumFileName !== config.fileName) {
-      // would require https://www.typescriptlang.org/docs/handbook/namespaces.html#splitting-across-files
-      // which is considered a bad practice
-      throw new Error("groupBySchema is not compatible with enumFileName");
-    }
+    config.schemaGrouping ??= config.groupBySchema ? "namespace" : "none";
 
-    return config as Omit<typeof config, "enumFileName"> &
-      Required<Pick<typeof config, "enumFileName">>;
+    return config as Omit<typeof config, "enumFileName" | "schemaGrouping"> &
+      Required<Pick<typeof config, "enumFileName" | "schemaGrouping">>;
   });
 
 export type Config = z.infer<typeof configValidator>;

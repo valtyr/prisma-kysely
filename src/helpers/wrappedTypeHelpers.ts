@@ -11,6 +11,7 @@ export const convertToWrappedTypes = (
 ): ts.TypeAliasDeclaration[] => {
   const modelName = modelDefinition.name.text;
   const tableTypeName = toTableTypeName(modelName);
+
   return [
     { ...modelDefinition, name: ts.factory.createIdentifier(tableTypeName) },
     ts.factory.createTypeAliasDeclaration(
