@@ -35,7 +35,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
-        uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b # v1
+        uses: changesets/action@8488615a623b1b9c987934bb89eae8af6a946ac1 # v1
         with:
           publish: bun run release
         env:
