@@ -62,7 +62,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.0",
+    "@changesets/cli": "^3.0.1",
     "@types/bun": "^1.4.1",
     "@types/node": "25.3.3",
     "@types/pg": "^8.20.0",
