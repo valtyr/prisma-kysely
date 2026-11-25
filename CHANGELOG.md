@@ -1,5 +1,11 @@
 # prisma-kysely
 
+## 3.2.2
+
+### Patch Changes
+
+- 227fdf1: Bump `@mrleebo/prisma-ast` to `^0.16.0` (removes transitive `lodash-es` dependency via `chevrotain` v12).
+
 ## 3.2.1
 
 ### Patch Changes
